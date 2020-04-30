@@ -27,6 +27,8 @@ search: true
 
 # General Information {#intro}
 
+###### Last update: 2020-04-30 | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/blob/master/payments_en.html.md)
+
 **Online payments protocol** allows RSP to start accepting fast and secure payments from credit cards.
 
 The protocol provides fully functional API for payment operations. API implements REST principles and uses HTTPS application protocol. Parameters are transferred by HTTP PUT method in the request body JSON data.
@@ -67,9 +69,9 @@ After processing requests, our personnel will contact you to discuss possible wa
 
 Upon connecting to the Protocol, we provide your ID and access to your [Account](https://kassa.qiwi.com/service/core/merchants?) in our system. We send the Account credentials to your e-mail address specified on Step 1.
 
-**Step 3. Issue Secret Key for the integration**
+**Step 3. Issue Token for the integration**
 
-To use API and requests you need authorization parameter `SECRET_KEY`. Send it in `Authorization` HTTP header as `Bearer SECRET_KEY`.
+To use API and requests you need authorization parameter `Token`. Send its value in `Authorization` HTTP header as `Bearer Token`.
 
 ## Test and Production Mode {#test_mode}
 
@@ -115,33 +117,12 @@ Send HTTP PUT-request to API URL with `{API_REQUEST}`:
 
 with parameters:
 
-
-Parameter|Description|Type
---------|--------|-------
-billId|Unique identifier in the RSP system|String
-amount|Invoice amount data|Object
-amount.value| Amount of invoice rounded down to two decimals | Number(6.2)
-amount.currency| Invoice currency (Code Alpha-3 ISO 4217)  |String
-expirationDateTime |  Invoice due date. Time should be specified with time zone. When date is overdue, invoice status becomes `EXPIRED` final status and invoice payment is not possible. |URL encoded string<br>`YYYY-MM-DDhh:mm+\-hh:mm`
+* **{billId}** - unique identifier in the RSP system
+* **amount** - invoice amount (`amount.value`) and currency (`currency`) data
+* **expirationDateTime** - invoice due date. Time should be specified with time zone. When date is overdue, invoice status becomes `EXPIRED` final status and invoice payment is not possible.
 
 
-
-
-
-<ul class="nestedList header">
-    <li><h3>HEADERS</h3>
-        <ul>
-             <li>Authorization: Bearer <a href="#auth">SECRET_KEY</a></li>
-             <li>Accept: application/json</li>
-        </ul>
-    </li>
-</ul>
-
-
-
-
-
-
+[Request details](#invoice_put)
 
 
 In response you receive the following data:
@@ -154,7 +135,7 @@ In response you receive the following data:
     "siteId": "23044",
     "billId": "893794793973",
     "amount": {
-      "value": 100,
+      "value": 100.00,
       "currency": "RUB"
     },
     "status": {
@@ -186,8 +167,6 @@ comment|String|Comment to the invoice
 creationDateTime|String| System date of the invoice issue. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh`
 payUrl|String|New Payment Form URL
 expirationDateTime|String|Expiration date of the Payment Form link (invoice payment's due date). Date format:<br>`YYYY-MM-DDThh:mm:ss±hh`
-
-[Request details](#invoice_put)
 
 ### Redirect the customer to Payment Form URL received in response
 
@@ -237,7 +216,7 @@ When customer pays for the invoice, we send two server callbacks - first on the 
 Parameter|Type|Description
 --------|---|--------
 paymentId|String| Unique payment identifier in the merchant's system
-type|String | Operation type
+type|String | Operation type `PAYMENT`
 createdDateTime|String| System date of the payment creation. Date format:<br>`YYYY-MM-DDThh:mm:ssZ`
 amount|Object| Payment amount data
 amount.value|Number| Payment amount. The number is rounded down to two decimals
@@ -267,7 +246,7 @@ flags|Array of Strings|  Operation flags: `SALE` - one-step payment scenario
      "siteId":"23044",
      "billId":"1519892138404fhr7i272a2",
      "amount":{  
-        "value":"100",
+        "value":100.00,
         "currency":"RUB"
      },
      "status":{  
@@ -303,7 +282,7 @@ payUrl|String|Payment Form link
 expirationDateTime|String|Expiration date of the pay form link (invoice payment's due date). Date format:<br>`YYYY-MM-DDThh:mm:ss+\-hh:mm`
 
 
-See details on server callbacks and callback types in [Server Notifications](#callback).
+See description of server callbacks and callback types in [Server Notifications](#callback).
 
 ### Make refund to the customer
 
@@ -333,15 +312,6 @@ refundId|String|Unique refund identifier in the merchant's system
 amount|Object|Invoice amount data
 amount.value|Number|Invoice amount rounded down to two decimals
 amount.currency	|String|Invoice currency (Code Alpha-3 ISO 4217)
-
-<ul class="nestedList header">
-    <li><h3>HEADERS</h3>
-        <ul>
-             <li>Authorization: Bearer <a href="#auth">SECRET_KEY</a></li>
-             <li>Accept: application/json</li>
-        </ul>
-    </li>
-</ul>
 
 [Request details](#invoice_refund)
 
@@ -387,7 +357,7 @@ paymentFlags|Array of strings|Additional payment options.<br>Use value `AUTH` to
     "billId": "gg",
     "amount": {
         "currency": "RUB",
-        "value": "42.24"
+        "value": 42.24
     },
     "status": {
         "value": "WAITING",
@@ -404,25 +374,7 @@ paymentFlags|Array of strings|Additional payment options.<br>Use value `AUTH` to
 
 <a name="hold"></a>
 
-You receive an URL of the Payment Form in the response:
-
-Parameter|Type|Description
---------|---|--------
-billId|String|Unique invoice identifier in merchant's system
-siteId|String|Merchant's site identifier in QIWI Kassa
-amount|Object|Invoice amount data
-amount.value|Number|Invoice amount rounded down to two decimals
-amount.currency	|String|Invoice currency (Code Alpha-3 ISO 4217: `RUB`, `USD`, `EUR`)
-status|Object|Invoice status data
-status.value	|String|Invoice [current status](#invoice_status)
-status.changedDateTime|String|Status refresh date. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh`
-customFields|Object|Additional fields including `paymentFlags`
-customFields.AUTH|String|Two-step authorization transaction
-customer|Object|Customer identifiers. Possible elements: `email`, `phone`, `account`
-comment|String|Invoice comment
-creationDateTime|String| System date of the invoice creation. Date format:<br>`YYYY-MM-DDThh:mm:ss`
-payUrl|String|Payment Form URL
-expirationDateTime|String|Expiration date of the payment form URL. Date format:<br>`YYYY-MM-DDThh:mm:ss+\-hh:mm`
+You receive an URL of the Payment Form in the `payUrl` parameter of the response.
 
 **Obtain transaction id for capture operation**
 
@@ -468,26 +420,7 @@ expirationDateTime|String|Expiration date of the payment form URL. Date format:<
 
 When payment is successfully processed, you will receive [server callback](#payment_callback). Take `paymentId` parameter from the callback for  `capture` operation.
 
-paymentId|String|Unique payment identifier in the merchant's system
-type|String|Operation type
-createdDateTime|String| System date of the payment creation. Date format:<br>`YYYY-MM-DDThh:mm:ssZ`
-amount|Object|Payment amount data
-amount.value|Number|Payment amount. The number is rounded down to two decimals
-amount.currency	|String|Payment currency identifier (Code Alpha-3 ISO 4217)
-status|Object|Payment status data
-status.value	|String|Current [payment status](#payment_status)
-status.changedDateTime|String|Status refresh date. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh`
-paymentMethod|Object|Payment method data
-paymentMethod.type|String|Payment method type. Possible values: `TOKEN`, `CARD`
-paymentMethod.maskedPan|String| Masked card PAN
-paymentMethod.cardHolder|String|Card holder name
-paymentMethod.cardExpireDate|String|Card expiration date
-gatewayData|String| Payment gateway data
-gatewayData.type|String| Gateway type. Possible value: `ACQUIRING`
-gatewayData.authcode|String| Auth code
-gatewayData.rrn|String| RRN value (ISO 8583)
-customer|Object| Customer identifiers. Possible elements: `email`, `phone`, `account`
-billId|String| Corresponding invoice ID
+You also may use the [invoice status](#invoice_get) method to get actual payment status and `paymentId` parameter.
 
 
 **Confirm operation**
@@ -551,7 +484,7 @@ where:
     "siteId": "23044",
     "billId": "893794793973",
     "amount": {
-      "value": 100,
+      "value": 100.00,
       "currency": "RUB"
     },
     "status": {
@@ -618,15 +551,15 @@ where:
         "createdDateTime": "2020-03-26T19:31:49+03:00",
         "amount": {
             "currency": "RUB",
-            "value": "10.00"
+            "value": 10.00
         },
         "capturedAmount": {
             "currency": "RUB",
-            "value": "10.00"
+            "value": 10.00
         },
         "refundedAmount": {
             "currency": "RUB",
-            "value": "0.00"
+            "value": 0.00
         },
         "paymentMethod": {
             "type": "CARD",
@@ -664,15 +597,15 @@ where:
         "createdDateTime": "2020-03-26T19:32:22+03:00",
         "amount": {
             "currency": "RUB",
-            "value": "10.00"
+            "value": 10.00
         },
         "capturedAmount": {
             "currency": "RUB",
-            "value": "10.00"
+            "value": 10.00
         },
         "refundedAmount": {
             "currency": "RUB",
-            "value": "0.00"
+            "value": 0.00
         },
         "paymentMethod": {
             "type": "CARD",
@@ -710,15 +643,15 @@ where:
         "createdDateTime": "2020-03-26T19:46:21+03:00",
         "amount": {
             "currency": "RUB",
-            "value": "10.00"
+            "value": 10.00
         },
         "capturedAmount": {
             "currency": "RUB",
-            "value": "10.00"
+            "value": 10.00
         },
         "refundedAmount": {
             "currency": "RUB",
-            "value": "0.00"
+            "value": 0.00
         },
         "paymentMethod": {
             "type": "CARD",
@@ -887,7 +820,7 @@ where:
   "createdDatetime": "2018-11-20T16:29:58.96+03:00",
   "amount": {
     "currency": "RUB",
-    "value": "6.77"
+    "value": 6.77
   },
   "status": {
     "value": "COMPLETED",
@@ -974,15 +907,15 @@ You get in response:
     "createdDateTime": "2019-08-15T13:28:26+03:00",
     "amount": {
         "currency": "RUB",
-        "value": "1.00"
+        "value": 1.00
     },
     "capturedAmount": {
         "currency": "RUB",
-        "value": "0.00"
+        "value": 0.00
     },
     "refundedAmount": {
         "currency": "RUB",
-        "value": "0.00"
+        "value": 0.00
     },
     "paymentMethod": {
         "type": "CARD",
@@ -1118,7 +1051,7 @@ curl https://api.qiwi.com/partner/payin/v1/sites/test-01/payments/2820220333/cap
 {
   "amount": {
     "currency": "RUB",
-    "value": 200
+    "value": 200.00
   },
   "callbackUrl": "https://example.com/callbacks",
   "comment": "Example payment",
@@ -1212,15 +1145,15 @@ curl https://api.qiwi.com/partner/payin/v1/sites/test-01/payments/2820220333/cap
   "createdDatetime" : "2018-11-01T17:10:31.284+03:00",
   "amount" : {
     "currency" : "RUB",
-    "value" : "200.00"
+    "value" : 200.00
   },
   "capturedAmount" : {
     "currency" : "RUB",
-    "value" : "0.00"
+    "value" : 0.00
   },
   "refundedAmount" : {
     "currency" : "RUB",
-    "value" : "0.00"
+    "value" : 0.00
   },
   "paymentMethod" : {
     "type" : "CARD",
@@ -1290,15 +1223,15 @@ curl https://api.qiwi.com/partner/payin/v1/sites/test-01/payments/2820220333/cap
 {
   "amount" : {
     "currency" : "RUB",
-    "value" : "200.00"
+    "value" : 200.00
   },
   "capturedAmount" : {
     "currency" : "RUB",
-    "value" : "0.00"
+    "value" : 0.00
   },
   "refundedAmount" : {
     "currency" : "RUB",
-    "value" : "0.00"
+    "value" : 0.00
   },
   "paymentMethod" : {
     "type" : "CARD",
@@ -1383,15 +1316,15 @@ curl https://api.qiwi.com/partner/payin/v1/sites/test-01/payments/2820220333/cap
   "createdDatetime" : "2018-11-01T17:10:31.284+03:00",
   "amount" : {
     "currency" : "RUB",
-    "value" : "200.00"
+    "value" : 200.00
   },
   "capturedAmount" : {
     "currency" : "RUB",
-    "value" : "0.00"
+    "value" : 0.00
   },
   "refundedAmount" : {
     "currency" : "RUB",
-    "value" : "0.00"
+    "value" : 0.00
   },
   "paymentMethod" : {
     "type" : "CARD",
@@ -1525,7 +1458,7 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
   "createdDatetime": "2018-11-20T16:29:58.96+03:00",
   "amount": {
     "currency": "RUB",
-    "value": "6.77"
+    "value": 6.77
   },
   "status": {
     "value": "COMPLETED",
@@ -1584,7 +1517,7 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
   "createdDatetime": "2018-11-20T16:29:58.96+03:00",
   "amount": {
     "currency": "RUB",
-    "value": "6.77"
+    "value": 6.77
   },
   "status": {
     "value": "COMPLETED",
@@ -1787,7 +1720,7 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
   "createdDatetime": "2018-11-20T16:32:55.547+03:00",
   "amount": {
     "currency": "RUB",
-    "value": "2.34"
+    "value": 2.34
   },
   "status": {
     "value": "COMPLETED",
@@ -1848,7 +1781,7 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
   "createdDatetime": "2018-11-20T16:32:55.547+03:00",
   "amount": {
     "currency": "RUB",
-    "value": "2.34"
+    "value": 2.34
   },
   "status": {
     "value": "COMPLETED",
@@ -1910,7 +1843,7 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
   "createdDatetime": "2018-11-20T16:32:55.547+03:00",
   "amount": {
     "currency": "RUB",
-    "value": "2.34"
+    "value": 2.34
   },
   "status": {
     "value": "COMPLETED",
@@ -1981,9 +1914,9 @@ PAYIN_PROCESSING_ERROR| Payment processing error
 
 # Server Notifications {#callback}
 
-The Protocol supports the following notification types: `payment`, `capture`, `refund`, and `bill`.
+The Protocol supports the following notification types: `PAYMENT`, `CAPTURE`, `REFUND`, and `BILL`.
 
-A notification is an inbound POST request with body containing JSON serialized payment data in UTF-8 codepage.
+A notification is an incoming POST request with body containing JSON serialized payment data in UTF-8 codepage.
 
 <aside class="success">
 Payment notification (callback) sends exclusively by HTTPS protocol to port 443. The server certificate must be issued by trusted certification center like Comodo, Verisign, Thawte etc.
@@ -2006,32 +1939,22 @@ If by any reason RSP server accepts the notification but responds not as <code>2
 </aside>
 
 <aside class="warning">
-The responsibility for any financial losses due to omitted verification of the <code>sign</code> signature parameter lies solely on RSP.
+The responsibility for any financial losses due to omitted verification of the <a href="#notifications_auth">signature</a> parameter lies solely on RSP.
 </aside>
 
 RSP's notification server address is specified in your Personal Profile on <a href="https://kassa.qiwi.com/">kassa.qiwi.com</a> site in <b>Settings</b> section. You may also specify the address in optional `callbackUrl` parameter of [API](#api_requests) requests.
 
-<ul class="nestedList header">
-    <li><h3>HEADERS</h3>
-        <ul>
-             <li>X-Api-Signature-SHA256: XXX</li>
-             <li>Accept: application/json</li>
-             <li>Content-type: application/json</li>
-        </ul>
-    </li>
-</ul>
-
 ## Notification Authorization {#notifications_auth}
 
-You need to verify the inbound notification's digital signature. It is placed in `X-Api-Signature-SHA256` HTTP header with UTF-8 encoding. We use HMAC integrity test with SHA256 hash.
+You need to verify the inbound notification's digital signature. It is placed in `Signature` HTTP header with UTF-8 encoding for `PAYMENT`, `CAPTURE`, `REFUND` notifications and in `X-Api-Signature-SHA256` HTTP header with UTF-8 encoding for `BILL` notifications. We use HMAC integrity test with SHA256 hash.
 
 Use the signature verification algorithm:
 
-1. Join values of some parameters from the notification with "\|" separator:
+1. Join values of some parameters from the notification with "\|" separator. For example:
 
-   `parameters = {amount.currency}|{amount.value}|{billId}|{siteId}|{status}`
+   `parameters = {amount.currency}|{amount.value}|{billId}|{siteId}|{status.value}`
 
-   where `{*}` – notification parameter value. All values are treated as strings. Make sure strings are UTF-8 encoded.
+   where `{*}` – notification parameter value. All values are treated as strings. Make sure strings are UTF-8 encoded. **Parameters to join are specified in the notification description**.
 
 
 2. Calculate hash HMAC value with SHA256 algorithm (signature string and secret key are UTF8-encoded):
@@ -2039,13 +1962,24 @@ Use the signature verification algorithm:
    `hash = HMAС(SHA256, secret_key, parameters)`
    where:
 
-   * `secret_key` – HMAC function key;
+   * `secret_key` – HMAC function key which you can obtain in your [Account](https://kassa.qiwi.com/service/core/merchants?);
    * `parameters` – string from step 1;
 
 3. Compare `X-Api-Signature-SHA256` HTTP header value with the result of step 2.
 
 
 ## PAYMENT, CAPTURE, REFUND Notification Types
+
+
+<ul class="nestedList header">
+    <li><h3>HEADERS</h3>
+        <ul>
+             <li>Signature: XXX</li>
+             <li>Accept: application/json</li>
+             <li>Content-type: application/json</li>
+        </ul>
+    </li>
+</ul>
 
 
 >PAYMENT/REFUND/CAPTURE Notification example
@@ -2210,6 +2144,17 @@ Time of secondary sending notification may slightly shift upward.
 
 These notifications are sent when you use [Checkout](#invoicing). The notification is sent as soon as the invoice is paid.
 
+
+<ul class="nestedList header">
+    <li><h3>HEADERS</h3>
+        <ul>
+             <li>X-Api-Signature-SHA256: XXX</li>
+             <li>Accept: application/json</li>
+             <li>Content-type: application/json</li>
+        </ul>
+    </li>
+</ul>
+
  >BILL Notification example
 
 ~~~ json
@@ -2260,8 +2205,7 @@ version | Callback version | String
 
 By default, signature is [verified](#notifications_auth) for those notification fields:
 
-BILL:
-`amount.currency|amount.value|billId|siteId|status`
+`amount.currency|amount.value|billId|siteId|status.value`
 
 <!--
 ### Заголовки
