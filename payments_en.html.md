@@ -99,16 +99,22 @@ When integration on your side is completed, we turn your ID to production mode (
 First, obtain a link to Payment Form and redirect the customer there.
 
 <!-- Request body -->
->Request body example
+>Request example
 
-~~~json
- {
+~~~http
+PUT /partner/bill/v1/bills/893794793973 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
    "amount": {  
      "currency": "RUB",  
      "value": 100.00
    },
    "expirationDateTime": "2018-04-13T14:30:00+03:00"
-   }
+}
 ~~~
 
 Send HTTP PUT-request to API URL with `{API_REQUEST}`:
@@ -128,10 +134,13 @@ with parameters:
 In response you receive the following data:
 
 
->Response body example
+>Response example
 
-~~~json
- {
+~~~http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
     "siteId": "23044",
     "billId": "893794793973",
     "amount": {
@@ -146,7 +155,7 @@ In response you receive the following data:
     "creationDateTime": "2018-03-05T11:27:41",
     "expirationDateTime": "2018-04-13T14:30:00+03:00",
     "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
-  }
+}
 ~~~
 
 
@@ -171,6 +180,24 @@ expirationDateTime|String|Expiration date of the Payment Form link (invoice paym
 ### Redirect the customer to Payment Form URL received in response
 
 To pay for the order, the customer has to open the link specified in `payUrl` parameter of the response. Redirect the customer and wait for payment callback.
+
+You can add the parameter for the Payment Form URL:
+
+<aside class="notice">
+When opening Payment Form URL in Webview on Android, you should enable <code>settings.setDomStorageEnabled(true)</code>
+</aside>
+
+
+> Invoice URL example with extra parameter
+
+~~~shell
+https://oplata.qiwi.com/form?invoiceUid=606a5f75-4f8e-4ce2-b400-967179502275&successUrl=https://developer.qiwi.com/ru/payments/#introduction
+~~~
+
+| Parameter | Description | Type |
+|--------------|------------------|-------------|
+| successUrl | The URL to which the client will be redirected in case of successful payment. Redirect happens after successful 3DS authentication. URL must be UTF8-encoded. | UTF-8 encoded string |
+
 
 ### Wait until the notification
 
@@ -241,23 +268,23 @@ flags|Array of Strings|  Operation flags: `SALE` - one-step payment scenario
 
 ~~~json
 
-{ "bill":
-  {  
+{ 
+  "bill": {  
      "siteId":"23044",
      "billId":"1519892138404fhr7i272a2",
      "amount":{  
         "value":100.00,
         "currency":"RUB"
      },
-     "status":{  
+     "status": {  
         "value":"PAID",
         "datetime":"2018-03-01T11:16:12"
      },
-     "customer":{},
-     "customFields":{},
+     "customer": {},
+     "customFields": {},
      "creationDateTime":"2018-03-01T11:15:39",
      "expirationDateTime":"2018-04-01T11:15:39+03:00"
-   },
+  },
   "version":"1"
 }
 ~~~
@@ -293,9 +320,15 @@ Send HTTP PUT request to API URL with `{API_REQUEST}`:
 `/bill/v1/bills/{billId}/refunds/{refundId}`
 
 
->Request refund body example
+>Request refund example
 
-~~~json
+~~~http
+PUT /partner/bill/v1/bills/893794793973/refund/1 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
 {
     "amount": {
          "currency": "RUB",
@@ -322,7 +355,13 @@ amount.currency	|String|Invoice currency (Code Alpha-3 ISO 4217)
 
 >Hold request example
 
-~~~json
+~~~http
+PUT /partner/bill/v1/bills/893794793973 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
 {
    "amount": {  
      "currency": "RUB",  
@@ -333,7 +372,7 @@ amount.currency	|String|Invoice currency (Code Alpha-3 ISO 4217)
    "customer": {},
    "customFields": {},
    "paymentFlags":["AUTH"]
-   }
+}
 ~~~
 
 
@@ -350,7 +389,9 @@ paymentFlags|Array of strings|Additional payment options.<br>Use value `AUTH` to
 
 >Response example:
 
-~~~json
+~~~http
+HTTP/1.1 200 OK
+Content-Type: application/json
 
 {
     "siteId": "test-01",
@@ -369,7 +410,8 @@ paymentFlags|Array of strings|Additional payment options.<br>Use value `AUTH` to
     "comment": "Spasibo",
     "creationDateTime": "2019-08-28T16:26:36.835+03:00",
     "expirationDateTime": "2019-09-13T14:30:00+03:00",
-    "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=78d60ca9-7c99-481f-8e51-0100c9012087"}
+    "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=78d60ca9-7c99-481f-8e51-0100c9012087"
+}
 ~~~
 
 <a name="hold"></a>
@@ -463,8 +505,8 @@ where:
 </div>
 
 <!-- Request body -->
-~~~ json
- {
+~~~json
+{
    "amount": {  
      "currency": "RUB",  
      "value": 100.00
@@ -480,7 +522,7 @@ where:
 
 <!-- 200 -->
 ~~~json
- {
+{
     "siteId": "23044",
     "billId": "893794793973",
     "amount": {
@@ -495,7 +537,7 @@ where:
     "creationDateTime": "2018-03-05T11:27:41",
     "expirationDateTime": "2018-04-13T14:30:00+03:00",
     "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
-  }
+}
 ~~~
 
 
@@ -859,9 +901,15 @@ where:
 ## Quick Start {#api_quick_start}
 
 
->Request body example
+>Request example
 
-~~~json
+~~~http
+PUT /partner/payin/v1/sites/Obuc-00/payments/1811 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
 {
   "amount": {
     "currency": "RUB",
@@ -875,7 +923,6 @@ where:
     "holderName" : "unknown cardholder"
   }
 }
-
 ~~~
 
 To make your customer perform payment, create a payment. Make the following actions:
@@ -898,9 +945,12 @@ with parameters:
 
 You get in response:
 
->Response body example
+>Response example with 3DS requirements
 
-~~~json
+~~~http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
 {
     "paymentId": "1811",
     "billId": "autogenerated-a29ea8c9-f9d9-4a60-87c2-c0c4be9affbc",
@@ -927,6 +977,12 @@ You get in response:
     "status": {
         "value": "WAITING",
         "changedDateTime": "2019-08-15T13:28:26+03:00"
+    },
+    "requirements" : {
+        "threeDS" : {
+          "pareq" : "eJyrrgUAAXUA+Q==",
+          "acsUrl" : "https://test.paymentgate.ru/acs/auth/start.do"
+        }
     }
 }
 ~~~
@@ -954,15 +1010,6 @@ To create a payment, most often you need to proceed additional authentication fo
 
 In this case, in response you will receive an additional `requirements` object with fields:
 
-~~~json
-"requirements" : {
-    "threeDS" : {
-      "pareq" : "eJyrrgUAAXUA+Q==",
-      "acsUrl" : "https://test.paymentgate.ru/acs/auth/start.do"
-    }
-}
-~~~
-
 * `threeDS` element: `pareq` and `acsUrl` for redirection to the card issuer verification page
 * `cvv` element
 
@@ -971,16 +1018,13 @@ In this case, in response you will receive an additional `requirements` object w
 
 **2. Complete customer authentication (optional)**
 
-Send HTTP PUT request to API URL with `{API_REQUEST}`
+~~~http
+POST /partner/payin/v1/sites/Obuc-00/payments/8937947/complete HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
 
-`/payin/v1/sites/{siteId}/payments/{paymentId}/complete`
-
- with the parameters:
-
-* card CVV
-* 3DS data
-
-~~~json
 {
   "threeDS": {
     "pares": "eJzVWFevo9iyfu9fMZrzaM0QjWHk3tIiGptgooE3cgabYMKvv3jvTurTc3XOfbkaJMuL...."
@@ -990,6 +1034,15 @@ Send HTTP PUT request to API URL with `{API_REQUEST}`
   }
 }
 ~~~
+
+Send HTTP POST request to API URL with `{API_REQUEST}`
+
+`/payin/v1/sites/{siteId}/payments/{paymentId}/complete`
+
+ with the parameters:
+
+* card CVV
+* 3DS data
 
 [Request details](#payment_complete)
 
@@ -1012,12 +1065,12 @@ where:
 > Capture example
 
 ~~~shell
-curl https://api.qiwi.com/partner/payin/v1/sites/test-01/payments/2820220333/captures/43234
--X PUT
--H 'Accept: application/json'
--H 'Content-Type: application/json'
--H 'Authorization: Bearer NDQzNGHJK43JFJDK595FJFJMjlCRkFFRDM5OE
--d ‘{}'
+curl https://api.qiwi.com/partner/payin/v1/sites/Obuc-00/payments/8937947/captures/43234 \
+-X PUT \
+-H 'Accept: application/json' \
+-H 'Content-Type: application/json' \
+-H 'Authorization: Bearer NDQzNGHJK43JFJDK595FJFJMjlCRkFFRDM5OE' \
+-d '{}'
 ~~~
 
 <!--
@@ -1049,13 +1102,6 @@ curl https://api.qiwi.com/partner/payin/v1/sites/test-01/payments/2820220333/cap
 <!-- Request body -->
 ~~~ json
 {
-  "amount": {
-    "currency": "RUB",
-    "value": 200.00
-  },
-  "callbackUrl": "https://example.com/callbacks",
-  "comment": "Example payment",
-  "billId": "string",
   "paymentMethod" : {
     "type" : "CARD",
     "pan" : "4444443616621049",
@@ -1063,6 +1109,11 @@ curl https://api.qiwi.com/partner/payin/v1/sites/test-01/payments/2820220333/cap
     "cvv2" : "123",
     "holderName" : "CARDHOLDER NAME"
   },
+  "amount": {
+    "currency": "RUB",
+    "value": 200.00
+  },
+  "billId": "string",
   "customer": {
     "account": "string",
     "address": {
@@ -1082,6 +1133,8 @@ curl https://api.qiwi.com/partner/payin/v1/sites/test-01/payments/2820220333/cap
     "timeOnPage": 1440,
     "userAgent": "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion"
   },
+  "callbackUrl": "https://example.com/callbacks",
+  "comment": "Example payment",
   "customFields": {},
   "flags": [
     "SALE"
@@ -1959,10 +2012,10 @@ Use the signature verification algorithm:
 
 2. Calculate hash HMAC value with SHA256 algorithm (signature string and secret key are UTF8-encoded):
 
-   `hash = HMAС(SHA256, secret_key, parameters)`
+   `hash = HMAС(SHA256, token, parameters)`
    where:
 
-   * `secret_key` – HMAC function key which you can obtain in your [Account](https://kassa.qiwi.com/service/core/merchants?);
+   * `token` – HMAC function key which you can obtain in your [Account](https://kassa.qiwi.com/service/core/merchants?);
    * `parameters` – string from step 1;
 
 3. Compare `X-Api-Signature-SHA256` HTTP header value with the result of step 2.
@@ -2229,8 +2282,6 @@ sign | string(64) | - | [Контрольная сумма](#sign) переда�
 # Electronic Receipt Transfer (for Fed.Rule 54) {#cheque}
 
 
-
-
 The payment receipt is sent in `cheque` optional field of `bill` and `payment` operation requests in [Checkout](#invoice_put) and [API](#payments) methods, respectively.
 
 
@@ -2253,8 +2304,10 @@ For ATOL service, provide the following data also:<ul>
 ## Receipt Description
 
 ~~~ json
-"cheque" : {
-	"sellerId" : 3123011520,
+{
+ ...
+ "cheque" : {
+  "sellerId" : 3123011520,
 	"customerContact" : "Test customer contact",
   "chequeType" : "COLLECT",
 	"taxSystem" : "OSN",
@@ -2262,15 +2315,16 @@ For ATOL service, provide the following data also:<ul>
     {
       "quantity" : 1,
       "price" : {
-			    "value" : 7.82,
-			    "currency" : "RUB"
-			    },
+        "value" : 7.82,
+        "currency" : "RUB"
+      },
       "tax" : "NDS_0",
       "paymentSubject" : "PAYMENT",
       "paymentMethod" : "FULL_PAYMENT",
       "description" : "Test description"
-		}
+    }
 	]
+ }
 }
 ~~~
 
@@ -2326,33 +2380,41 @@ Do not use the same <code>account</code> value for your Customers. It may allow 
 >Token notification example
 
 ~~~json
-{"payment":
-  {"paymentId":"9790769",
-  "tokenData":{
-    "paymentToken":"66aebf5f-098e-4e36-922a-a4107b349a96",
-    "expiredDate":"2021-12-31T00:00:00+03:00"},
+{
+  "payment":{
+    "paymentId":"9790769",
+    "tokenData":{
+      "paymentToken":"66aebf5f-098e-4e36-922a-a4107b349a96",
+      "expiredDate":"2021-12-31T00:00:00+03:00"
+    },
+    "type":"PAYMENT",
+    "createdDateTime":"2020-01-23T15:07:35+03:00",
+    "status":{
+      "value":"SUCCESS",
+      "changedDateTime":"2020-01-23T15:07:36+03:00"
+    },
+    "amount":{
+        "value":2211.24,
+        "currency":"RUB"
+    },
+    "paymentMethod":{
+      "type":"CARD",
+      "maskedPan":"4111111111",
+      "cardHolder":"CARD HOLDER",
+      "cardExpireDate":"12/2021",
+      "type":"CARD"
+    },
+    "customer":{
+      "ip":"79.142.20.248",
+      "account":"token324",
+      "phone":"0"
+    },
+    "billId":"testing1222213",
+    "flags":["SALE"]
+  },
   "type":"PAYMENT",
-  "createdDateTime":"2020-01-23T15:07:35+03:00",
-  "status":{
-    "value":"SUCCESS",
-    "changedDateTime":"2020-01-23T15:07:36+03:00"},
-  "amount":{
-    "value":2211.24,
-    "currency":"RUB"},
-  "paymentMethod":{
-    "type":"CARD",
-    "maskedPan":"4111111111",
-    "cardHolder":"CARD HOLDER",
-    "cardExpireDate":"12/2021",
-    "type":"CARD"},
-  "customer":{
-     "ip":"79.142.20.248",
-     "account":"token324",
-     "phone":"0"},
-  "billId":"testing1222213",
-  "flags":["SALE"]},
- "type":"PAYMENT",
- "version":"1"}
+  "version":"1"
+}
 ~~~
 
 You would receive the following data in subsequent `payment` type notification:
@@ -2380,13 +2442,13 @@ Instead of card payment data, use the following parameters in  `paymentMethod` o
     "currency": "RUB",
     "value": 2000.00
   },
-   "paymentMethod" : {
+  "paymentMethod" : {
     "type": "TOKEN",
     "paymentToken" : "f42abb6c-4b6b-464e-adcc-fbdc197bd24d"
   },
   "customer": {
         "account": "token324"
-    }
+  }
 }
 ~~~
 
