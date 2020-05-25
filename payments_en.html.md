@@ -1253,7 +1253,7 @@ curl https://api.qiwi.com/partner/payin/v1/sites/Obuc-00/payments/8937947/captur
 }
 ~~~
 
-### Payment status {#payments_status}
+### Payment status {#payment_status}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__get_api">
   <script>
@@ -1967,43 +1967,53 @@ PAYIN_PROCESSING_ERROR| Payment processing error
 
 # Server Notifications {#callback}
 
-The Protocol supports the following notification types: `PAYMENT`, `CAPTURE`, `REFUND`, and `BILL`.
+The Protocol supports the following notification types for API events: `PAYMENT`, `CAPTURE`, `REFUND`, and `BILL`.
 
-A notification is an incoming POST request with body containing JSON serialized payment data in UTF-8 codepage.
+<aside class="warning">
+There is no specific sequence of sending different types' notifications for the operation. The sequence may vary for different operations.
+</aside>
+
+A notification is an incoming HTTP POST message. The JSON-formatted notification message contains event data in UTF-8 codepage.
 
 <aside class="success">
-Payment notification (callback) sends exclusively by HTTPS protocol to port 443. The server certificate must be issued by trusted certification center like Comodo, Verisign, Thawte etc.
+Event notification sends exclusively by HTTPS protocol to port 443. The server certificate must be issued by trusted certification center like Comodo, Verisign, Thawte etc.
 </aside>
+
+Specify the notification server address in your Personal Profile on <a href="https://kassa.qiwi.com/">kassa.qiwi.com</a> site in <b>Settings</b> section. You may also specify the address in optional `callbackUrl` parameter of [API](#api_requests) requests.
 
 The notification contains a [request signature](#notifications_auth) which RSP should verify on its side to secure from notification fraud.
 
-To make sure the notification is from QIWI, you ought to accept notifications from the following IP addresses belonging to QIWI:
+<aside class="warning">
+The responsibility for any financial losses due to omitted verification of the <a href="#notifications_auth">signature</a> parameter lies solely on RSP.
+</aside>
+
+To make sure the notification is from QIWI, we recommend you to accept messages only from the following IP addresses belonging to QIWI:
 
 * 79.142.16.0/20
 * 195.189.100.0/22
 * 91.232.230.0/23
 * 91.213.51.0/24
 
-Notification is treated as successfully delivered if RSP server responds with HTTP code `200 OK`.
-Therefore, our system will repeat notification delivery attempts with incremental time during the day until it receives `200 OK` HTTP code server response.
+To treat notification as successfully delivered, we need your notification server to respond with HTTP code `200 OK`. 
+
+If your server is unavailable or responds differently, QIWI system resends the notification message several times with growing interval during the day until it receives `200 OK` HTTP code server response.
 
 <aside class="notice">
-If by any reason RSP server accepts the notification but responds not as <code>200 OK</code>, then it should treat the repeated transaction notification as already received one.
+If by any reason RSP server accepts the notification message but responds incorrectly, then on receiving notification with the same data next time it should not be treated as a new event.
 </aside>
-
-<aside class="warning">
-The responsibility for any financial losses due to omitted verification of the <a href="#notifications_auth">signature</a> parameter lies solely on RSP.
-</aside>
-
-RSP's notification server address is specified in your Personal Profile on <a href="https://kassa.qiwi.com/">kassa.qiwi.com</a> site in <b>Settings</b> section. You may also specify the address in optional `callbackUrl` parameter of [API](#api_requests) requests.
 
 ## Notification Authorization {#notifications_auth}
 
-You need to verify the inbound notification's digital signature. It is placed in `Signature` HTTP header with UTF-8 encoding for `PAYMENT`, `CAPTURE`, `REFUND` notifications and in `X-Api-Signature-SHA256` HTTP header with UTF-8 encoding for `BILL` notifications. We use HMAC integrity test with SHA256 hash.
+HTTP headers of notification messages contain the UTF-8 encoded generated signature which you need to validate.
 
-Use the signature verification algorithm:
+Notification type | HTTP Header with signature
+----|-----
+`PAYMENT`, `CAPTURE`, `REFUND` | `Signature`
+`BILL` | `X-Api-Signature-SHA256`
 
-1. Join values of some parameters from the notification with "\|" separator. For example:
+To validate the signature, use the following algorithm:
+
+1. Join values of some parameters from the notification with the pipe "\|" character. For example:
 
    `parameters = {amount.currency}|{amount.value}|{billId}|{siteId}|{status.value}`
 
@@ -2018,11 +2028,12 @@ Use the signature verification algorithm:
    * `token` – HMAC function key which you can obtain in your [Account](https://kassa.qiwi.com/service/core/merchants?);
    * `parameters` – string from step 1;
 
-3. Compare `X-Api-Signature-SHA256` HTTP header value with the result of step 2.
+3. Compare the notification signature with the result of step 2. If there is no difference, the validation is successful.
 
 
 ## PAYMENT, CAPTURE, REFUND Notification Types
 
+`PAYMENT`, `CAPTURE`, `REFUND` notifications are sending on events of payment operation, payment confirmation, and refund for payment, accordingly. Notification type is specified in `type` parameter.
 
 <ul class="nestedList header">
     <li><h3>HEADERS</h3>
@@ -2195,7 +2206,7 @@ Time of secondary sending notification may slightly shift upward.
 
 ## BILL Notifications
 
-These notifications are sent when you use [Checkout](#invoicing). The notification is sent as soon as the invoice is paid.
+`BILL` type of API notifications are sent when you use [Checkout](#invoicing). The notification is sent as soon as the invoice is paid.
 
 
 <ul class="nestedList header">
@@ -2512,5 +2523,6 @@ Error Code | Meaning
 406 | Not Acceptable -- You requested a format that isn't json.
 410 | Gone -- The resource requested has been removed from our servers.
 429 | Too Many Requests -- You're requesting too many payments.
-500 | Internal Server Error -- We had a problem with our server. Try again later.
+500 | Internal Server Error -- We had a problem with our server. Try again later. If response body is empty, repeat the request with the same parameters. If the body is non-empty, make [payment status request](#payment_status)/[invoice status request](#invoice_get).
+502 | Bad Gateway - No connection to service
 503 | Service Unavailable -- We're temporarily offline for maintenance. Please try again later.
