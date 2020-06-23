@@ -15,19 +15,19 @@ toc_footers:
 search: true
 ---
 
-*[3DS]: 3-D Secure - a messaging protocol to exchange data during e-commerce transaction for consumer authentication purposes.
-*[API]: Application Programming Interface -  a set of ready-for-use methods that allow the creation of applications which access the features or data of an application or other service.
+*[3DS]: 3-D Secure - a messaging protocol to exchange data during e-commerce transaction for consumer authentication purposes
+*[API]: Application Programming Interface -  a set of ready-for-use methods that allow the creation of applications which access the features or data of an application or other service
 *[RSP]: Retail Service Provider
-*[PCI DSS]: Payment Card Industry Data Security Standard -  The Payment Card Industry Data Security Standard – a proprietary information security standard for storing, processing and transmitting credit card data.
-*[REST]: Representational State Transfer -  a software architectural pattern for Network Interaction between distributed application components.
-*[JSON]: JavaScript Object Notation - a lightweight data-interchange format based on JavaScript.
-*[Luhn]: Luhn Algorithm - a checksum formula used for verifying and validating identification numbers against accidental errors.
-*[HTTPS]: HTTP protocol extension to encrypt and enforce security. In HTTPS protocol, data transfer over SSL and TLS cryptographic protocols. In contrast with HTTP on port 80, the TCP 443 port is used by default for HTTPS.
+*[PCI DSS]: Payment Card Industry Data Security Standard -  The Payment Card Industry Data Security Standard – a proprietary information security standard for storing, processing and transmitting credit card data
+*[REST]: Representational State Transfer -  a software architectural pattern for Network Interaction between distributed application components
+*[JSON]: JavaScript Object Notation - a lightweight data-interchange format based on JavaScript
+*[Luhn]: Luhn Algorithm - a checksum formula used for verifying and validating identification numbers against accidental errors
+*[HTTPS]: HTTP protocol extension to encrypt and enforce security. In HTTPS protocol, data transfer over SSL and TLS cryptographic protocols. In contrast with HTTP on port 80, the TCP 443 port is used by default for HTTPS
 
 
 # General Information {#intro}
 
-###### Last update: 2020-04-30 | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/blob/master/payments_en.html.md)
+###### Last update: 2020-06-19 | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/blob/master/payments_en.html.md)
 
 **Online payments protocol** allows RSP to start accepting fast and secure payments from credit cards.
 
@@ -94,7 +94,7 @@ When integration on your side is completed, we turn your ID to production mode (
 ## Quick Start {#invoicing_quick_start}
 
 
-### Issue invoice to customer
+**1. Issue invoice to customer**
 
 First, obtain a link to Payment Form and redirect the customer there.
 
@@ -177,36 +177,14 @@ creationDateTime|String| System date of the invoice issue. Date format:<br>`YYYY
 payUrl|String|New Payment Form URL
 expirationDateTime|String|Expiration date of the Payment Form link (invoice payment's due date). Date format:<br>`YYYY-MM-DDThh:mm:ss±hh`
 
-### Redirect the customer to Payment Form URL received in response
+Redirect the customer to the link from `payUrl` field. It opens the Payment Form. 
 
-To pay for the order, the customer has to open the link specified in `payUrl` parameter of the response. Redirect the customer and wait for payment callback.
-
-You can add the parameter for the Payment Form URL:
-
-<aside class="notice">
-When opening Payment Form URL in Webview on Android, you should enable <code>settings.setDomStorageEnabled(true)</code>
-</aside>
-
-
-> Invoice URL example with extra parameter
-
-~~~shell
-https://oplata.qiwi.com/form?invoiceUid=606a5f75-4f8e-4ce2-b400-967179502275&successUrl=https://developer.qiwi.com/ru/payments/#introduction
-~~~
-
-| Parameter | Description | Type |
-|--------------|------------------|-------------|
-| successUrl | The URL to which the client will be redirected in case of successful payment. Redirect happens after successful 3DS authentication. URL must be UTF8-encoded. | UTF-8 encoded string |
-
-
-### Wait until the notification
+**2. Wait until the notification**
 
 When customer pays for the invoice, we send two server callbacks - first on the successfully processed payment, second - on the invoice payment.
 
 
-
-
-**Processed Payment Notifications**
+**2a. Processed Payment Notifications**
 
 >Processed payment notification example
 
@@ -289,7 +267,7 @@ flags|Array of Strings|  Operation flags: `SALE` - one-step payment scenario
 }
 ~~~
 
-**Invoice Payment Notification**
+**2b. Invoice Payment Notification**
 
 Parameter|Type|Description
 --------|---|--------
@@ -311,9 +289,9 @@ expirationDateTime|String|Expiration date of the pay form link (invoice payment'
 
 See description of server callbacks and callback types in [Server Notifications](#callback).
 
-### Make refund to the customer
+**How to make refund to the customer**
 
-To make refund of the operation, send refund request.
+If you need to make a refund of the operation, send refund request.
 
 Send HTTP PUT request to API URL with `{API_REQUEST}`:
 
@@ -348,10 +326,67 @@ amount.currency	|String|Invoice currency (Code Alpha-3 ISO 4217)
 
 [Request details](#invoice_refund)
 
+## Payment Form {#payform}
+
+
+### Payment Form URL {#http_oplata}
+
+To pay for the order, the customer should open the link from `payUrl` parameter of the response to [invoice request](#invoice_put).
+
+<aside class="notice">
+When opening Payment Form URL in Webview on Android, you should enable <code>settings.setDomStorageEnabled(true)</code>
+</aside>
+
+You can add the following parameter for the Payment Form URL:
+
+
+> Invoice URL example with extra parameter
+
+~~~shell
+https://oplata.qiwi.com/form?invoiceUid=606a5f75-4f8e-4ce2-b400-967179502275&successUrl=https://developer.qiwi.com/ru/payments/#introduction
+~~~
+
+| Parameter | Description | Type |
+|--------------|------------------|-------------|
+| successUrl | The URL to which the client will be redirected in case of successful payment. Redirect happens after successful 3DS authentication. URL must be UTF8-encoded. | UTF-8 encoded string |
+
+
+
+### Personalization {#custom}
+
+Personalization allows you to create a payment form with your style, customizable logo, background and color of the buttons. 
+
+To create styles, send a request to our support via <a href='mailto:payin@qiwi.com'>payin@qiwi.com</a>. On setting up, the name of the style (for example, `codeStyle`) is specified.
+
+To use style on the Payment Form, send `"themeCode":"codeStyle"` field with specified style name in `customFields` parameter of the [invoice request](#invoice_put).
+
+ >Using Payment Form style
+
+~~~shell
+curl https://api.qiwi.com/partner/bill/v1/bills/893794793973 \
+-X PUT \
+-H 'Accept: application/json' \
+-H 'Content-Type: application/json' \
+-H 'Authorization: Bearer eyJ2ZXJzaW9uIjoicmVzdF92MyIsImRhdGEiOnsibWVyY2hhbnRfaWQiOjIwNDIsImFwaV91c2VyX2lkIjo1NjYwMzk3Miwic2VjcmV0IjoiQjIwODlDNkI5Q0NDNTdCNDQzNGHJK43JFJDK595FJFJMjlCRkFFRDM5OE***********************' \
+-d '{ \
+   "amount": {  \
+     "currency": "RUB",  \
+     "value": 100.00 \
+   }, \
+   "comment": "Text comment", \
+   "expirationDateTime": "2018-04-13T14:30:00+03:00", \
+   "customer": {}, \
+   "customFields": {"themeCode":"codeStyle"} \
+}'
+~~~
+
+![Customer form](/images/Custom.png)
+
 ## Two-Step Scenario {#two_step}
 
+Two-step scenario includes (1) holding funds on the customer's card and (2) confirming the operation.
 
-**How to hold funds**
+**1. How to hold funds**
 
 >Hold request example
 
@@ -418,7 +453,7 @@ Content-Type: application/json
 
 You receive an URL of the Payment Form in the `payUrl` parameter of the response.
 
-**Obtain transaction id for capture operation**
+**1a. Obtain transaction id for capture operation**
 
 >Callback example
 
@@ -465,7 +500,7 @@ When payment is successfully processed, you will receive [server callback](#paym
 You also may use the [invoice status](#invoice_get) method to get actual payment status and `paymentId` parameter.
 
 
-**Confirm operation**
+**2. Confirm operation**
 
 Using operation ID (`paymentId`), you can make `capture` request which confirms the operation.
 
@@ -486,7 +521,9 @@ where:
 
 ## Requests, Statuses and Errors {#invoicing_requests}
 
-### Invoice Creation {#invoice_put}
+<aside class="notice">Additional fields might be added to the requests and responses. Check <a href="https://github.com/QIWI-API/payments-docs/blob/master/payments_en.html.md">Github</a> for updates.</aside>
+
+### Invoice creation {#invoice_put}
 
 <div id="bill_v1_bills__billId__put_checkout">
   <script>
@@ -829,7 +866,7 @@ where:
 }
 ~~~
 
-###  Invoice Payment Confirmation For Two-Step Scenario {#capture_invoice}
+###  Invoice payment confirmation for two-step scenario {#capture_invoice}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__captures__captureId__put_checkout">
   <script>
@@ -1081,6 +1118,9 @@ curl https://api.qiwi.com/partner/payin/v1/sites/Obuc-00/payments/8937947/captur
 
 ## Requests, Statuses and Errors {#api_requests}
 
+<aside class="notice">Additional fields might be added to the requests and responses. Check <a href="https://github.com/QIWI-API/payments-docs/blob/master/payments_en.html.md">Github</a> for updates.</aside>
+
+
 ### Payment {#payments}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__put_api">
@@ -1223,6 +1263,13 @@ curl https://api.qiwi.com/partner/payin/v1/sites/Obuc-00/payments/8937947/captur
   "status" : {
     "value" : "WAITING",
     "changedDateTime" : "2018-11-01T17:10:32.607+03:00"
+  },
+  "paymentCardInfo": {
+    "issuingCountry": "810",
+    "issuingBank": "QiwiBank",
+    "paymentSystem": "VISA",
+    "fundingSource": "CREDIT",
+    "paymentSystemProduct": "P|Visa Gold"
   },
   "customFields" : { },
   "flags" : [ ]
@@ -1967,7 +2014,9 @@ PAYIN_PROCESSING_ERROR| Payment processing error
 
 # Server Notifications {#callback}
 
-The Protocol supports the following notification types for API events: `PAYMENT`, `CAPTURE`, `REFUND`, and `BILL`.
+The Protocol supports the following notification types for API events: `PAYMENT`, `CAPTURE`, `REFUND`, and `BILL`. 
+
+`PAYMENT`, `CAPTURE`, `REFUND` notifications are sending on events of payment operation, payment confirmation, and refund for payment, accordingly. `BILL` notifications are sending when you use [Checkout](#invoicing), as soon as the invoice is paid.
 
 <aside class="warning">
 There is no specific sequence of sending different types' notifications for the operation. The sequence may vary for different operations.
@@ -2031,9 +2080,9 @@ To validate the signature, use the following algorithm:
 3. Compare the notification signature with the result of step 2. If there is no difference, the validation is successful.
 
 
-## PAYMENT, CAPTURE, REFUND Notification Types
+## PAYMENT, CAPTURE, REFUND Notification Format
 
-`PAYMENT`, `CAPTURE`, `REFUND` notifications are sending on events of payment operation, payment confirmation, and refund for payment, accordingly. Notification type is specified in `type` parameter.
+Notification type is specified in `type` parameter.
 
 <ul class="nestedList header">
     <li><h3>HEADERS</h3>
@@ -2048,7 +2097,13 @@ To validate the signature, use the following algorithm:
 
 >PAYMENT/REFUND/CAPTURE Notification example
 
-~~~json
+~~~http
+POST /qiwi-notify.php HTTP/1.1
+Accept: application/json
+Content-type: application/json
+Signature: J4WNfNZd***V5mv2w=
+Host: server.ru
+
 {
    "payment/refund/capture":{
       "paymentId/refundId/captureId":"4504751",
@@ -2072,6 +2127,13 @@ To validate the signature, use the following algorithm:
          "rrn":null,
          "authCode":null,
          "type":"CARD"
+      },
+      "paymentCardInfo": {
+         "issuingCountry": "810",
+         "issuingBank": "QiwiBank",
+         "paymentSystem": "VISA",
+         "fundingSource": "CREDIT",
+         "paymentSystemProduct": "P|Visa Gold"
       },
       "customer":{
          "ip":"79.142.20.248",
@@ -2109,6 +2171,12 @@ paymentMethod.type| Payment method type| String
 paymentMethod.maskedPan| Masked card PAN| String
 paymentMethod.rrn| Payment RRN| Number
 paymentMethod.authCode| Payment Auth code| Number
+paymentCardInfo | Card information. **Only in PAYMENT notifications** | Object
+paymentCardInfo.issuingCountry | Issuer country code | String(3)
+paymentCardInfo.issuingBank | Issuer name | String
+paymentCardInfo.paymentSystem | Card's payment system | String
+paymentCardInfo.fundingSource | Card's type (debit/credit/..) | String
+paymentCardInfo.paymentSystemProduct | Card's category | String
 customer | Customer data | Object
 customer.phone |Phone number to which invoice issued (if specified) |String
 customer.email| E-mail to which invoice issued (if specified)|String
@@ -2204,10 +2272,7 @@ Time of secondary sending notification may slightly shift upward.
 -->
 
 
-## BILL Notifications
-
-`BILL` type of API notifications are sent when you use [Checkout](#invoicing). The notification is sent as soon as the invoice is paid.
-
+## BILL Notifications Format
 
 <ul class="nestedList header">
     <li><h3>HEADERS</h3>
@@ -2219,9 +2284,15 @@ Time of secondary sending notification may slightly shift upward.
     </li>
 </ul>
 
- >BILL Notification example
+>BILL Notification example
 
-~~~ json
+~~~http
+POST /qiwi-notify.php HTTP/1.1
+Accept: application/json
+Content-type: application/json
+X-Api-Signature-SHA256: J4WNfNZd***V5mv2w=
+Host: server.ru
+
 {
    "bill":{
       "siteId":"Obuc-00",
