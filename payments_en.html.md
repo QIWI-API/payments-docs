@@ -184,9 +184,9 @@ Redirect the customer to the link from `payUrl` field. It opens the Payment Form
 When customer pays for the invoice, we send two server callbacks - first on the successfully processed payment, second - on the invoice payment.
 
 
-**2a. Processed Payment Notifications**
+**2a. Processed payment notification**
 
->Processed payment notification example
+>Processed payment notification body example
 
 ~~~json
 {
@@ -242,7 +242,7 @@ customer|Object| Customer identifiers. Possible elements: `email`, `phone`, `acc
 billId|String| Corresponding invoice ID
 flags|Array of Strings|  Operation flags: `SALE` - one-step payment scenario
 
->Invoice payment notification
+>Invoice payment notification body example
 
 ~~~json
 
@@ -267,7 +267,7 @@ flags|Array of Strings|  Operation flags: `SALE` - one-step payment scenario
 }
 ~~~
 
-**2b. Invoice Payment Notification**
+**2b. Invoice payment notification**
 
 Parameter|Type|Description
 --------|---|--------
@@ -287,7 +287,7 @@ payUrl|String|Payment Form link
 expirationDateTime|String|Expiration date of the pay form link (invoice payment's due date). Date format:<br>`YYYY-MM-DDThh:mm:ss+\-hh:mm`
 
 
-See description of server callbacks and callback types in [Server Notifications](#callback).
+See description of server notifications and their types in [Server Notifications](#callback).
 
 **How to make refund to the customer**
 
@@ -362,22 +362,23 @@ To use style on the Payment Form, send `"themeCode":"codeStyle"` field with spec
 
  >Using Payment Form style
 
-~~~shell
-curl https://api.qiwi.com/partner/bill/v1/bills/893794793973 \
--X PUT \
--H 'Accept: application/json' \
--H 'Content-Type: application/json' \
--H 'Authorization: Bearer eyJ2ZXJzaW9uIjoicmVzdF92MyIsImRhdGEiOnsibWVyY2hhbnRfaWQiOjIwNDIsImFwaV91c2VyX2lkIjo1NjYwMzk3Miwic2VjcmV0IjoiQjIwODlDNkI5Q0NDNTdCNDQzNGHJK43JFJDK595FJFJMjlCRkFFRDM5OE***********************' \
--d '{ \
-   "amount": {  \
-     "currency": "RUB",  \
-     "value": 100.00 \
-   }, \
-   "comment": "Text comment", \
-   "expirationDateTime": "2018-04-13T14:30:00+03:00", \
-   "customer": {}, \
-   "customFields": {"themeCode":"codeStyle"} \
-}'
+~~~http
+PUT /partner/bill/v1/bills/893794793973 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+   "amount": {
+     "currency": "RUB",
+     "value": 100.00
+   },
+   "comment": "Text comment",
+   "expirationDateTime": "2018-04-13T14:30:00+03:00",
+   "customer": {},
+   "customFields": {"themeCode":"codeStyle"}
+}
 ~~~
 
 ![Customer form](/images/Custom.png)
@@ -455,7 +456,7 @@ You receive an URL of the Payment Form in the `payUrl` parameter of the response
 
 **1a. Obtain transaction id for capture operation**
 
->Callback example
+>Notification body example
 
 ~~~json
 {
@@ -474,7 +475,7 @@ You receive an URL of the Payment Form in the `payUrl` parameter of the response
     },
     "paymentMethod":{
       "type":"CARD",
-      "maskedPan":"444444\*\*\*\*\*\*4444",
+      "maskedPan":"444444XXXXXX4444",
       "rrn":null,
       "authCode":null,
       "type":"CARD"
@@ -495,7 +496,7 @@ You receive an URL of the Payment Form in the `payUrl` parameter of the response
 }
 ~~~
 
-When payment is successfully processed, you will receive [server callback](#payment_callback). Take `paymentId` parameter from the callback for  `capture` operation.
+When payment is successfully processed, you will receive [server notification](#payment_callback). Take `paymentId` parameter from the notification for  `capture` operation.
 
 You also may use the [invoice status](#invoice_get) method to get actual payment status and `paymentId` parameter.
 
@@ -1101,13 +1102,13 @@ where:
 
 > Capture example
 
-~~~shell
-curl https://api.qiwi.com/partner/payin/v1/sites/Obuc-00/payments/8937947/captures/43234 \
--X PUT \
--H 'Accept: application/json' \
--H 'Content-Type: application/json' \
--H 'Authorization: Bearer NDQzNGHJK43JFJDK595FJFJMjlCRkFFRDM5OE' \
--d '{}'
+~~~http
+PUT /partner/payin/v1/sites/Obuc-00/payments/8937947/captures/43234 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
 ~~~
 
 <!--
@@ -2141,6 +2142,7 @@ Host: server.ru
          "phone":"0"
       },
       "billId":"testing122",
+      "customFields":{},
       "flags":[
          "SALE"
       ]
@@ -2183,6 +2185,12 @@ customer.email| E-mail to which invoice issued (if specified)|String
 customer.account| Customer ID in RSP system (if specified)|String
 customer.ip| IP address |String
 customer.country| Country from address string |String
+customFields | Fields with additional information | Object
+customFields.cf1 | Extra field with some information to operation data | String
+customFields.cf2 | Extra field with some information to operation data | String
+customFields.cf3 | Extra field with some information to operation data | String
+customFields.cf4 | Extra field with some information to operation data | String
+customFields.cf5 | Extra field with some information to operation data | String
 flags| Additional API commands| Array of Strings. Possible values - `SALE` , `REVERSAL`
 version | Callback version | String
 

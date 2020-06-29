@@ -193,7 +193,7 @@ expirationDateTime|String| Срок действия созданной форм
 
 **2а. Уведомление о проведении платежа**
 
->Пример уведомления о проведении платежа
+>Пример тела уведомления о проведении платежа
 
 ~~~json
 {
@@ -253,7 +253,7 @@ billId|String|Идентификатор счета
 flags|Array of strings| Флаги операции: `SALE` - одношаговый сценарий
 
 
->Пример уведомления об оплате счета
+>Пример тела уведомления об оплате счета
 
 ~~~json
 
@@ -368,22 +368,23 @@ https://oplata.qiwi.com/form?invoiceUid=606a5f75-4f8e-4ce2-b400-967179502275&suc
 
  >Пример передачи параметра
 
-~~~shell
-curl https://api.qiwi.com/partner/bill/v1/bills/893794793973 \
--X PUT \
--H 'Accept: application/json' \
--H 'Content-Type: application/json' \
--H 'Authorization: Bearer eyJ2ZXJzaW9uIjoicmVzdF92MyIsImRhdGEiOnsibWVyY2hhbnRfaWQiOjIwNDIsImFwaV91c2VyX2lkIjo1NjYwMzk3Miwic2VjcmV0IjoiQjIwODlDNkI5Q0NDNTdCNDQzNGHJK43JFJDK595FJFJMjlCRkFFRDM5OE***********************' \
--d '{ \
-   "amount": {  \
-     "currency": "RUB",  \
-     "value": 100.00 \
-   }, \
-   "comment": "Text comment", \
-   "expirationDateTime": "2018-04-13T14:30:00+03:00", \
-   "customer": {}, \
-   "customFields": {"themeCode":"кодСтиля"} \
-}'
+~~~http
+PUT /partner/bill/v1/bills/893794793973 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+   "amount": {
+     "currency": "RUB",
+     "value": 100.00
+   },
+   "comment": "Text comment",
+   "expirationDateTime": "2018-04-13T14:30:00+03:00",
+   "customer": {},
+   "customFields": {"themeCode":"кодСтиля"}
+}
 ~~~
 
 ![Customer form](/images/Custom.png)
@@ -480,7 +481,7 @@ Content-Type: application/json
     },
     "paymentMethod":{
       "type":"CARD",
-      "maskedPan":"444444\*\*\*\*\*\*4444",
+      "maskedPan":"444444XXXXXX4444",
       "rrn":null,
       "authCode":null,
       "type":"CARD"
@@ -1052,13 +1053,13 @@ Host: api.qiwi.com
 
 > Пример подтверждения
 
-~~~shell
-curl https://api.qiwi.com/partner/payin/v1/sites/test-01/payments/2820220333/captures/43234 \
--X PUT \
--H 'Accept: application/json' \
--H 'Content-Type: application/json' \
--H 'Authorization: Bearer NDQzNGHJK43JFJDK595FJFJMjlCRkFFRDM5OE' \
--d '{}'
+~~~http
+PUT /partner/payin/v1/sites/test-01/payments/2820220333/captures/43234 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
 ~~~
 
 <!--
@@ -2092,6 +2093,7 @@ Host: server.ru
          "phone":"0"
       },
       "billId":"testing122",
+      "customFields":{},
       "flags":[
          "SALE"
       ]
@@ -2134,6 +2136,12 @@ customer.email|E-mail пользователя (если был указан п�
 customer.account| Идентификатор пользователя в системе ТСП (если был указан при выставлении счета)|String
 customer.ip| IP адрес пользователя |String
 customer.country| страна адрес пользователя |String
+customFields | Поля с произвольной информацией, дополняющей данные по операции | Object
+customFields.cf1 | Поле с произвольной информацией, дополняющей данные по операции| String(256)
+customFields.cf2 | Поле с произвольной информацией, дополняющей данные по операции| String(256)
+customFields.cf3 | Поле с произвольной информацией, дополняющей данные по операции| String(256)
+customFields.cf4 | Поле с произвольной информацией, дополняющей данные по операции| String(256)
+customFields.cf5 | Поле с произвольной информацией, дополняющей данные по операции| String(256)
 flags| Дополнительные команды для API| Массив. Доступные значения - `SALE`/`REVERSAL`
 version | Версия уведомлений | String
 
