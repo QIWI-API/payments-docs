@@ -160,7 +160,7 @@ Content-Type: application/json
 
 
 
-Parameter|Type|Description
+Response field|Type|Description
 --------|---|--------
 billId|String| Unique invoice identifier in the merchant's system
 siteId|String| Merchant's site identifier in QIWI Kassa
@@ -218,7 +218,7 @@ When customer pays for the invoice, we send two server callbacks - first on the 
 }
 ~~~
 
-Parameter|Type|Description
+Notification field|Type|Description
 --------|---|--------
 paymentId|String| Unique payment identifier in the merchant's system
 type|String | Operation type `PAYMENT`
@@ -269,7 +269,7 @@ flags|Array of Strings|  Operation flags: `SALE` - one-step payment scenario
 
 **2b. Invoice payment notification**
 
-Parameter|Type|Description
+Notification field|Type|Description
 --------|---|--------
 billId|String|Unique invoice identifier in the merchant's system
 siteId|String|Merchant's site identifier in QIWI Kassa
@@ -1027,7 +1027,7 @@ Content-Type: application/json
 
 
 
-Parameter|Type|Description
+Response field | Type | Description
 --------|---|--------
 paymentId|String|Unique payment ID in RSP's system, the same as in the request
 createdDateTime|String| System date of the payment creation. Date format:<br>`YYYY-MM-DDThh:mm:ss`
@@ -1110,10 +1110,6 @@ Content-type: application/json
 Host: api.qiwi.com
 
 ~~~
-
-<!--
-**4. Произведите возврат**
--->
 
 
 
@@ -2153,7 +2149,7 @@ Host: server.ru
 ~~~
 
 
-Parameter|Description|Type
+Notification field | Description | Type
 --------|--------|---
 paymentId/refundId/captureId|Payment/refund/capture operation unique identifier in RSP's system|String(200)
 type| Operation type|String(200)
@@ -2326,7 +2322,7 @@ Host: server.ru
 ~~~
 
 
-Parameter|Description|Type
+Notification field|Description|Type
 --------|--------|---
 billId|Invoice operation unique identifier in RSP's system|String(200)
 siteId| RSP' site identifier in QIWI Kassa|Number
@@ -2507,9 +2503,9 @@ Do not use the same <code>account</code> value for your Customers. It may allow 
 }
 ~~~
 
-You would receive the following data in subsequent `payment` type notification:
+You would receive the following data in subsequent `PAYMENT` type notification:
 
-Parameter|Type|Description
+Notification field|Type|Description
 --------|-------|----------
 tokenData|Object| Card token data
 tokenData.paymentToken|String| Card token
