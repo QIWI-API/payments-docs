@@ -50,8 +50,8 @@ Method|API|Checkout
 -----|---------|--------------
 One-step funds authorization|+|+
 Two-steps funds authorization|+|+
-Card tokenization |+|+
-Token payment |+|-
+Card token issue |+|+
+Use of payment token |+|-
 
 
 
@@ -67,7 +67,7 @@ After processing requests, our personnel will contact you to discuss possible wa
 
 **Step 2. Get access to your Account**
 
-Upon connecting to the Protocol, we provide your ID and access to your [Account](https://kassa.qiwi.com/service/core/merchants?) in our system. We send the Account credentials to your e-mail address specified on Step 1.
+Upon connecting to the Protocol, we provide you the site identifier (`siteId`) and access to your [Account](https://kassa.qiwi.com/service/core/merchants?) in our system. We send the Account credentials to your e-mail address specified on Step 1.
 
 **Step 3. Issue Token for the integration**
 
@@ -81,7 +81,7 @@ Send all requests to URL:
 
 The URL pathname's variable part `{API_REQUEST}` is request-specific. In this documentation, only `{API_REQUEST}` part is specified in the requests description.
 
-Upon completion of [three steps](#start), your ID is in test mode by default. You can proceed operations, but without debiting credit card. See  [Test Data](#test_data) for details.
+Upon completion of [three steps](#start), your `siteId` is in test mode by default. You can proceed operations, but without debiting credit card. See  [Test Data](#test_data) for details.
 
 Test environment has restrictions on the total amount and number of operations. By default, maximum amount of a test transaction is 10 rubles. Maximum number of test transactions is 100 per day (MSK time zone). Only test transactions within allowed amount are taken into account.
 
@@ -2187,6 +2187,10 @@ customFields.cf2 | Extra field with some information to operation data | String
 customFields.cf3 | Extra field with some information to operation data | String
 customFields.cf4 | Extra field with some information to operation data | String
 customFields.cf5 | Extra field with some information to operation data | String
+tokenData | Issued payment token data | Object
+tokenData.paymentToken | Card payment token | String
+tokenData.expiredDate | Payment token expiration date. Date format: `YYYY-MM-DDThh:mm:ss±hh:mm` | String
+
 flags| Additional API commands| Array of Strings. Possible values - `SALE` , `REVERSAL`
 version | Callback version | String
 
@@ -2368,7 +2372,7 @@ sign | string(64) | - | [Контрольная сумма](#sign) переда�
 # Electronic Receipt Transfer (for Fed.Rule 54) {#cheque}
 
 
-The payment receipt is sent in `cheque` optional field of `bill` and `payment` operation requests in [Checkout](#invoice_put) and [API](#payments) methods, respectively.
+The payment receipt is sent in `cheque` optional JSON object of [invoice](#invoice_put) and [payment](#payments) operation requests.
 
 
 <aside class="notice">
@@ -2430,17 +2434,108 @@ paymentMethod|Y|Number|Cash type (fiscal tag 1214):<br>`ADVANCED_FULL_PAYMENT` �
 paymentSubject|Y|Number|Payment subject (fiscal tag 1212):<br>`COMMODITY` – commodity except excise commodities (name and other properties describing the commodity).<br>`EXCISE_COMMODITY` – excise commodity (name and other properties describing the commodity).<br>`WORK` – work (name and other properties describing the work). .<br>`SERVICE` – service (name and other properties describing the service).<br>`GAMBLING_RATE` – gambling rate (in any gambling activities).<br>`GAMBLING_PRIZE` – gambling prize payment (in any gambling activities)в.<br>`LOTTERY_TICKET` – lottery ticket payment (in accepting payments for lottery tickets, including electronic ones, lottery stakes in any lottery activities).<br>`LOTTERY_PRIZE` – lottery prize payment (n any lottery activities). <br>`GRANTING_RESULTS_OF_INTELLECTUAL_ACTIVITY` – provision of rights to use intellectual activity results.<br>`PAYMENT` – payment (advance, pre-payment, deposit, partial payment, credit, fine, bonus, reward, or any similar payment subject).<br>`AGENCY_FEE` – agent's commission (in any fee to payment agent, bank payment agent, commissioner or other agent service).<br>`COMPAUND_PAYMENT_SUBJECT` – multiple payment subject (in any payment constituent subject to any of the above).<br>`OTHER_PAYMENT_SUBJECT` – other payment subject not related to any of the above.
 
 
-# Tokenization {#token}
+# Payment Tokens {#token}
 
-The **Protocol** supports card tokenization. It allows you to save encrypted customer's cards and use it for recurring payments.
+The **Protocol** supports card payment tokens. It allows you to save customer's card data in encrypted payment token and use it for recurring payments.
 
-By default, tokenization in the protocol is disabled. Contact your personal manager to enable this option.
+By default, card payment token issue in the protocol is disabled. Contact your personal manager to enable this option.
 
-## Payment Token Issue
+To use payment tokens, you need to register two [site identifiers](#test_mode) and get two API tokens: first (with 3DS support, as a rule) for [payment token issue](#token_issue), second for [payments](#token_pay) by card payment token.
 
->Request body example
+## Payment Token Issue {#token_issue}
+
+To issue payment card token, use identifiers (`siteId`, API token) of the site registered for payment tokens issue.
+
+### If you use [Payment Form](#invoicing)
+
+>Example of invoice request with payment token request
+
+~~~http
+PUT /partner/bill/v1/bills/893794793973 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+   "amount": {  
+     "currency": "RUB",  
+     "value": 10.00
+   },
+   "expirationDateTime": "2021-04-13T14:30:00+03:00",
+    "customer": { 
+      "account":"token32" 
+   }, 
+   "customFields": {}, 
+   "paymentFlags":["BIND_PAYMENT_TOKEN"] 
+} 
+~~~
+
+>Example of notification with payment token
 
 ~~~json
+{
+  "payment":
+  {
+    "paymentId":"9790769",
+    "tokenData": {
+      "paymentToken":"66aebf5f-098e-4e36-922a-a4107b349a96",
+      "expiredDate":"2021-12-31T00:00:00+03:00"
+    },
+    "type":"PAYMENT",
+    "createdDateTime":"2020-01-23T15:07:35+03:00",
+    "status": {
+      "value":"SUCCESS",
+      "changedDateTime":"2020-01-23T15:07:36+03:00"
+    },
+    "amount": {
+      "value":2211.24,
+      "currency":"RUB"
+    },
+    "paymentMethod": {
+      "type":"CARD",
+      "maskedPan":"4111111111",
+      "cardHolder":"CARD HOLDER",
+      "cardExpireDate":"12/2021",
+      "type":"CARD"
+    },
+    "customer": {
+      "ip":"79.142.20.248",
+      "account":"token324",
+      "phone":"0"
+    },
+    "billId":"testing1222213",
+    "flags":["SALE"]
+  },
+  "type":"PAYMENT",
+  "version":"1"
+}
+~~~
+
+Add the following fields in the [invoice request](#invoicing):
+
+* `paymentFlags:["BIND_PAYMENT_TOKEN"]` - a command requesting the issue of payment token
+* `customer.account` - Customer unique ID in RSP's information system. **Do not use the same `account` value for your Customers. It may allow any Customer to pay from another's cards.**
+
+You would receive the payment token data in subsequent `PAYMENT` type notification after successful invoice payment:
+
+Notification field|Type|Description
+--------|-------|----------
+tokenData|Object| Card payment token data
+tokenData.paymentToken|String| Card payment token
+tokenData.expiredDate|String|Payment token expiration date. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh:mm`
+
+### If you use API
+
+>Example of payment request with payment token request
+
+~~~http
+PUT /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
 {
    "amount": {  
      "currency": "RUB",  
@@ -2454,71 +2549,70 @@ By default, tokenization in the protocol is disabled. Contact your personal mana
 ~~~
 
 
-To issue payment card token, you need to add the following fields in the [payment request](#payments):
-
-* payment option `flags:["BIND_PAYMENT_TOKEN"]` - a command indicating the issue of payment token
-* `customer.account` - Customer unique ID in RSP's information system
-
-<aside class="warning">
-Do not use the same <code>account</code> value for your Customers. It may allow any Customer to pay from another's cards.
-</aside>
-
->Token notification example
+> Example of response with payment token
 
 ~~~json
 {
-  "payment":{
-    "paymentId":"9790769",
-    "tokenData":{
-      "paymentToken":"66aebf5f-098e-4e36-922a-a4107b349a96",
-      "expiredDate":"2021-12-31T00:00:00+03:00"
+    "paymentId": "test-022",
+    "billId": "autogenerated-c4479bb1-c916-4fba-8445-802592fa8d51",
+    "createdDateTime": "2020-03-26T12:22:12+03:00",
+    "amount": {
+        "currency": "RUB",
+        "value": "10.00"
     },
-    "type":"PAYMENT",
-    "createdDateTime":"2020-01-23T15:07:35+03:00",
-    "status":{
-      "value":"SUCCESS",
-      "changedDateTime":"2020-01-23T15:07:36+03:00"
+    "capturedAmount": {
+        "currency": "RUB",
+        "value": "0.00"
     },
-    "amount":{
-        "value":2211.24,
-        "currency":"RUB"
+    "refundedAmount": {
+        "currency": "RUB",
+        "value": "0.00"
     },
-    "paymentMethod":{
-      "type":"CARD",
-      "maskedPan":"4111111111",
-      "cardHolder":"CARD HOLDER",
-      "cardExpireDate":"12/2021",
-      "type":"CARD"
+    "paymentMethod": {
+        "type": "CARD",
+        "maskedPan": "411111******1111",
+        "rrn": "123",
+        "authCode": "181218",
+        "type": "CARD"
     },
-    "customer":{
-      "ip":"79.142.20.248",
-      "account":"token324",
-      "phone":"0"
+    "createdToken": {
+        "token": "27e61f2f-19e1-4fd7-a3c8-fd84508d21ab",
+        "name": "411111******1111"
     },
-    "billId":"testing1222213",
-    "flags":["SALE"]
-  },
-  "type":"PAYMENT",
-  "version":"1"
+    "customer": {
+        "account": "1",
+        "phone": "79022222222"
+    },
+    "status": {
+        "value": "COMPLETED",
+        "changedDateTime": "2020-03-26T12:22:12+03:00"
+    },
+    "customFields": {
+        "customer_account": "1",
+        "customer_phone": "79022222222"
+    },
+    "flags": [
+        "TEST"
+    ]
 }
 ~~~
 
-You would receive the following data in subsequent `PAYMENT` type notification:
+Add the following fields in the [payment request](#payments):
+
+* `flags:["BIND_PAYMENT_TOKEN"]` - a command requesting the issue of payment token
+* `customer.account` - Customer unique ID in RSP's information system. **Do not use the same `account` value for your Customers. It may allow any Customer to pay with someone else's cards.**
+
+You would receive the payment token data in the response:
 
 Notification field|Type|Description
 --------|-------|----------
-tokenData|Object| Card token data
-tokenData.paymentToken|String| Card token
-tokenData.expiredDate|Object|Token expiration date. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh:mm`
+createdToken|Object| Card payment token data
+createdToken.token|String| Card payment token
+createdToken.name|Object|Masked card PAN for which payment token is issued
 
-You should use the obtained data for the Customer's payments.
-
+Payment token data will be also provided in  subsequent `PAYMENT` type notification after successful payment (see above).
 
 ## How To Pay By Token {#token_pay}
-
-You can pay by token using [API](#api) methods only.
-
-Instead of card payment data, use the following parameters in  `paymentMethod` object:
 
 >Token payment request example
 
@@ -2538,12 +2632,19 @@ Instead of card payment data, use the following parameters in  `paymentMethod` o
 }
 ~~~
 
-Partameter|Type|Description
---------|---|--------
-type|String|Operation type, use `TOKEN` only
-paymentToken|String| Card token
+You can pay by payment token using [API](#api) methods only.
 
-Make sure you specify unique customer ID related to the payment token in `account` field. Without this field, payment by token is impossible.
+In [payment request](#payments):
+
+* Use identifiers (`siteId`, API token) of the site registered for payments by payment tokens
+* Put payment token parameters into `paymentMethod` object, instead of card data, and add customer identifier:
+
+Parameter|Type|Description
+--------|---|--------
+paymentMethod.type|String| Payment operation type. Use `TOKEN` string
+paymentMethod.paymentToken|String| Payment token string
+customer.account|String| Customer unique ID in RSP's information system for which payment token was issued. **Without this parameter, payment by payment token is not possible.**
+
 
 # Payouts {#payouts}
 
@@ -2554,9 +2655,9 @@ QIWI holds a commission for each confirmed operation. If operation is rejected b
 
 # Test Data {#test_data}
 
-Use [production url](#test_mode) for testing purposes.
-
 By default, for each new RSP `siteId` is created in the system in testing mode. You can ask your manager to make testing mode of any of your  `siteId`, or add new `siteId` in testing mode.
+
+Use [production URL](#test_mode) for test requests.
 
 * To make tests for payment operations, you may use any card number complied with Luhn algorithm.
 * In testing mode, you may use only Russian ruble (643 code) for the currency.
