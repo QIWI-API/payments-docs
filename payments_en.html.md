@@ -383,6 +383,48 @@ Host: api.qiwi.com
 
 ![Customer form](/images/Custom.png)
 
+## Popup SDK
+
+A popup allows you to open a payment form for an invoice on top of your site. 
+
+<button id="pop" class="button-popup" onclick="t
+estPopup();">Demo popup</button>
+
+How to use Popup SDK:
+
+1. Issue invoice
+2. Open the invoice with Checkout Popup SDK
+
+[Download QIWI Checkout Popup SDK](https://github.com/QIWI-API/bill-payments-popup-js-sdk)
+
+SDK Installation:
+
+`<script src='https://oplata.qiwi.com/popup/v1.js'></script>`
+
+###  Open an existing invoice {#openpopup}
+
+>Open an existing invoice in popup
+
+~~~javascript
+params = {
+    payUrl: 'https://oplata.qiwi.com/form?invoiceUid=06df838c-0f86-4be3-aced-a950c244b5b1'
+}
+
+QiwiCheckout.openInvoice(params)
+    .then(data => {
+        // ...
+    })
+    .catch(error => {
+        // ...
+    })
+~~~
+
+Call function  `QiwiCheckout.openInvoice`
+
+| Parameter | Description | Type | Required |
+|--------------|-------------|-------------|--------------|
+| payUrl | Pay form link from `payUrl` field of response to [invoice issue request](#invoice_put)| String | + |
+
 ## Two-Step Scenario {#two_step}
 
 Two-step scenario includes (1) holding funds on the customer's card and (2) confirming the operation.
@@ -2441,6 +2483,8 @@ The **Protocol** supports card payment tokens. It allows you to save customer's 
 By default, card payment token issue in the protocol is disabled. Contact your personal manager to enable this option.
 
 To use payment tokens, you need to register two [site identifiers](#test_mode) and get two API tokens: first (with 3DS support, as a rule) for [payment token issue](#token_issue), second for [payments](#token_pay) by card payment token.
+
+<aside class="warning">The token is issued only after the customer's 3DS authentication and successful payment authorization by the issuer, i.e. in response to the request to <a href="#payment_complete">complete customer authentication</a></aside>
 
 ## Payment Token Issue {#token_issue}
 
