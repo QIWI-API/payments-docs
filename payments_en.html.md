@@ -102,7 +102,7 @@ First, obtain a link to Payment Form and redirect the customer there.
 >Request example
 
 ~~~http
-PUT /partner/bill/v1/bills/893794793973 HTTP/1.1
+PUT /partner/payin/v1/sites/23044/bills/893794793973 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -119,12 +119,13 @@ Host: api.qiwi.com
 
 Send HTTP PUT-request to API URL with `{API_REQUEST}`:
 
-`/bill/v1/bills/{billId}`
+`/payin/v1/sites/{siteId}/bills/{billId}`
 
 with parameters:
 
-* **{billId}** - unique identifier in the RSP system
-* **amount** - invoice amount (`amount.value`) and currency (`currency`) data
+* **{siteId}** - unique RSP ID;
+* **{billId}** - unique identifier in the RSP system;
+* **amount** - invoice amount (`amount.value`) and currency (`currency`) data;
 * **expirationDateTime** - invoice due date. Time should be specified with time zone. When date is overdue, invoice status becomes `EXPIRED` final status and invoice payment is not possible.
 
 
@@ -181,10 +182,7 @@ Redirect the customer to the link from `payUrl` field. It opens the Payment Form
 
 **2. Wait until the notification**
 
-When customer pays for the invoice, we send two server callbacks - first on the successfully processed payment, second - on the invoice payment.
-
-
-**2a. Processed payment notification**
+When customer pays for the invoice, we send server callback on the successfully processed payment.
 
 >Processed payment notification body example
 
@@ -242,89 +240,7 @@ customer|Object| Customer identifiers. Possible elements: `email`, `phone`, `acc
 billId|String| Corresponding invoice ID
 flags|Array of Strings|  Operation flags: `SALE` - one-step payment scenario
 
->Invoice payment notification body example
-
-~~~json
-
-{ 
-  "bill": {  
-     "siteId":"23044",
-     "billId":"1519892138404fhr7i272a2",
-     "amount":{  
-        "value":100.00,
-        "currency":"RUB"
-     },
-     "status": {  
-        "value":"PAID",
-        "datetime":"2018-03-01T11:16:12"
-     },
-     "customer": {},
-     "customFields": {},
-     "creationDateTime":"2018-03-01T11:15:39",
-     "expirationDateTime":"2018-04-01T11:15:39+03:00"
-  },
-  "version":"1"
-}
-~~~
-
-**2b. Invoice payment notification**
-
-Notification field|Type|Description
---------|---|--------
-billId|String|Unique invoice identifier in the merchant's system
-siteId|String|Merchant's site identifier in QIWI Kassa
-amount|Object|Invoice amount data
-amount.value|Number|Invoice amount. The number is rounded down to two decimals
-amount.currency	|String|Invoice currency (Code Alpha-3 ISO 4217: `RUB`, `USD`, `EUR`)
-status|Object|Invoice status data
-status.value	|String|Current [invoice status](#invoice_status)
-status.changedDateTime|String|Status refresh date. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh`
-customFields|Object|Additional fields
-customer|Object|Customer data. Possible elements: `email`, `phone`, `account`
-comment|String|Comment to the invoice
-creationDateTime|String| System date of the invoice creation. Date format:<br>`YYYY-MM-DDThh:mm:ss`
-payUrl|String|Payment Form link
-expirationDateTime|String|Expiration date of the pay form link (invoice payment's due date). Date format:<br>`YYYY-MM-DDThh:mm:ss+\-hh:mm`
-
-
-See description of server notifications and their types in [Server Notifications](#callback).
-
-**How to make refund to the customer**
-
-If you need to make a refund of the operation, send refund request.
-
-Send HTTP PUT request to API URL with `{API_REQUEST}`:
-
-`/bill/v1/bills/{billId}/refunds/{refundId}`
-
-
->Request refund example
-
-~~~http
-PUT /partner/bill/v1/bills/893794793973/refund/1 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
-{
-    "amount": {
-         "currency": "RUB",
-         "value": 42.24
-    }
-}
-~~~
-
-
-Parameter|Type|Description
---------|---|--------
-billId|String| Unique invoice identifier
-refundId|String|Unique refund identifier in the merchant's system
-amount|Object|Invoice amount data
-amount.value|Number|Invoice amount rounded down to two decimals
-amount.currency	|String|Invoice currency (Code Alpha-3 ISO 4217)
-
-[Request details](#invoice_refund)
+See detailed description of server notifications and their types in [Server Notifications](#callback).
 
 ## Payment Form {#payform}
 
@@ -363,7 +279,7 @@ To use style on the Payment Form, send `"themeCode":"codeStyle"` field with spec
  >Using Payment Form style
 
 ~~~http
-PUT /partner/bill/v1/bills/893794793973 HTTP/1.1
+PUT /partner/payin/v1/sites/23044/bills/893794793973 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -434,7 +350,7 @@ Two-step scenario includes (1) holding funds on the customer's card and (2) conf
 >Hold request example
 
 ~~~http
-PUT /partner/bill/v1/bills/893794793973 HTTP/1.1
+PUT /partner/payin/v1/sites/23044/bills/893794793973 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -559,421 +475,7 @@ where:
 * **{paymentId}** - operation ID, string, obtained from the payment callback
 * **{captureId}** - confirmation ID, string, unique identifier for the RSP which generates it by itself
 
-[Request details](#capture_invoice)
-
-
-## Requests, Statuses and Errors {#invoicing_requests}
-
-<aside class="notice">Additional fields might be added to the requests and responses. Check <a href="https://github.com/QIWI-API/payments-docs/blob/master/payments_en.html.md">Github</a> for updates.</aside>
-
-### Invoice creation {#invoice_put}
-
-<div id="bill_v1_bills__billId__put_checkout">
-  <script>
-    $(document).ready(function(){
-      $.getJSON('../../eui_jsons/payin-checkout-payment-put.json', function( data ) {
-        window.requestUI(
-            data,
-            "checkout",
-            "bill/v1/bills/{billId}",
-            "put",
-            ['RequestBody', '200', '4xx', '5xx']
-          )
-      })
-    });
-  </script>
-</div>
-
-<!-- Request body -->
-~~~json
-{
-   "amount": {  
-     "currency": "RUB",  
-     "value": 100.00
-   },
-   "comment": "Text comment",
-   "expirationDateTime": "2018-04-13T14:30:00+03:00",
-   "customer": {},
-   "customFields": {}  
-   }
-}
-~~~
-
-
-<!-- 200 -->
-~~~json
-{
-    "siteId": "23044",
-    "billId": "893794793973",
-    "amount": {
-      "value": 100.00,
-      "currency": "RUB"
-    },
-    "status": {
-      "value": "WAITING",
-      "changedDateTime": "2018-03-05T11:27:41+03:00"
-    },
-    "comment": "Text comment",
-    "creationDateTime": "2018-03-05T11:27:41",
-    "expirationDateTime": "2018-04-13T14:30:00+03:00",
-    "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
-}
-~~~
-
-
-<!-- 4xx -->
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
-}
-~~~
-
-<!-- 5xx -->
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "payin.resource.not.found",
-  "userMessage" : "Resource not found",
-  "description" : "Resource not found",
-  "traceId" : "c3564ba25e221fe3",
-  "dateTime" : "2018-11-13T16:30:52.464+03:00"
-}
-~~~
-
-### Invoice status {#invoice_get}
-
-<div id="payin_v1_sites__siteId__bills__billId__get_checkout">
-  <script>
-    $(document).ready(function(){
-      $.getJSON('../../eui_jsons/payin-checkout-payment-get.json', function( data ) {
-        window.requestUI(
-            data,
-            "checkout",
-            "payin/v1/sites/{siteId}/bills/{billId}",
-            "get",
-            ['200', '4xx', '5xx']
-          )
-      })
-    });
-  </script>
-</div>
-
-
-<!-- 200 -->
-~~~json
-[
-    {
-        "paymentId": "12600406",
-        "billId": "d35cf63943e54f50badc75f49a5aac7c",
-        "createdDateTime": "2020-03-26T19:31:49+03:00",
-        "amount": {
-            "currency": "RUB",
-            "value": 10.00
-        },
-        "capturedAmount": {
-            "currency": "RUB",
-            "value": 10.00
-        },
-        "refundedAmount": {
-            "currency": "RUB",
-            "value": 0.00
-        },
-        "paymentMethod": {
-            "type": "CARD",
-            "maskedPan": "427638******1410",
-            "type": "CARD"
-        },
-        "createdToken": {
-            "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
-            "name": "427638******1410"
-        },
-        "customer": {
-            "account": "1",
-            "phone": "0",
-            "address": {}
-        },
-        "requirements": {
-            "threeDS": {
-                "pareq": "eJxVUWFvgjAQX7gM3fq+hNqO0oI5prexilN1UDEMwl6FcHZZ19m7v63DtRY=",
-                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
-            }
-        },
-        "status": {
-            "value": "DECLINED",
-            "changedDateTime": "2020-03-26T19:32:09+03:00",
-            "reason": "ACQUIRING_NOT_PERMITTED"
-        },
-        "customFields": {
-            "customer_account": "1",
-            "customer_phone": "0"
-        }
-    },
-    {
-        "paymentId": "12600433",
-        "billId": "d35cf63943e54f50badc75f49a5aac7c",
-        "createdDateTime": "2020-03-26T19:32:22+03:00",
-        "amount": {
-            "currency": "RUB",
-            "value": 10.00
-        },
-        "capturedAmount": {
-            "currency": "RUB",
-            "value": 10.00
-        },
-        "refundedAmount": {
-            "currency": "RUB",
-            "value": 0.00
-        },
-        "paymentMethod": {
-            "type": "CARD",
-            "maskedPan": "427638******1410",
-            "type": "CARD"
-        },
-        "createdToken": {
-            "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
-            "name": "427638******1410"
-        },
-        "customer": {
-            "account": "1",
-            "phone": "0",
-            "address": {}
-        },
-        "requirements": {
-            "threeDS": {
-                "pareq": "eJxVUWFvgjAQ52lBUtjD3M9++qFgCxl0i/OtJv2WT/tv8LXqG0vw==",
-                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
-            }
-        },
-        "status": {
-            "value": "DECLINED",
-            "changedDateTime": "2020-03-26T19:32:54+03:00",
-            "reason": "ACQUIRING_NOT_PERMITTED"
-        },
-        "customFields": {
-            "customer_account": "1",
-            "customer_phone": "0"
-        }
-    },
-    {
-        "paymentId": "12601084",
-        "billId": "d35cf63943e54f50badc75f49a5aac7c",
-        "createdDateTime": "2020-03-26T19:46:21+03:00",
-        "amount": {
-            "currency": "RUB",
-            "value": 10.00
-        },
-        "capturedAmount": {
-            "currency": "RUB",
-            "value": 10.00
-        },
-        "refundedAmount": {
-            "currency": "RUB",
-            "value": 0.00
-        },
-        "paymentMethod": {
-            "type": "CARD",
-            "maskedPan": "427638******1410",
-            "rrn": "008692274763",
-            "authCode": "242847",
-            "type": "CARD"
-        },
-        "createdToken": {
-            "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
-            "name": "427638******1410"
-        },
-        "customer": {
-            "account": "1",
-            "phone": "0",
-            "address": {}
-        },
-        "requirements": {
-            "threeDS": {
-                "pareq": "eJxVUdtuwjAM7b6t/1fcku04w==",
-                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
-            }
-        },
-        "status": {
-            "value": "COMPLETED",
-            "changedDateTime": "2020-03-26T19:46:43+03:00"
-        },
-        "customFields": {
-            "customer_account": "1",
-            "customer_phone": "0"
-        },
-        "flags": [
-            "AFT"
-        ]
-    }
-]
-~~~
-
-
-<!-- 4xx -->
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
-}
-~~~
-
-<!-- 5xx -->
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
-}
-~~~
-
-### Refund {#invoice_refund}
-
-
-
-
-<div id="bill_v1_bills__billId__refunds__refundId__put_checkout">
-  <script>
-    $(document).ready(function(){
-      $.getJSON('../../eui_jsons/payin-checkout-refund-put.json', function( data ) {
-        window.requestUI(
-            data,
-            "checkout",
-            "bill/v1/bills/{billId}/refunds/{refundId}",
-            "put",
-            ['RequestBody', '200', '4xx', '5xx']
-          )
-      })
-    });
-  </script>
-</div>
-
-<!-- Request body -->
-~~~json
-{
-  "amount": {
-    "value": 2.34,
-    "currency": "RUB"
-  }
-}
-~~~
-
-
-
-
-<!-- 200 -->
-~~~json
-{
-    "amount": {
-      "value": 50.50,
-      "currency": "RUB"
-    },
-    "datetime": "2018-03-01T16:06:57+03",
-    "refundId": "1",
-    "status": "PARTIAL"
-}
-~~~
-
-<!-- 4xx -->
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
-}
-~~~
-
-
-<!-- 5xx -->
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "payin.resource.not.found",
-  "userMessage" : "Resource not found",
-  "description" : "Resource not found",
-  "traceId" : "c3564ba25e221fe3",
-  "dateTime" : "2018-11-13T16:30:52.464+03:00"
-}
-~~~
-
-###  Invoice payment confirmation for two-step scenario {#capture_invoice}
-
-<div id="payin_v1_sites__siteId__payments__paymentId__captures__captureId__put_checkout">
-  <script>
-    $(document).ready(function(){
-      $.getJSON('../../eui_jsons/payin-checkout-capture-put.json', function( data ) {
-        window.requestUI(
-            data,
-            "checkout",
-            "payin/v1/sites/{siteId}/payments/{paymentId}/captures/{captureId}",
-            "put",
-            ['RequestBody', '200', '4xx', '5xx']
-          )
-      })
-    });
-  </script>
-</div>
-
-<!-- Request body -->
-~~~json
-{
-  "callbackUrl": "https://example.com/callbacks",
-  "comment": "Example capture"
-}
-~~~
-
-<!-- 200 -->
-~~~json
-{
-  "captureId": "bxwd8096",
-  "createdDatetime": "2018-11-20T16:29:58.96+03:00",
-  "amount": {
-    "currency": "RUB",
-    "value": 6.77
-  },
-  "status": {
-    "value": "COMPLETED",
-    "changedDateTime": "2018-11-20T16:29:58.963+03:00"
-  }
-}
-~~~
-
-<!-- 4xx -->
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
-}
-~~~
-
-<!-- 5xx -->
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "payin.resource.not.found",
-  "userMessage" : "Resource not found",
-  "description" : "Resource not found",
-  "traceId" : "c3564ba25e221fe3",
-  "dateTime" : "2018-11-13T16:30:52.464+03:00"
-}
-~~~
+[Request details](#capture)
 
 # API {#api}
 
@@ -1082,16 +584,10 @@ status.changedDateTime|String|Status refresh date. Date format:<br>`YYYY-MM-DDTh
 customer|Object|Customer identifiers. Possible elements: `email`, `phone`, `account`
 
 
-To create a payment, most often you need to proceed additional authentication for the customer.  This is the case when:
-
-* Card issuer requires CVV for the payment
-* 3DS authentication is needed
+To create a payment, most often you need to proceed additional authentication for the customer.  This is the case when 3DS authentication is needed.
 
 
-In this case, in response you will receive an additional `requirements` object with fields:
-
-* `threeDS` element: `pareq` and `acsUrl` for redirection to the card issuer verification page
-* `cvv` element
+In this case, in response to the request an additional `requirements.threeDS` object will be present with fields `pareq` and `acsUrl` for redirection to the card issuer verification page.
 
 
 
@@ -1108,9 +604,6 @@ Host: api.qiwi.com
 {
   "threeDS": {
     "pares": "eJzVWFevo9iyfu9fMZrzaM0QjWHk3tIiGptgooE3cgabYMKvv3jvTurTc3XOfbkaJMuL...."
-  },
-  "cvv2": {
-    "cvv2": "string"
   }
 }
 ~~~
@@ -1119,10 +612,7 @@ Send HTTP POST request to API URL with `{API_REQUEST}`
 
 `/payin/v1/sites/{siteId}/payments/{paymentId}/complete`
 
- with the parameters:
-
-* card CVV
-* 3DS data
+ with the 3DS data.
 
 [Request details](#payment_complete)
 
@@ -1154,13 +644,1120 @@ Host: api.qiwi.com
 ~~~
 
 
+<!--# Service Information -->
 
-## Requests, Statuses and Errors {#api_requests}
+# Server Notifications {#callback}
+
+A notification is an incoming HTTP POST message. The JSON-formatted notification message contains event data in UTF-8 codepage.
+
+<aside class="success">
+QIWI server sends event notification exclusively by HTTPS protocol to port 443. The notification server certificate must be issued by trusted certification center like Comodo, Verisign, Thawte etc.
+</aside>
+
+The Protocol supports the following notification types for API events: `PAYMENT`, `CAPTURE`, and `REFUND`. These notifications are sending on events of payment operation, payment confirmation, and refund for payment, accordingly.
+
+<aside class="notice">
+There is no specific sequence of sending different types' notifications for the operation. The sequence may vary for different operations.
+</aside>
+
+<aside class="notice">
+If you don't receive an transaction notification within 10 minutes of the transaction, you must request the status of the transaction by <a href="#invoice_get">requesting invoice status</a> or <a href="#payment_status">requesting payment status</a> (depending on which way you use the API).
+</aside>
+
+Specify the notification server address in your Personal Profile on <a href="https://kassa.qiwi.com/">kassa.qiwi.com</a> site in <b>Settings</b> section. You may also specify the address in optional `callbackUrl` parameter of [API](#api_requests) requests.
+
+To make sure the notification is from QIWI, we recommend you to accept messages only from the following IP addresses belonging to QIWI:
+
+* 79.142.16.0/20
+* 195.189.100.0/22
+* 91.232.230.0/23
+* 91.213.51.0/24
+
+To treat notification as successfully delivered, we need your notification server to respond with HTTP code `200 OK`. 
+
+If your server is unavailable or responds differently, QIWI system resends the notification message several times with growing interval during the day until it receives `200 OK` HTTP code server response.
+
+<aside class="notice">
+If by any reason RSP server accepts the notification message but responds incorrectly, then on receiving notification with the same data next time it should not be treated as a new event.
+</aside>
+
+## Notification Authorization {#notifications_auth}
+
+The notification contains a digital signature which RSP should verify on its side to secure from notification fraud.
+
+<aside class="warning">
+The responsibility for any financial losses due to omitted verification of the signature parameter lies solely on RSP.
+</aside>
+
+The UTF-8 encoded digital signature is in HTTP header `Signature` of the notification message.
+
+To validate the signature, use the following algorithm:
+
+1. Join values of some parameters from the notification with the pipe "\|" character. For example:
+
+   `parameters = {payment.paymentId}|{payment.createdDateTime}|{payment.amount.value}`
+
+   where `{*}` – notification parameter value. All values are treated as strings. Make sure strings are UTF-8 encoded.
+
+   Signature should be verified for those notification fields:
+
+      * `PAYMENT` type:`payment.paymentId|payment.createdDateTime|payment.amount.value`
+      * `REFUND` type:`refund.refundId|refund.createdDateTime|refund.amount.value`
+      * `CAPTURE` type:`capture.captureId|capture.createdDateTime|capture.amount.value`
+
+2. Calculate hash HMAC value with SHA256 algorithm (signature string and secret key are UTF8-encoded):
+
+   `hash = HMAС(SHA256, token, parameters)`
+
+   where:
+
+      * `token` – HMAC function key which you can obtain in your [Account site](https://kassa.qiwi.com/service/core/merchants?);
+      * `parameters` – string from step 1;
+
+3. Compare the notification signature from `Signature` HTTP-header with the result of step 2. If there is no difference, the validation is successful.
+
+
+## PAYMENT, CAPTURE, REFUND Notification Format
+
+Notification type is specified in `type` parameter.
+
+<ul class="nestedList header">
+    <li><h3>HEADERS</h3>
+        <ul>
+             <li>Signature: XXX</li>
+             <li>Accept: application/json</li>
+             <li>Content-type: application/json</li>
+        </ul>
+    </li>
+</ul>
+
+
+>PAYMENT/REFUND/CAPTURE Notification example
+
+~~~http
+POST /qiwi-notify.php HTTP/1.1
+Accept: application/json
+Content-type: application/json
+Signature: J4WNfNZd***V5mv2w=
+Host: server.ru
+
+{
+   "payment/refund/capture":{
+      "paymentId/refundId/captureId":"4504751",
+      "tokenData":{
+         "paymentToken":"4cc975be-483f-8d29-2b7de3e60c2f",
+         "expiredDate":"2021-12-31T00:00:00+03:00"
+      },
+      "type":"PAYMENT",
+      "createdDateTime":"2019-10-08T11:31:37+03:00",
+      "status":{
+         "value":"SUCCESS",
+         "changedDateTime":"2019-10-08T11:31:37+03:00"
+      },
+      "amount":{
+         "value":2211.24,
+         "currency":"RUB"
+      },
+      "paymentMethod":{
+         "type":"CARD",
+         "maskedPan":"220024/*/*/*/*/*/*5036",
+         "rrn":null,
+         "authCode":null,
+         "type":"CARD"
+      },
+      "paymentCardInfo": {
+         "issuingCountry": "810",
+         "issuingBank": "QiwiBank",
+         "paymentSystem": "VISA",
+         "fundingSource": "CREDIT",
+         "paymentSystemProduct": "P|Visa Gold"
+      },
+      "customer":{
+         "ip":"79.142.20.248",
+         "account":"token32",
+         "phone":"0"
+      },
+      "billId":"testing122",
+      "customFields":{},
+      "flags":[
+         "SALE"
+      ]
+   },
+   "type":"PAYMENT",
+   "version":"1"
+}
+~~~
+
+
+Notification field | Description | Type
+--------|--------|---
+paymentId/refundId/captureId|Payment/refund/capture operation unique identifier in RSP's system|String(200)
+type| Operation type|String(200)
+createdDateTime| System date of the operation creation | URL-encoded string<br>`YYYY-MM-DDThh:mm:ss`
+amount|Object| Operation amount data
+amount.value | Operation amount rounded down to two decimals | Number(6.2)
+amount.currency | Operation currency (Code: Alpha-3 ISO 4217) | String(3)
+billId| Corresponding invoice ID| String(200)
+status | Operation status data | Object
+status.value |Invoice status value | String
+status.changedDatetime|Date of operation status update| URL encoded string<br>`YYYY-MM-DDThh:mm:ssZ`
+status.reasonCode| Rejection reason code| String(200)
+status.reasonMessage| Rejection reason description| String(200)
+status.errorCode| Error code| Number
+paymentMethod| Payment method data| Object
+paymentMethod.type| Payment method type| String
+paymentMethod.maskedPan| Masked card PAN| String
+paymentMethod.rrn| Payment RRN| Number
+paymentMethod.authCode| Payment Auth code| Number
+paymentCardInfo | Card information. **Only in PAYMENT notifications** | Object
+paymentCardInfo.issuingCountry | Issuer country code | String(3)
+paymentCardInfo.issuingBank | Issuer name | String
+paymentCardInfo.paymentSystem | Card's payment system | String
+paymentCardInfo.fundingSource | Card's type (debit/credit/..) | String
+paymentCardInfo.paymentSystemProduct | Card's category | String
+customer | Customer data | Object
+customer.phone |Phone number to which invoice issued (if specified) |String
+customer.email| E-mail to which invoice issued (if specified)|String
+customer.account| Customer ID in RSP system (if specified)|String
+customer.ip| IP address |String
+customer.country| Country from address string |String
+customFields | Fields with additional information | Object
+customFields.cf1 | Extra field with some information to operation data | String
+customFields.cf2 | Extra field with some information to operation data | String
+customFields.cf3 | Extra field with some information to operation data | String
+customFields.cf4 | Extra field with some information to operation data | String
+customFields.cf5 | Extra field with some information to operation data | String
+tokenData | Issued [payment token data](#token_issue) | Object
+tokenData.paymentToken | Card payment token | String
+tokenData.expiredDate | Payment token expiration date. Date format: `YYYY-MM-DDThh:mm:ss±hh:mm` | String
+flags| Additional API commands| Array of Strings. Possible values - `SALE` , `REVERSAL`
+version | Callback version | String
+
+
+
+Callback service sorts unsuccessful notifications on the following queues:
+
+* One attempt on waiting 5 seconds
+* One attempt on waiting 1 minutes
+* Three attempts on waiting 5 minutes
+
+Time of secondary sending notification may slightly shift upward.
+
+
+
+<!--
+--===< NOTIFICATION_STRUCTURE >===--
+{
+  :
+  {
+    "paymentId/refundId/captureId":"9999999",
+    "createdDateTime":"2019-06-03T08:19:16+03:00",
+    "status":{
+      "value":"SUCCESS/WAITING/DECLINE",
+      "changedDateTime":"2019-06-03T08:19:16+03:00",
+      "reasonCode":"payin.gateway.acquiring.declined-fraud",
+      "reasonMessage":"Declined by fraud",
+      "errorCode":"1234"
+    },
+    "amount":{
+      "value":111.11,
+      "currency":"RUB"},
+    "paymentMethod": <PAYMENT_METHOD>,
+    "customer":{
+      "ip":"xxx.xxx.xxx.xxx",
+      "email":"my_mail@mail.com",
+      "account":"dasd32d2d2",
+      "phone":"79991112233",
+      "country":"Russian Federation",
+      "city":"some city",
+      "region":"some region"
+    },
+    "gatewayData": <GATEWAY_DATA>,
+    "billId":"f1e1a1f11ae111a11a111111e1111111",
+    "flags":["SALE/REVERSAL"]
+  },
+  "type":"PAYMENT/REFUND/CAPTURE",
+  "version":"1"
+}
+
+
+
+
+--===< PAYMENT_METHOD >===--
+"paymentMethod":{
+  "type":"CARD",
+  "maskedPan":"411111\*\*\*\*\*\*0001"
+}
+"paymentMethod":{
+  "type":"QIWI_WALLET",
+  "phone":"79991112233"
+}
+"paymentMethod":{
+  "type":"SAVED_CARD",
+  "token":"12341234123412341234"
+}
+"paymentMethod":{
+  "type":"MOBILE_COMMERCE",
+  "phone":"79991112233"
+}
+-->
+
+<!--
+## BILL Notifications Format
+
+<ul class="nestedList header">
+    <li><h3>HEADERS</h3>
+        <ul>
+             <li>X-Api-Signature-SHA256: XXX</li>
+             <li>Accept: application/json</li>
+             <li>Content-type: application/json</li>
+        </ul>
+    </li>
+</ul>
+
+>BILL Notification example
+
+~~~http
+POST /qiwi-notify.php HTTP/1.1
+Accept: application/json
+Content-type: application/json
+X-Api-Signature-SHA256: J4WNfNZd***V5mv2w=
+Host: server.ru
+
+{
+   "bill":{
+      "siteId":"Obuc-00",
+      "billId":"testing122",
+      "amount":{
+         "value":"2211.24",
+         "currency":"RUB"
+      },
+      "status":{
+         "value":"PAID",
+         "changedDateTime":"2019-10-08T11:31:39+03"
+      },
+      "customer":{
+         "account":"account42"
+      },
+      "customFields":{},
+      "comment":"Spasibo",
+      "creationDateTime":"2019-10-08T11:30:16+03",
+      "expirationDateTime":"2019-10-13T14:30:00+03"
+   },
+   "version":"1"
+}
+~~~
+
+
+Notification field|Description|Type
+--------|--------|---
+billId|Invoice operation unique identifier in RSP's system|String(200)
+siteId| RSP' site identifier in QIWI Kassa|Number
+amount|Object| Operation amount data
+amount.value | Operation amount rounded down to two decimals | Number(6.2)
+amount.currency | Operation currency (Code: Alpha-3 ISO 4217) | String(3)
+status | Invoice status data | Object
+status.value |Invoice status value | String
+status.changedDatetime|Date of invoice status update| URL encoded string<br>`YYYY-MM-DDThh:mm:ssZ`
+customer | Customer data | Object
+customer.phone |Phone number to which invoice issued (if specified) |String
+customer.email| E-mail to which invoice issued (if specified)|String
+customer.account| Customer ID in RSP system (if specified)|String
+creationDatetime | Invoice creation date | URL encoded string<br>`YYYY-MM-DDThh:mm:ssZ`
+expirationDateTime | Invoice payment due date | URL encoded string<br>`YYYY-MM-DDThh:mm:ssZ`
+comment | Invoice comment | String(255)
+customFields | Additional data for the operation | Object
+version | Callback version | String
+
+By default, signature is [verified](#notifications_auth) for those notification fields:
+
+`amount.currency|amount.value|billId|siteId|status.value`
+-->
+<!--
+### Заголовки
+
+*  `Content-type: application/json`
+
+Уведомление доставляется на переданный в запросе параметр `callbackUrl` в виде POST запроса с параметрами, указанными ниже.
+
+
+Параметр|Тип данных| Участвует в sign | Описание
+--------|----------|------------------|---------
+sign | string(64) | - | [Контрольная сумма](#sign) переданных параметров. _Контрольная сумма передается в верхнем регистре._
+
+
+
+
+## Доступные валюты и страны
+
+-->
+
+# Electronic Receipt Transfer (for Fed.Rule 54) {#cheque}
+
+
+The payment receipt is sent in `cheque` optional JSON object of [invoice](#invoice_put) and [payment](#payments) operation requests.
+
+
+<aside class="notice">
+To enable fiscal data service, provide your organization's tax identification number (TIN) used for registration in online cash service.
+For ATOL service, provide the following data also:<ul>
+<li>RSP's email for receipt</li>
+<li>full title of the organization</li>
+<li>Fiscal data operator details (name, TIN, URL)</li>
+<li>login / password for token generation</li>
+<li>commodity group code</li></ul>
+</aside>
+
+<!--<aside class="notice">
+Пока аккаунт находится в тестовом режиме, чек так также будет проходить по тестовому контуру.
+</aside>
+-->
+
+
+## Receipt Description
+
+~~~ json
+{
+ ...
+ "cheque" : {
+  "sellerId" : 3123011520,
+	"customerContact" : "Test customer contact",
+  "chequeType" : "COLLECT",
+	"taxSystem" : "OSN",
+	"positions" : [
+    {
+      "quantity" : 1,
+      "price" : {
+        "value" : 7.82,
+        "currency" : "RUB"
+      },
+      "tax" : "NDS_0",
+      "paymentSubject" : "PAYMENT",
+      "paymentMethod" : "FULL_PAYMENT",
+      "description" : "Test description"
+    }
+	]
+ }
+}
+~~~
+
+Parameter|Req.|Type|Description
+--------|-------|----------|--------
+sellerId|Y|Number|Organization's TIN
+chequeType|Y|Number|Cash operation (1054 fiscal tag):<br> `COLLECT` – Incoming cash <br> `COLLECT_RETURN` - Cash return <br> `CONSUME` - Outcoming cash <br> `CONSUME_RETURN` - Outcoming cash return
+customerContact|Y|String(64)|Customer's phone or e-mail  (fiscal tag 1008)
+taxSystem|Y|Number|Tax system (fiscal tag 1055):<br> `OSN` - General, "ОСН" <br>`USN` – Simplified income, "УСН доход" <br>`USN_MINUS_CONSUM`  – Simplified income minus expense, "УСН доход - расход" <br>`ENVD` – United tax to conditional income, "ЕНВД" <br>`ESN` - United agriculture tax, "ЕСН" <br>`PATENT` – Patent tax system, "Патент"
+positions|Y|array|Commodities list
+--------|-------|----------|--------
+quantity|Y|Number|Quantity (fiscal tag 1023)
+price|Y|Number|One item price, with discounts and extra charges (fiscal tag 1079)
+tax|Y|Number|VAT rate (fiscal tag 1199):<br>`NDS_CALC_18_118` - VAT rate 18% (18/118) <br>`NDS_CALC_10_110` – VAT rate 10% (10/110) <br>`NDS_0` – VAT rate 0% <br>`NO_NDS` – VAT not applicable<br>`NDS_CALC_20_120` – VAT rate 20% (20/120) (20/120)
+description|Y|string(128)|Name
+paymentMethod|Y|Number|Cash type (fiscal tag 1214):<br>`ADVANCED_FULL_PAYMENT` – payment in advance 100%. Full payment in advance before commodity provision<br>`PARTIAL_ADVANCE_PAYMENT`  – payment in advance. Partial payment before commodity provision<br>`ADVANCE` – prepayment<br>`FULL_PAYMENT` – full payment, taking into account prepayment, with commodity provision<br>`PARTIAL_PAYMENT` – partial payment and credit payment. Partial payment for the commodity at the moment of delivery, with future credit payment.<br>`CREDIT`  – credit payment. Commodity is delivered with no payment at the moment and future credit payment is expected.<br>`CREDIT_PAYMENT` – payment for the credit. Commodity payment after its delivery with future credit payment.
+paymentSubject|Y|Number|Payment subject (fiscal tag 1212):<br>`COMMODITY` – commodity except excise commodities (name and other properties describing the commodity).<br>`EXCISE_COMMODITY` – excise commodity (name and other properties describing the commodity).<br>`WORK` – work (name and other properties describing the work). .<br>`SERVICE` – service (name and other properties describing the service).<br>`GAMBLING_RATE` – gambling rate (in any gambling activities).<br>`GAMBLING_PRIZE` – gambling prize payment (in any gambling activities)в.<br>`LOTTERY_TICKET` – lottery ticket payment (in accepting payments for lottery tickets, including electronic ones, lottery stakes in any lottery activities).<br>`LOTTERY_PRIZE` – lottery prize payment (n any lottery activities). <br>`GRANTING_RESULTS_OF_INTELLECTUAL_ACTIVITY` – provision of rights to use intellectual activity results.<br>`PAYMENT` – payment (advance, pre-payment, deposit, partial payment, credit, fine, bonus, reward, or any similar payment subject).<br>`AGENCY_FEE` – agent's commission (in any fee to payment agent, bank payment agent, commissioner or other agent service).<br>`COMPAUND_PAYMENT_SUBJECT` – multiple payment subject (in any payment constituent subject to any of the above).<br>`OTHER_PAYMENT_SUBJECT` – other payment subject not related to any of the above.
+
+# Apple Pay
+
+Apple Pay allows customers to pay for purchases on the site in one touch, without entering the card data. The technology works in mobile apps and the Safari browser on iPhone, iPad, Apple Watch and MacBook. To enable the Apple Pay payment method, you should contact your accompanying manager.
+
+You'll need to integrate with Apple yourself. This will allow you to verify the RSP website and receive the user's payment data. RSP requirements for integrating Apple Pay on the web page:
+
+* Developer account in Apple Developer Program.
+* Using HTTPS on the Apple Pay page, TLS 1.2 support, valid SSL certificate.
+* Compliance with [Apple's guidelines](https://developer.apple.com/apple-pay/acceptable-use-guidelines-for-websites/) on using Apple Pay on websites.
+* Using the [Apple Pay JS API framework](https://developer.apple.com/documentation/apple_pay_on_the_web/apple_pay_js_api).
+
+For more information on integration, please visit [Apple's website](https://developer.apple.com/apple-pay/implementation/).
+
+## How to send a payment {#payin_apple}
+
+> Example of external3dSecData object
+
+~~~json
+"external3dSecData": {
+  "cavv": "AOLqt9wP++/WAzN+is7YAoABFA==",
+  "eci": "05"
+}
+~~~
+
+> Example of a payment request with Apple's cryptogram
+
+~~~json
+{
+  "paymentMethod": {
+    "type": "CARD",
+    "pan": "4444443616621049",
+    "expiryDate": "12/19",
+    "holderName": "Apple pay",
+    "external3dSecData": {
+      "cavv": "AOLqt9wP++YAoABFA==",
+      "eci": "05"
+    }
+  },
+  "amount": {
+    "value": "5900.00",
+    "currency": "RUB"
+  },
+  "flags": [
+    "SALE"
+  ],
+  "customer": {
+    "account": "79111111111",
+    "email": "test@qiwi.com",
+    "phone": "79111111111"
+  }
+}
+~~~
+
+The process of making an Apple Pay payment in the API consists of four steps:
+
+1. Creating an Apple Pay Payment Session and Validating RSP in Apple Pay.
+2. Getting encrypted payment data from Apple Pay.
+3. Deciphering payment data on the RSP side.
+4. Sending a [request for write-off](#payments) with an added Apple cryptogram to QIWI.
+
+To send payment data to QIWI, it is necessary to add in the `paymentMethod` of the [payment request](#payments) body the additional JSON object `external3dSecData` containing Apple payment data:
+
+* `cavv` - contents of the `onlinePaymentCryptogram` field from decrypted [Apple payment token](https://developer.apple.com/library/archive/documentation/PassKit/Reference/PaymentTokenJSON/PaymentTokenJSON.html).
+* `eci` - ECI indicator. It must be transmitted if the `eciIndicator` field is received at [Apple's payment token](https://developer.apple.com/library/archive/documentation/documentation/PassKit/Reference/PaymentTokenJSON/PaymentTokenJSON.html). Otherwise, don't pass the option.
+
+# Payment Tokens {#token}
+
+The **Protocol** supports card payment tokens. It allows you to save customer's card data in encrypted payment token and use it for recurring payments.
+
+By default, card payment token issue in the protocol is disabled. Contact your personal support manager to enable this option.
+
+To use payment tokens, you need to register two [site identifiers](#test_mode) and get two API tokens: first (with 3DS support, as a rule) for [payment token issue](#token_issue), second for [payments](#token_pay) by card payment token.
+
+## Payment Token Issue {#token_issue}
+
+To issue payment card token, use identifiers (`siteId`, API token) of the site registered for payment tokens issue.
+
+<aside class="warning">In case of the customer's 3DS authentication, the payment token is issued only after successful payment authorization by the issuer.</aside>
+
+### If you use [Payment Form](#invoicing)
+
+>Example of invoice request with payment token request
+
+~~~http
+PUT /partner/payin/v1/sites/23044/bills/893794793973 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+   "amount": {  
+     "currency": "RUB",  
+     "value": 10.00
+   },
+   "expirationDateTime": "2021-04-13T14:30:00+03:00",
+    "customer": { 
+      "account":"token32" 
+   }, 
+   "customFields": {}, 
+   "paymentFlags":["BIND_PAYMENT_TOKEN"] 
+} 
+~~~
+
+>Example of notification with payment token
+
+~~~json
+{
+  "payment":
+  {
+    "paymentId":"9790769",
+    "tokenData": {
+      "paymentToken":"66aebf5f-098e-4e36-922a-a4107b349a96",
+      "expiredDate":"2021-12-31T00:00:00+03:00"
+    },
+    "type":"PAYMENT",
+    "createdDateTime":"2020-01-23T15:07:35+03:00",
+    "status": {
+      "value":"SUCCESS",
+      "changedDateTime":"2020-01-23T15:07:36+03:00"
+    },
+    "amount": {
+      "value":2211.24,
+      "currency":"RUB"
+    },
+    "paymentMethod": {
+      "type":"CARD",
+      "maskedPan":"4111111111",
+      "cardHolder":"CARD HOLDER",
+      "cardExpireDate":"12/2021",
+      "type":"CARD"
+    },
+    "customer": {
+      "ip":"79.142.20.248",
+      "account":"token324",
+      "phone":"0"
+    },
+    "billId":"testing1222213",
+    "flags":["SALE"]
+  },
+  "type":"PAYMENT",
+  "version":"1"
+}
+~~~
+
+Add the following fields in the [invoice request](#invoicing):
+
+* `paymentFlags:["BIND_PAYMENT_TOKEN"]` - a command requesting the issue of payment token
+* `customer.account` - Customer unique ID in RSP's information system. **Do not use the same `account` value for your Customers. It may allow any Customer to pay from another's cards.**
+
+The payment token data is returned in the subsequent `PAYMENT` type notification after successful processing of the invoice payment:
+
+Field|Type|Description
+--------|-------|----------
+tokenData|Object| Card payment token data
+tokenData.paymentToken|String| Card payment token
+tokenData.expiredDate|String|Payment token expiration date. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh:mm`
+
+### If you use API
+
+>Example of payment request with payment token request
+
+~~~http
+PUT /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+   "amount": {  
+     "currency": "RUB",  
+     "value": 2211.24
+   },
+   "customer": {
+   	"account":"token324"
+   },
+   "flags":["BIND_PAYMENT_TOKEN"]
+}
+~~~
+
+
+> Example of response with payment token
+
+~~~json
+{
+    "paymentId": "test-022",
+    "billId": "autogenerated-c4479bb1-c916-4fba-8445-802592fa8d51",
+    "createdDateTime": "2020-03-26T12:22:12+03:00",
+    "amount": {
+        "currency": "RUB",
+        "value": "10.00"
+    },
+    "capturedAmount": {
+        "currency": "RUB",
+        "value": "0.00"
+    },
+    "refundedAmount": {
+        "currency": "RUB",
+        "value": "0.00"
+    },
+    "paymentMethod": {
+        "type": "CARD",
+        "maskedPan": "411111******1111",
+        "rrn": "123",
+        "authCode": "181218",
+        "type": "CARD"
+    },
+    "createdToken": {
+        "token": "27e61f2f-19e1-4fd7-a3c8-fd84508d21ab",
+        "name": "411111******1111"
+    },
+    "customer": {
+        "account": "1",
+        "phone": "79022222222"
+    },
+    "status": {
+        "value": "COMPLETED",
+        "changedDateTime": "2020-03-26T12:22:12+03:00"
+    },
+    "customFields": {
+        "customer_account": "1",
+        "customer_phone": "79022222222"
+    },
+    "flags": [
+        "TEST"
+    ]
+}
+~~~
+
+Add the following fields in the [payment request](#payments):
+
+* `flags:["BIND_PAYMENT_TOKEN"]` - a command requesting the issue of payment token
+* `customer.account` - Customer unique ID in RSP's information system. **Do not use the same `account` value for your Customers. It may allow any Customer to pay with someone else's cards.**
+
+The payment token data is returned:
+
+1. In the response to the payment request, if additional customer authentication is not required.
+2. In response to a request for [authentication completion](#payment_complete) after redirecting to the issuer's confirmation page, if additional customer authentication is required.
+
+Data structure:
+
+Response field|Type|Description
+--------|-------|----------
+createdToken|Object| Card payment token data
+createdToken.token|String| Card payment token
+createdToken.name|Object|Masked card PAN for which payment token is issued
+
+In both cases, payment token data are also provided in subsequent `PAYMENT` type notification (see above).
+
+## How To Pay By Token {#token_pay}
+
+>Token payment request example
+
+~~~json
+{
+  "amount": {
+    "currency": "RUB",
+    "value": 2000.00
+  },
+  "paymentMethod" : {
+    "type": "TOKEN",
+    "paymentToken" : "f42abb6c-4b6b-464e-adcc-fbdc197bd24d"
+  },
+  "customer": {
+        "account": "token324"
+  }
+}
+~~~
+
+You can pay by payment token using [API](#api) methods only.
+
+In [payment request](#payments):
+
+* Use identifiers (`siteId`, API token) of the site registered for payments by payment tokens
+* Put payment token parameters into `paymentMethod` object, instead of card data, and add customer identifier:
+
+Parameter|Type|Description
+--------|---|--------
+paymentMethod.type|String| Payment operation type. Use `TOKEN` string
+paymentMethod.paymentToken|String| Payment token string
+customer.account|String| Customer unique ID in RSP's information system for which payment token was issued. **Without this parameter, payment by payment token is not possible.**
+
+
+# QIWI Wallet Payment {#qiwi-wallet-payment}
+
+Making payment from the customer's QIWI Wallet is possible with [Payment Form](#payform) only.
+
+~~~http
+PUT /partner/payin/v1/sites/23044/bills/893794793973 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+   "amount": {  
+     "currency": "RUB",  
+     "value": 1.00
+   },
+   "expirationDateTime": "2020-10-16T14:30:00+03:00"
+}
+~~~
+
+Payments from QIWI Wallet are enabled for a merchant on QIWI side. To get access to payments from QIWI Wallet, you need to address your personal support manager.
+
+For accepting QIWI Wallet payments, use [Invoice creation](#invoice_put). Send the following PUT request to URL:
+
+`/payin/v1/sites/{siteId}/bills/{billId}`
+
+> Ответ сервера
+
+~~~json
+{
+    "siteId": "site-01",
+    "billId": "89379",
+    "amount": {
+        "currency": "RUB",
+        "value": "1.00"
+    },
+    "status": {
+        "value": "WAITING",
+        "changedDateTime": "2020-10-12T12:46:29.452+03:00"
+    },
+    "creationDateTime": "2020-10-12T12:46:29.452+03:00",
+    "expirationDateTime": "2020-10-16T14:30:00+03:00",
+    "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
+}
+~~~
+
+В ответе придет ссылка на платежную форму (см. поле `payUrl`). На платежной форме пользователю будет доступен способ оплаты с баланса КИВИ Кошелька.
+
+<aside class="notice">Если у вас подключена оплата с карт на платежной форме, пользователю будут доступны оба способа оплаты.</aside>
+
+Процесс оплаты выглядит следующим образом:
+
+1. Пользователь открывает форму.
+     
+    ![Wallet Invoice](/images/wallet_invoice.jpg)
+2. Пользователь авторизуется в КИВИ Кошельке.
+    
+    ![Wallet Auth](/images/wallet_auth.jpg)
+3. Пользователь оплачивает счет.
+    
+    ![Wallet Pay](/images/wallet_pay.jpg)
+
+<!-- После успешной оплаты вам придет уведомление [BILL](#bill_callback). -->
+
+> Уведомление REFUND
+
+~~~json
+{
+  "refund":
+  {
+    "refundId":"1",
+    "type":"REFUND",
+    "createdDateTime":"2020-10-12T13:08:13+03:00",
+    "status":{
+      "value":"SUCCESS",
+      "changedDateTime":"2020-10-12T13:08:14+03:00"
+    },
+    "amount":{
+      "value":1.00,
+      "currency":"RUB"
+    },
+    "paymentMethod":{
+      "type":"QIWI_WALLET",
+      "phone":"79022672222"
+    },
+    "customer":{
+      "phone":"0"
+    },
+    "gatewayData":{
+      "type":"QW",
+      "walletTxnId":"19990706195"
+    },
+    "billId":"89379",
+    "flags":[]
+  },
+  "type":"REFUND",
+  "version":"1"
+}
+~~~
+
+Возвраты выполняются с помощью метода API [Операция возврата](#refund-api). В случае успешного возврата вам придет уведомление [REFUND](#payment_callback).
+
+# Reimbursement {#reimburse}
+
+By default, we make reimbursement to merchants for processed operations once every two days when 10,000 rubles reached. If you need a custom schedule for reimbursements, contact your personal support manager.
+
+QIWI holds a commission for each confirmed operation. If operation is rejected before the confirmation, commission will not hold.  If partial refund is made before the confirmation, commission will be recalculated.
+
+
+# Test Data {#test_data}
+
+By default, for each new RSP `siteId` is created in the system in testing mode. You can ask your personal support manager to make testing mode of any of your  `siteId`, or add new `siteId` in testing mode.
+
+Use [production URL](#test_mode) for test requests.
+
+* To make tests for payment operations, you may use any card number complied with Luhn algorithm.
+* In testing mode, you may use only Russian ruble (643 code) for the currency.
+* CVV in testing mode may be arbitrary (3 digits).
+
+
+<h4>Test card numbers</h4>
+<h4 id="visa">
+</h4>
+<h4 id="mc">
+</h4>
+<button class="button-popup" id="generate">Get more cards</button>
+
+To make tests of various payment methods and responses, use different expiry dates:
+
+* If month of expiry date is `02`, then operation is treated as unsuccessful.
+* If month of expiry date is `03`, then operation will process successfully with 3 seconds timeout.
+* If month of expiry date is `04`, then operation will process unsuccessfully with 3 seconds timeout.
+* In all other cases, operation is treated as successful.
+
+<a name="test_limit"></a>
+Test environment has restrictions on the total amount and number of operations. By default, maximum amount of a test transaction is 10 rubles. Maximum number of test transactions is 100 per day (MSK time zone). Only test transactions within allowed amount are taken into account.
+
+To process 3DS operation, use `unknown name` as card holder name.
+
+3DS in testing mode may be properly tested on real card number only.
+
+# Method Reference {#references}
 
 <aside class="notice">Additional fields might be added to the requests and responses. Check <a href="https://github.com/QIWI-API/payments-docs/blob/master/payments_en.html.md">Github</a> for updates.</aside>
 
+## Invoice creation {#invoice_put}
 
-### Payment {#payments}
+<div id="bill_v1_bills__billId__put_checkout">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../eui_jsons/payin-checkout-payment-put.json', function( data ) {
+        window.requestUI(
+            data,
+            "checkout",
+            "payin/v1/sites/{siteId}/bills/{billId}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~json
+{
+   "amount": {  
+     "currency": "RUB",  
+     "value": 100.00
+   },
+   "comment": "Text comment",
+   "expirationDateTime": "2018-04-13T14:30:00+03:00",
+   "customer": {},
+   "customFields": {}  
+   }
+}
+~~~
+
+
+<!-- 200 -->
+~~~json
+{
+    "siteId": "23044",
+    "billId": "893794793973",
+    "amount": {
+      "value": 100.00,
+      "currency": "RUB"
+    },
+    "status": {
+      "value": "WAITING",
+      "changedDateTime": "2018-03-05T11:27:41+03:00"
+    },
+    "comment": "Text comment",
+    "creationDateTime": "2018-03-05T11:27:41",
+    "expirationDateTime": "2018-04-13T14:30:00+03:00",
+    "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
+}
+~~~
+
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "payin.resource.not.found",
+  "userMessage" : "Resource not found",
+  "description" : "Resource not found",
+  "traceId" : "c3564ba25e221fe3",
+  "dateTime" : "2018-11-13T16:30:52.464+03:00"
+}
+~~~
+
+## Invoice status {#invoice_get}
+
+<div id="payin_v1_sites__siteId__bills__billId__get_checkout">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../eui_jsons/payin-checkout-payment-get.json', function( data ) {
+        window.requestUI(
+            data,
+            "checkout",
+            "payin/v1/sites/{siteId}/bills/{billId}",
+            "get",
+            ['200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+
+<!-- 200 -->
+~~~json
+[
+    {
+        "paymentId": "12600406",
+        "billId": "d35cf63943e54f50badc75f49a5aac7c",
+        "createdDateTime": "2020-03-26T19:31:49+03:00",
+        "amount": {
+            "currency": "RUB",
+            "value": 10.00
+        },
+        "capturedAmount": {
+            "currency": "RUB",
+            "value": 10.00
+        },
+        "refundedAmount": {
+            "currency": "RUB",
+            "value": 0.00
+        },
+        "paymentMethod": {
+            "type": "CARD",
+            "maskedPan": "427638******1410",
+            "type": "CARD"
+        },
+        "createdToken": {
+            "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
+            "name": "427638******1410"
+        },
+        "customer": {
+            "account": "1",
+            "phone": "0",
+            "address": {}
+        },
+        "requirements": {
+            "threeDS": {
+                "pareq": "eJxVUWFvgjAQX7gM3fq+hNqO0oI5prexilN1UDEMwl6FcHZZ19m7v63DtRY=",
+                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
+            }
+        },
+        "status": {
+            "value": "DECLINE",
+            "changedDateTime": "2020-03-26T19:32:09+03:00",
+            "reason": "ACQUIRING_NOT_PERMITTED"
+        },
+        "customFields": {
+            "customer_account": "1",
+            "customer_phone": "0"
+        }
+    },
+    {
+        "paymentId": "12600433",
+        "billId": "d35cf63943e54f50badc75f49a5aac7c",
+        "createdDateTime": "2020-03-26T19:32:22+03:00",
+        "amount": {
+            "currency": "RUB",
+            "value": 10.00
+        },
+        "capturedAmount": {
+            "currency": "RUB",
+            "value": 10.00
+        },
+        "refundedAmount": {
+            "currency": "RUB",
+            "value": 0.00
+        },
+        "paymentMethod": {
+            "type": "CARD",
+            "maskedPan": "427638******1410",
+            "type": "CARD"
+        },
+        "createdToken": {
+            "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
+            "name": "427638******1410"
+        },
+        "customer": {
+            "account": "1",
+            "phone": "0",
+            "address": {}
+        },
+        "requirements": {
+            "threeDS": {
+                "pareq": "eJxVUWFvgjAQ52lBUtjD3M9++qFgCxl0i/OtJv2WT/tv8LXqG0vw==",
+                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
+            }
+        },
+        "status": {
+            "value": "DECLINE",
+            "changedDateTime": "2020-03-26T19:32:54+03:00",
+            "reason": "ACQUIRING_NOT_PERMITTED"
+        },
+        "customFields": {
+            "customer_account": "1",
+            "customer_phone": "0"
+        }
+    },
+    {
+        "paymentId": "12601084",
+        "billId": "d35cf63943e54f50badc75f49a5aac7c",
+        "createdDateTime": "2020-03-26T19:46:21+03:00",
+        "amount": {
+            "currency": "RUB",
+            "value": 10.00
+        },
+        "capturedAmount": {
+            "currency": "RUB",
+            "value": 10.00
+        },
+        "refundedAmount": {
+            "currency": "RUB",
+            "value": 0.00
+        },
+        "paymentMethod": {
+            "type": "CARD",
+            "maskedPan": "427638******1410",
+            "rrn": "008692274763",
+            "authCode": "242847",
+            "type": "CARD"
+        },
+        "createdToken": {
+            "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
+            "name": "427638******1410"
+        },
+        "customer": {
+            "account": "1",
+            "phone": "0",
+            "address": {}
+        },
+        "requirements": {
+            "threeDS": {
+                "pareq": "eJxVUdtuwjAM7b6t/1fcku04w==",
+                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
+            }
+        },
+        "status": {
+            "value": "COMPLETED",
+            "changedDateTime": "2020-03-26T19:46:43+03:00"
+        },
+        "customFields": {
+            "customer_account": "1",
+            "customer_phone": "0"
+        },
+        "flags": [
+            "AFT"
+        ]
+    }
+]
+~~~
+
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+
+## Payment {#payments}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__put_api">
   <script>
@@ -1339,7 +1936,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-### Payment status {#payment_status}
+## Payment status {#payment_status}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__get_api">
   <script>
@@ -1418,7 +2015,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-### Completing authentication {#payment_complete}
+## Completing authentication {#payment_complete}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__complete_post_api">
   <script>
@@ -1441,9 +2038,6 @@ Host: api.qiwi.com
 {
   "threeDS": {
     "pares": "eJzVWFevo9iyfu9fMZrzaM0QjWHk3tIiGptgooE3cgabYMKvv3jvTurTc3XOfbkaJMuL...."
-  },
-  "cvv2": {
-    "cvv2": "string"
   }
 }
 ~~~
@@ -1519,9 +2113,6 @@ user@server:~$ curl -X POST "https://api.qiwi.com/partner/pay/v1/sites/112/payme
   -d '{
   "threeDS": {
     "pares": "eJxVUmtvgjAUuG79oClYe51uDcsi2B...."
-  },
-  "cvv2": {
-    "cvv2": "string"
   }
 }'
 ~~~ -->
@@ -1536,15 +2127,12 @@ Host: edge.qiwi.com
 {
   "threeDS": {
     "pares": "eJzVWFevo9iyfu9fMZrzaM0QjWHk3tIiGptgooE3cgabYMKvv3jvTurTc3XOfbkaJMuL...."
-  },
-  "cvv2": {
-    "cvv2": "string"
   }
 }
 ~~~
 -->
 
-### Payment confirmation {#capture}
+## Payment confirmation {#capture}
 
 
 <!--
@@ -1631,7 +2219,7 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
 ~~~
 
 
-### Capture status {#capture_status}
+## Capture status {#capture_status}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__captures__captureId__get_api">
   <script>
@@ -1689,139 +2277,8 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
 }
 ~~~
 
-<!--
-### Статус подтверждений
 
-<div id="v1_sites__siteUid__payments__paymentId__captures_get">
-  <script>
-    $(document).ready(function(){
-        $.getJSON('../../eui_jsons/payin-captures-get.json', function( data ) {
-          window.requestUI(
-              data,
-              "v1/sites/{siteUid}/payments/{paymentId}/captures",
-              "get",
-              [200, 400, 401, 403, 404, 500, 501, 503]
-              )
-          })
-    });
-  </script>
-</div>
--->
-
-<!-- 200 -->
-<!--
-~~~json
-{
-  "captureId": "bxwd8096",
-  "createdDatetime": "2018-11-20T16:29:58.96+03:00",
-  "amount": {
-    "currency": "RUB",
-    "value": "6.77"
-  },
-  "status": {
-    "value": "COMPLETED",
-    "changedDateTime": "2018-11-20T16:29:58.963+03:00"
-  }
-}
-~~~
--->
-<!-- 400 -->
-<!--
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83",
-  "cause" : {
-    "amount" : [ "Invalid format. Amount value must be greater then zero" ]
-  }
-}
-~~~
--->
-<!-- 401 -->
-<!--
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "payin.resource.not.found",
-  "userMessage" : "Resource not found",
-  "description" : "Resource not found",
-  "traceId" : "c3564ba25e221fe3",
-  "dateTime" : "2018-11-13T16:30:52.464+03:00"
-}
-~~~
--->
-<!-- 403 -->
-<!--
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "payin.resource.not.found",
-  "userMessage" : "Resource not found",
-  "description" : "Resource not found",
-  "traceId" : "c3564ba25e221fe3",
-  "dateTime" : "2018-11-13T16:30:52.464+03:00"
-}
-~~~
--->
-<!-- 404 -->
-<!--
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "payin.resource.not.found",
-  "userMessage" : "Resource not found",
-  "description" : "Resource not found",
-  "traceId" : "c3564ba25e221fe3",
-  "dateTime" : "2018-11-13T16:30:52.464+03:00"
-}
-~~~
--->
-<!-- 500 -->
-<!--
-~~~json
-{
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
-
-}
-~~~
--->
-<!-- 501 -->
-<!--
-~~~json
-{
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
- }
-~~~
--->
-<!-- 503 -->
-<!--
-~~~json
-{
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
- }
-~~~
--->
-
-### Refund {#refund}
+## Refund {#refund}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__refunds__refundId__put_api">
   <script>
@@ -1895,7 +2352,7 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
 }
 ~~~
 
-### Refund status {#refund_status}
+## Refund status {#refund_status}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__refunds__refundId__get_api">
   <script>
@@ -1956,7 +2413,7 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
 }
 ~~~
 
-### All refunds status {#refunds_status}
+## All refunds status {#refunds_status}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__refunds_get_api">
   <script>
@@ -2019,7 +2476,7 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
 }
 ~~~
 
-### Reasons for rejection {#reasons}
+## Reasons for rejection {#reasons}
 
 Code of the reason for the payment rejection is returned in `status.reason` field of request responses and in `status.reasonCode` field of notifications.
 
@@ -2048,688 +2505,7 @@ BILL_ALREADY_PAID| Bill already paid
 PAYIN_PROCESSING_ERROR| Payment processing error
 
 
-
-<!--# Service Information -->
-
-# Server Notifications {#callback}
-
-The Protocol supports the following notification types for API events: `PAYMENT`, `CAPTURE`, `REFUND`, and `BILL`. 
-
-`PAYMENT`, `CAPTURE`, `REFUND` notifications are sending on events of payment operation, payment confirmation, and refund for payment, accordingly. `BILL` notifications are sending when you use [Checkout](#invoicing), as soon as the invoice is paid.
-
-<aside class="warning">
-There is no specific sequence of sending different types' notifications for the operation. The sequence may vary for different operations.
-</aside>
-
-A notification is an incoming HTTP POST message. The JSON-formatted notification message contains event data in UTF-8 codepage.
-
-<aside class="success">
-Event notification sends exclusively by HTTPS protocol to port 443. The server certificate must be issued by trusted certification center like Comodo, Verisign, Thawte etc.
-</aside>
-
-Specify the notification server address in your Personal Profile on <a href="https://kassa.qiwi.com/">kassa.qiwi.com</a> site in <b>Settings</b> section. You may also specify the address in optional `callbackUrl` parameter of [API](#api_requests) requests.
-
-The notification contains a [request signature](#notifications_auth) which RSP should verify on its side to secure from notification fraud.
-
-<aside class="warning">
-The responsibility for any financial losses due to omitted verification of the <a href="#notifications_auth">signature</a> parameter lies solely on RSP.
-</aside>
-
-To make sure the notification is from QIWI, we recommend you to accept messages only from the following IP addresses belonging to QIWI:
-
-* 79.142.16.0/20
-* 195.189.100.0/22
-* 91.232.230.0/23
-* 91.213.51.0/24
-
-To treat notification as successfully delivered, we need your notification server to respond with HTTP code `200 OK`. 
-
-If your server is unavailable or responds differently, QIWI system resends the notification message several times with growing interval during the day until it receives `200 OK` HTTP code server response.
-
-<aside class="notice">
-If by any reason RSP server accepts the notification message but responds incorrectly, then on receiving notification with the same data next time it should not be treated as a new event.
-</aside>
-
-## Notification Authorization {#notifications_auth}
-
-HTTP headers of notification messages contain the UTF-8 encoded generated signature which you need to validate.
-
-Notification type | HTTP Header with signature
-----|-----
-`PAYMENT`, `CAPTURE`, `REFUND` | `Signature`
-`BILL` | `X-Api-Signature-SHA256`
-
-To validate the signature, use the following algorithm:
-
-1. Join values of some parameters from the notification with the pipe "\|" character. For example:
-
-   `parameters = {amount.currency}|{amount.value}|{billId}|{siteId}|{status.value}`
-
-   where `{*}` – notification parameter value. All values are treated as strings. Make sure strings are UTF-8 encoded. **Parameters to join are specified in the notification description**.
-
-
-2. Calculate hash HMAC value with SHA256 algorithm (signature string and secret key are UTF8-encoded):
-
-   `hash = HMAС(SHA256, token, parameters)`
-   where:
-
-   * `token` – HMAC function key which you can obtain in your [Account](https://kassa.qiwi.com/service/core/merchants?);
-   * `parameters` – string from step 1;
-
-3. Compare the notification signature with the result of step 2. If there is no difference, the validation is successful.
-
-
-## PAYMENT, CAPTURE, REFUND Notification Format
-
-Notification type is specified in `type` parameter.
-
-<ul class="nestedList header">
-    <li><h3>HEADERS</h3>
-        <ul>
-             <li>Signature: XXX</li>
-             <li>Accept: application/json</li>
-             <li>Content-type: application/json</li>
-        </ul>
-    </li>
-</ul>
-
-
->PAYMENT/REFUND/CAPTURE Notification example
-
-~~~http
-POST /qiwi-notify.php HTTP/1.1
-Accept: application/json
-Content-type: application/json
-Signature: J4WNfNZd***V5mv2w=
-Host: server.ru
-
-{
-   "payment/refund/capture":{
-      "paymentId/refundId/captureId":"4504751",
-      "tokenData":{
-         "paymentToken":"4cc975be-483f-8d29-2b7de3e60c2f",
-         "expiredDate":"2021-12-31T00:00:00+03:00"
-      },
-      "type":"PAYMENT",
-      "createdDateTime":"2019-10-08T11:31:37+03:00",
-      "status":{
-         "value":"SUCCESS",
-         "changedDateTime":"2019-10-08T11:31:37+03:00"
-      },
-      "amount":{
-         "value":2211.24,
-         "currency":"RUB"
-      },
-      "paymentMethod":{
-         "type":"CARD",
-         "maskedPan":"220024/*/*/*/*/*/*5036",
-         "rrn":null,
-         "authCode":null,
-         "type":"CARD"
-      },
-      "paymentCardInfo": {
-         "issuingCountry": "810",
-         "issuingBank": "QiwiBank",
-         "paymentSystem": "VISA",
-         "fundingSource": "CREDIT",
-         "paymentSystemProduct": "P|Visa Gold"
-      },
-      "customer":{
-         "ip":"79.142.20.248",
-         "account":"token32",
-         "phone":"0"
-      },
-      "billId":"testing122",
-      "customFields":{},
-      "flags":[
-         "SALE"
-      ]
-   },
-   "type":"PAYMENT",
-   "version":"1"
-}
-~~~
-
-
-Notification field | Description | Type
---------|--------|---
-paymentId/refundId/captureId|Payment/refund/capture operation unique identifier in RSP's system|String(200)
-type| Operation type|String(200)
-createdDateTime| System date of the operation creation | URL-encoded string<br>`YYYY-MM-DDThh:mm:ss`
-amount|Object| Operation amount data
-amount.value | Operation amount rounded down to two decimals | Number(6.2)
-amount.currency | Operation currency (Code: Alpha-3 ISO 4217) | String(3)
-billId| Corresponding invoice ID| String(200)
-status | Operation status data | Object
-status.value |Invoice status value | String
-status.changedDatetime|Date of operation status update| URL encoded string<br>`YYYY-MM-DDThh:mm:ssZ`
-status.reasonCode| Rejection reason code| String(200)
-status.reasonMessage| Rejection reason description| String(200)
-status.errorCode| Error code| Number
-paymentMethod| Payment method data| Object
-paymentMethod.type| Payment method type| String
-paymentMethod.maskedPan| Masked card PAN| String
-paymentMethod.rrn| Payment RRN| Number
-paymentMethod.authCode| Payment Auth code| Number
-paymentCardInfo | Card information. **Only in PAYMENT notifications** | Object
-paymentCardInfo.issuingCountry | Issuer country code | String(3)
-paymentCardInfo.issuingBank | Issuer name | String
-paymentCardInfo.paymentSystem | Card's payment system | String
-paymentCardInfo.fundingSource | Card's type (debit/credit/..) | String
-paymentCardInfo.paymentSystemProduct | Card's category | String
-customer | Customer data | Object
-customer.phone |Phone number to which invoice issued (if specified) |String
-customer.email| E-mail to which invoice issued (if specified)|String
-customer.account| Customer ID in RSP system (if specified)|String
-customer.ip| IP address |String
-customer.country| Country from address string |String
-customFields | Fields with additional information | Object
-customFields.cf1 | Extra field with some information to operation data | String
-customFields.cf2 | Extra field with some information to operation data | String
-customFields.cf3 | Extra field with some information to operation data | String
-customFields.cf4 | Extra field with some information to operation data | String
-customFields.cf5 | Extra field with some information to operation data | String
-tokenData | Issued payment token data | Object
-tokenData.paymentToken | Card payment token | String
-tokenData.expiredDate | Payment token expiration date. Date format: `YYYY-MM-DDThh:mm:ss±hh:mm` | String
-
-flags| Additional API commands| Array of Strings. Possible values - `SALE` , `REVERSAL`
-version | Callback version | String
-
-
-By default, signature is [verified](#notifications_auth) for those notification fields:
-
-
-PAYMENT:
-`payment.paymentId|payment.createdDateTime|payment.amount.value`
-
-REFUND:
-`refund.refundId|refund.createdDateTime|refund.amount.value`
-
-CAPTURE:
-`capture.captureId|capture.createdDateTime|capture.amount.value`
-
-
-
-
-Callback service sorts unsuccessful notifications on the following queues:
-
-* Two attempts on waiting 5 seconds
-
-* Two attempts on waiting 1 minutes
-
-* Two attempts on waiting 5 minutes
-
-Time of secondary sending notification may slightly shift upward.
-
-
-
-<!--
---===< NOTIFICATION_STRUCTURE >===--
-{
-  :
-  {
-    "paymentId/refundId/captureId":"9999999",
-    "createdDateTime":"2019-06-03T08:19:16+03:00",
-    "status":{
-      "value":"SUCCESS/WAITING/DECLINE",
-      "changedDateTime":"2019-06-03T08:19:16+03:00",
-      "reasonCode":"payin.gateway.acquiring.declined-fraud",
-      "reasonMessage":"Declined by fraud",
-      "errorCode":"1234"
-    },
-    "amount":{
-      "value":111.11,
-      "currency":"RUB"},
-    "paymentMethod": <PAYMENT_METHOD>,
-    "customer":{
-      "ip":"xxx.xxx.xxx.xxx",
-      "email":"my_mail@mail.com",
-      "account":"dasd32d2d2",
-      "phone":"79991112233",
-      "country":"Russian Federation",
-      "city":"some city",
-      "region":"some region"
-    },
-    "gatewayData": <GATEWAY_DATA>,
-    "billId":"f1e1a1f11ae111a11a111111e1111111",
-    "flags":["SALE/REVERSAL"]
-  },
-  "type":"PAYMENT/REFUND/CAPTURE",
-  "version":"1"
-}
-
-
-
-
---===< PAYMENT_METHOD >===--
-"paymentMethod":{
-  "type":"CARD",
-  "maskedPan":"411111\*\*\*\*\*\*0001"
-}
-"paymentMethod":{
-  "type":"QIWI_WALLET",
-  "phone":"79991112233"
-}
-"paymentMethod":{
-  "type":"SAVED_CARD",
-  "token":"12341234123412341234"
-}
-"paymentMethod":{
-  "type":"MOBILE_COMMERCE",
-  "phone":"79991112233"
-}
--->
-
-
-## BILL Notifications Format
-
-<ul class="nestedList header">
-    <li><h3>HEADERS</h3>
-        <ul>
-             <li>X-Api-Signature-SHA256: XXX</li>
-             <li>Accept: application/json</li>
-             <li>Content-type: application/json</li>
-        </ul>
-    </li>
-</ul>
-
->BILL Notification example
-
-~~~http
-POST /qiwi-notify.php HTTP/1.1
-Accept: application/json
-Content-type: application/json
-X-Api-Signature-SHA256: J4WNfNZd***V5mv2w=
-Host: server.ru
-
-{
-   "bill":{
-      "siteId":"Obuc-00",
-      "billId":"testing122",
-      "amount":{
-         "value":"2211.24",
-         "currency":"RUB"
-      },
-      "status":{
-         "value":"PAID",
-         "changedDateTime":"2019-10-08T11:31:39+03"
-      },
-      "customer":{
-         "account":"account42"
-      },
-      "customFields":{},
-      "comment":"Spasibo",
-      "creationDateTime":"2019-10-08T11:30:16+03",
-      "expirationDateTime":"2019-10-13T14:30:00+03"
-   },
-   "version":"1"
-}
-~~~
-
-
-Notification field|Description|Type
---------|--------|---
-billId|Invoice operation unique identifier in RSP's system|String(200)
-siteId| RSP' site identifier in QIWI Kassa|Number
-amount|Object| Operation amount data
-amount.value | Operation amount rounded down to two decimals | Number(6.2)
-amount.currency | Operation currency (Code: Alpha-3 ISO 4217) | String(3)
-status | Invoice status data | Object
-status.value |Invoice status value | String
-status.changedDatetime|Date of invoice status update| URL encoded string<br>`YYYY-MM-DDThh:mm:ssZ`
-customer | Customer data | Object
-customer.phone |Phone number to which invoice issued (if specified) |String
-customer.email| E-mail to which invoice issued (if specified)|String
-customer.account| Customer ID in RSP system (if specified)|String
-creationDatetime | Invoice creation date | URL encoded string<br>`YYYY-MM-DDThh:mm:ssZ`
-expirationDateTime | Invoice payment due date | URL encoded string<br>`YYYY-MM-DDThh:mm:ssZ`
-comment | Invoice comment | String(255)
-customFields | Additional invoice data (if specified)| Object
-version | Callback version | String
-
-By default, signature is [verified](#notifications_auth) for those notification fields:
-
-`amount.currency|amount.value|billId|siteId|status.value`
-
-<!--
-### Заголовки
-
-*  `Content-type: application/json`
-
-Уведомление доставляется на переданный в запросе параметр `callbackUrl` в виде POST запроса с параметрами, указанными ниже.
-
-
-Параметр|Тип данных| Участвует в sign | Описание
---------|----------|------------------|---------
-sign | string(64) | - | [Контрольная сумма](#sign) переданных параметров. _Контрольная сумма передается в верхнем регистре._
-
-
-
-
-## Доступные валюты и страны
-
--->
-
-# Electronic Receipt Transfer (for Fed.Rule 54) {#cheque}
-
-
-The payment receipt is sent in `cheque` optional JSON object of [invoice](#invoice_put) and [payment](#payments) operation requests.
-
-
-<aside class="notice">
-To enable fiscal data service, provide your organization's tax identification number (TIN) used for registration in online cash service.
-For ATOL service, provide the following data also:<ul>
-<li>RSP's email for receipt</li>
-<li>full title of the organization</li>
-<li>Fiscal data operator details (name, TIN, URL)</li>
-<li>login / password for token generation</li>
-<li>commodity group code</li></ul>
-</aside>
-
-<!--<aside class="notice">
-Пока аккаунт находится в тестовом режиме, чек так также будет проходить по тестовому контуру.
-</aside>
--->
-
-
-## Receipt Description
-
-~~~ json
-{
- ...
- "cheque" : {
-  "sellerId" : 3123011520,
-	"customerContact" : "Test customer contact",
-  "chequeType" : "COLLECT",
-	"taxSystem" : "OSN",
-	"positions" : [
-    {
-      "quantity" : 1,
-      "price" : {
-        "value" : 7.82,
-        "currency" : "RUB"
-      },
-      "tax" : "NDS_0",
-      "paymentSubject" : "PAYMENT",
-      "paymentMethod" : "FULL_PAYMENT",
-      "description" : "Test description"
-    }
-	]
- }
-}
-~~~
-
-Parameter|Req.|Type|Description
---------|-------|----------|--------
-sellerId|Y|Number|Organization's TIN
-chequeType|Y|Number|Cash operation (1054 fiscal tag):<br> `COLLECT` – Incoming cash <br> `COLLECT_RETURN` - Cash return <br> `CONSUME` - Outcoming cash <br> `CONSUME_RETURN` - Outcoming cash return
-customerContact|Y|String(64)|Customer's phone or e-mail  (fiscal tag 1008)
-taxSystem|Y|Number|Tax system (fiscal tag 1055):<br> `OSN` - General, "ОСН" <br>`USN` – Simplified income, "УСН доход" <br>`USN_MINUS_CONSUM`  – Simplified income minus expense, "УСН доход - расход" <br>`ENVD` – United tax to conditional income, "ЕНВД" <br>`ESN` - United agriculture tax, "ЕСН" <br>`PATENT` – Patent tax system, "Патент"
-positions|Y|array|Commodities list
---------|-------|----------|--------
-quantity|Y|Number|Quantity (fiscal tag 1023)
-price|Y|Number|One item price, with discounts and extra charges (fiscal tag 1079)
-tax|Y|Number|VAT rate (fiscal tag 1199):<br>`NDS_CALC_18_118` - VAT rate 18% (18/118) <br>`NDS_CALC_10_110` – VAT rate 10% (10/110) <br>`NDS_0` – VAT rate 0% <br>`NO_NDS` – VAT not applicable<br>`NDS_CALC_20_120` – VAT rate 20% (20/120) (20/120)
-description|Y|string(128)|Name
-paymentMethod|Y|Number|Cash type (fiscal tag 1214):<br>`ADVANCED_FULL_PAYMENT` – payment in advance 100%. Full payment in advance before commodity provision<br>`PARTIAL_ADVANCE_PAYMENT`  – payment in advance. Partial payment before commodity provision<br>`ADVANCE` – prepayment<br>`FULL_PAYMENT` – full payment, taking into account prepayment, with commodity provision<br>`PARTIAL_PAYMENT` – partial payment and credit payment. Partial payment for the commodity at the moment of delivery, with future credit payment.<br>`CREDIT`  – credit payment. Commodity is delivered with no payment at the moment and future credit payment is expected.<br>`CREDIT_PAYMENT` – payment for the credit. Commodity payment after its delivery with future credit payment.
-paymentSubject|Y|Number|Payment subject (fiscal tag 1212):<br>`COMMODITY` – commodity except excise commodities (name and other properties describing the commodity).<br>`EXCISE_COMMODITY` – excise commodity (name and other properties describing the commodity).<br>`WORK` – work (name and other properties describing the work). .<br>`SERVICE` – service (name and other properties describing the service).<br>`GAMBLING_RATE` – gambling rate (in any gambling activities).<br>`GAMBLING_PRIZE` – gambling prize payment (in any gambling activities)в.<br>`LOTTERY_TICKET` – lottery ticket payment (in accepting payments for lottery tickets, including electronic ones, lottery stakes in any lottery activities).<br>`LOTTERY_PRIZE` – lottery prize payment (n any lottery activities). <br>`GRANTING_RESULTS_OF_INTELLECTUAL_ACTIVITY` – provision of rights to use intellectual activity results.<br>`PAYMENT` – payment (advance, pre-payment, deposit, partial payment, credit, fine, bonus, reward, or any similar payment subject).<br>`AGENCY_FEE` – agent's commission (in any fee to payment agent, bank payment agent, commissioner or other agent service).<br>`COMPAUND_PAYMENT_SUBJECT` – multiple payment subject (in any payment constituent subject to any of the above).<br>`OTHER_PAYMENT_SUBJECT` – other payment subject not related to any of the above.
-
-
-# Payment Tokens {#token}
-
-The **Protocol** supports card payment tokens. It allows you to save customer's card data in encrypted payment token and use it for recurring payments.
-
-By default, card payment token issue in the protocol is disabled. Contact your personal manager to enable this option.
-
-To use payment tokens, you need to register two [site identifiers](#test_mode) and get two API tokens: first (with 3DS support, as a rule) for [payment token issue](#token_issue), second for [payments](#token_pay) by card payment token.
-
-<aside class="warning">The token is issued only after the customer's 3DS authentication and successful payment authorization by the issuer, i.e. in response to the request to <a href="#payment_complete">complete customer authentication</a></aside>
-
-## Payment Token Issue {#token_issue}
-
-To issue payment card token, use identifiers (`siteId`, API token) of the site registered for payment tokens issue.
-
-### If you use [Payment Form](#invoicing)
-
->Example of invoice request with payment token request
-
-~~~http
-PUT /partner/bill/v1/bills/893794793973 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
-{
-   "amount": {  
-     "currency": "RUB",  
-     "value": 10.00
-   },
-   "expirationDateTime": "2021-04-13T14:30:00+03:00",
-    "customer": { 
-      "account":"token32" 
-   }, 
-   "customFields": {}, 
-   "paymentFlags":["BIND_PAYMENT_TOKEN"] 
-} 
-~~~
-
->Example of notification with payment token
-
-~~~json
-{
-  "payment":
-  {
-    "paymentId":"9790769",
-    "tokenData": {
-      "paymentToken":"66aebf5f-098e-4e36-922a-a4107b349a96",
-      "expiredDate":"2021-12-31T00:00:00+03:00"
-    },
-    "type":"PAYMENT",
-    "createdDateTime":"2020-01-23T15:07:35+03:00",
-    "status": {
-      "value":"SUCCESS",
-      "changedDateTime":"2020-01-23T15:07:36+03:00"
-    },
-    "amount": {
-      "value":2211.24,
-      "currency":"RUB"
-    },
-    "paymentMethod": {
-      "type":"CARD",
-      "maskedPan":"4111111111",
-      "cardHolder":"CARD HOLDER",
-      "cardExpireDate":"12/2021",
-      "type":"CARD"
-    },
-    "customer": {
-      "ip":"79.142.20.248",
-      "account":"token324",
-      "phone":"0"
-    },
-    "billId":"testing1222213",
-    "flags":["SALE"]
-  },
-  "type":"PAYMENT",
-  "version":"1"
-}
-~~~
-
-Add the following fields in the [invoice request](#invoicing):
-
-* `paymentFlags:["BIND_PAYMENT_TOKEN"]` - a command requesting the issue of payment token
-* `customer.account` - Customer unique ID in RSP's information system. **Do not use the same `account` value for your Customers. It may allow any Customer to pay from another's cards.**
-
-You would receive the payment token data in subsequent `PAYMENT` type notification after successful invoice payment:
-
-Notification field|Type|Description
---------|-------|----------
-tokenData|Object| Card payment token data
-tokenData.paymentToken|String| Card payment token
-tokenData.expiredDate|String|Payment token expiration date. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh:mm`
-
-### If you use API
-
->Example of payment request with payment token request
-
-~~~http
-PUT /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
-{
-   "amount": {  
-     "currency": "RUB",  
-     "value": 2211.24
-   },
-   "customer": {
-   	"account":"token324"
-   },
-   "flags":["BIND_PAYMENT_TOKEN"]
-}
-~~~
-
-
-> Example of response with payment token
-
-~~~json
-{
-    "paymentId": "test-022",
-    "billId": "autogenerated-c4479bb1-c916-4fba-8445-802592fa8d51",
-    "createdDateTime": "2020-03-26T12:22:12+03:00",
-    "amount": {
-        "currency": "RUB",
-        "value": "10.00"
-    },
-    "capturedAmount": {
-        "currency": "RUB",
-        "value": "0.00"
-    },
-    "refundedAmount": {
-        "currency": "RUB",
-        "value": "0.00"
-    },
-    "paymentMethod": {
-        "type": "CARD",
-        "maskedPan": "411111******1111",
-        "rrn": "123",
-        "authCode": "181218",
-        "type": "CARD"
-    },
-    "createdToken": {
-        "token": "27e61f2f-19e1-4fd7-a3c8-fd84508d21ab",
-        "name": "411111******1111"
-    },
-    "customer": {
-        "account": "1",
-        "phone": "79022222222"
-    },
-    "status": {
-        "value": "COMPLETED",
-        "changedDateTime": "2020-03-26T12:22:12+03:00"
-    },
-    "customFields": {
-        "customer_account": "1",
-        "customer_phone": "79022222222"
-    },
-    "flags": [
-        "TEST"
-    ]
-}
-~~~
-
-Add the following fields in the [payment request](#payments):
-
-* `flags:["BIND_PAYMENT_TOKEN"]` - a command requesting the issue of payment token
-* `customer.account` - Customer unique ID in RSP's information system. **Do not use the same `account` value for your Customers. It may allow any Customer to pay with someone else's cards.**
-
-You would receive the payment token data in the response:
-
-Notification field|Type|Description
---------|-------|----------
-createdToken|Object| Card payment token data
-createdToken.token|String| Card payment token
-createdToken.name|Object|Masked card PAN for which payment token is issued
-
-Payment token data will be also provided in  subsequent `PAYMENT` type notification after successful payment (see above).
-
-## How To Pay By Token {#token_pay}
-
->Token payment request example
-
-~~~json
-{
-  "amount": {
-    "currency": "RUB",
-    "value": 2000.00
-  },
-  "paymentMethod" : {
-    "type": "TOKEN",
-    "paymentToken" : "f42abb6c-4b6b-464e-adcc-fbdc197bd24d"
-  },
-  "customer": {
-        "account": "token324"
-  }
-}
-~~~
-
-You can pay by payment token using [API](#api) methods only.
-
-In [payment request](#payments):
-
-* Use identifiers (`siteId`, API token) of the site registered for payments by payment tokens
-* Put payment token parameters into `paymentMethod` object, instead of card data, and add customer identifier:
-
-Parameter|Type|Description
---------|---|--------
-paymentMethod.type|String| Payment operation type. Use `TOKEN` string
-paymentMethod.paymentToken|String| Payment token string
-customer.account|String| Customer unique ID in RSP's information system for which payment token was issued. **Without this parameter, payment by payment token is not possible.**
-
-
-# Payouts {#payouts}
-
-By default, we make payouts for processed operations once every two days when 10,000 rubles reached. If you need a custom schedule for payouts, contact your personal manager.
-
-QIWI holds a commission for each confirmed operation. If operation is rejected before the confirmation, commission will not hold.  If partial refund is made before the confirmation, commission will be recalculated.
-
-
-# Test Data {#test_data}
-
-By default, for each new RSP `siteId` is created in the system in testing mode. You can ask your manager to make testing mode of any of your  `siteId`, or add new `siteId` in testing mode.
-
-Use [production URL](#test_mode) for test requests.
-
-* To make tests for payment operations, you may use any card number complied with Luhn algorithm.
-* In testing mode, you may use only Russian ruble (643 code) for the currency.
-* CVV in testing mode may be arbitrary (3 digits).
-
-
-<h4>Test card numbers</h4>
-<h4 id="visa">
-</h4>
-<h4 id="mc">
-</h4>
-<button class="button-popup" id="generate">Get more cards</button>
-
-To make tests of various payment methods and responses, use different expiry dates:
-
-* If month of expiry date is `02`, then operation is treated as unsuccessful.
-* If month of expiry date is `03`, then operation will process successfully with 3 seconds timeout.
-* If month of expiry date is `04`, then operation will process unsuccessfully with 3 seconds timeout.
-* In all other cases, operation is treated as successful.
-
-<a name="test_limit"></a>
-Test environment has restrictions on the total amount and number of operations. By default, maximum amount of a test transaction is 10 rubles. Maximum number of test transactions is 100 per day (MSK time zone). Only test transactions within allowed amount are taken into account.
-
-To process 3DS operation, use `unknown name` as card holder name.
-
-3DS in testing mode may be properly tested on real card number only.
-
-# Error Codes {#errors}
+## Error Codes {#errors}
 
 The Online Payment Protocol API uses the following error codes:
 
