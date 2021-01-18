@@ -33,7 +33,7 @@ search: true
 
 # Общая информация {#intro}
 
-###### Последнее обновление: 2020-06-19 | [Редактировать на GitHub](https://github.com/QIWI-API/payments-docs/blob/master/payments_ru.html.md)
+###### Последнее обновление: 2021-01-18 | [Редактировать на GitHub](https://github.com/QIWI-API/payments-docs/blob/master/payments_ru.html.md)
 
 
 **Протокол онлайн платежей** позволяет быстро и безопасно принимать платежи с банковских карт.
@@ -160,9 +160,7 @@ Content-Type: application/json
         "value": "WAITING",
         "changedDateTime": "2019-08-28T16:26:36.835+03:00"
     },
-    "customFields": {
-        "AUTH": "true"
-    },
+    "customFields": {},
     "comment": "Spasibo",
     "creationDateTime": "2019-08-28T16:26:36.835+03:00",
     "expirationDateTime": "2019-09-13T14:30:00+03:00",
@@ -189,6 +187,8 @@ amount.currency| String |  Идентификатор валюты счета (A
 expirationDateTime|URL-закодированная строка<br>`YYYY-MM-DDThh:mm:ss±hh`| Дата, до которой счет будет доступен для оплаты. Если счет не будет оплачен до этой даты, ему присваивается финальный статус `EXPIRED` и последующая оплата станет невозможна
 
 В поле `payUrl` ответа вы получите ссылку на платежную форму. Перенаправьте покупателя по этой ссылке.
+
+[Подробнее о параметрах запроса](#invoice_put)
 
 **1а. Получите id транзакции для подтверждения**
 
@@ -960,7 +960,7 @@ customFields.cf5 | Поле с произвольной информацией, 
 tokenData| Объект, содержащий данные о выпущенном [платежном токене](#token_issue)|Object
 tokenData.paymentToken| Строка платежного токена для использования при оплате | String
 tokenData.expiredDate | Дата окончания срока действия платежного токена. Формат даты:<br>`YYYY-MM-DDThh:mm:ss±hh:mm` | String
-flags| Дополнительные команды для API| Массив. Доступные значения - `SALE`/`REVERSAL`
+flags| Дополнительные команды для API| Массив. Возможные значения - `SALE`/`REVERSAL`
 version | Версия уведомлений | String
 
 
@@ -1744,7 +1744,7 @@ Host: api.qiwi.com
       "account":"token32" 
    }, 
    "customFields": {}, 
-   "paymentFlags":["BIND_PAYMENT_TOKEN"] 
+   "flags":["BIND_PAYMENT_TOKEN"] 
 } 
 ~~~
 
@@ -1791,7 +1791,7 @@ Host: api.qiwi.com
 
 Укажите в запросе [выставления счета](#invoicing) дополнительные параметры:
 
-* `paymentFlags: ["BIND_PAYMENT_TOKEN"]` - команда, указывающая системе на необходимость выпуска платежного токена
+* `flags: ["BIND_PAYMENT_TOKEN"]` - команда, указывающая системе на необходимость выпуска платежного токена
 * `customer.account` - уникальный идентификатор Покупателя в системе ТСП. **Не указывайте один и тот же параметр <code>account</code> для всех ваших пользователей. В результате пользователи смогут произвести оплату чужими картами.**
 
 После оплаты счета в [уведомлении](#payment_callback) `PAYMENT` вы получите данные платежного токена:

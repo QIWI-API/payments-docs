@@ -27,7 +27,7 @@ search: true
 
 # General Information {#intro}
 
-###### Last update: 2020-06-19 | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/blob/master/payments_en.html.md)
+###### Last update: 2021-01-19 | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/blob/master/payments_en.html.md)
 
 **Online payments protocol** allows RSP to start accepting fast and secure payments from credit cards.
 
@@ -93,13 +93,14 @@ When integration on your side is completed, we turn your ID to production mode (
 
 ## Quick Start {#invoicing_quick_start}
 
+Basic payment scenario includes two  steps:
 
-**1. Issue invoice to customer**
+1. Holding funds on the customer's card.
+2. Confirming the operation.
 
-First, obtain a link to Payment Form and redirect the customer there.
+**1. How to hold card funds**
 
-<!-- Request body -->
->Request example
+>Hold request example
 
 ~~~http
 PUT /partner/payin/v1/sites/23044/bills/893794793973 HTTP/1.1
@@ -111,13 +112,17 @@ Host: api.qiwi.com
 {
    "amount": {  
      "currency": "RUB",  
-     "value": 100.00
+     "value": 42.24
    },
-   "expirationDateTime": "2018-04-13T14:30:00+03:00"
+   "comment": "Spasibo",
+   "expirationDateTime": "2019-09-13T14:30:00+03:00",
+   "customer": {},
+   "customFields": {}
 }
 ~~~
 
-Send HTTP PUT-request to API URL with `{API_REQUEST}`:
+
+Send HTTP PUT-request to API URL:
 
 `/payin/v1/sites/{siteId}/bills/{billId}`
 
@@ -125,122 +130,104 @@ with parameters:
 
 * **{siteId}** - unique RSP ID;
 * **{billId}** - unique identifier in the RSP system;
-* **amount** - invoice amount (`amount.value`) and currency (`currency`) data;
-* **expirationDateTime** - invoice due date. Time should be specified with time zone. When date is overdue, invoice status becomes `EXPIRED` final status and invoice payment is not possible.
+* in JSON-body of the request:
 
+    * **amount** - invoice amount (`amount.value`) and currency (`currency`) data;
+    * **expirationDateTime** - invoice due date. Time should be specified with time zone. When date is overdue, invoice status becomes `EXPIRED` final status and invoice payment is not possible.
 
-[Request details](#invoice_put)
-
-
-In response you receive the following data:
-
-
->Response example
+>Response example:
 
 ~~~http
 HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
-    "siteId": "23044",
-    "billId": "893794793973",
+    "siteId": "test-01",
+    "billId": "gg",
     "amount": {
-      "value": 100.00,
-      "currency": "RUB"
+        "currency": "RUB",
+        "value": 42.24
     },
     "status": {
-      "value": "WAITING",
-      "changedDateTime": "2018-03-05T11:27:41+03:00"
+        "value": "WAITING",
+        "changedDateTime": "2019-08-28T16:26:36.835+03:00"
     },
-    "comment": "Text comment",
-    "creationDateTime": "2018-03-05T11:27:41",
-    "expirationDateTime": "2018-04-13T14:30:00+03:00",
-    "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
+    "customFields": {},
+    "comment": "Spasibo",
+    "creationDateTime": "2019-08-28T16:26:36.835+03:00",
+    "expirationDateTime": "2019-09-13T14:30:00+03:00",
+    "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=78d60ca9-7c99-481f-8e51-0100c9012087"
 }
 ~~~
 
+<a name="hold"></a>
 
+You receive an URL of the Payment Form in the `payUrl` parameter of the response. Redirect your customer to this URL.
 
-Response field|Type|Description
---------|---|--------
-billId|String| Unique invoice identifier in the merchant's system
-siteId|String| Merchant's site identifier in QIWI Kassa
-amount|Object| Invoice amount data
-amount.value|Number| Invoice amount. The number is rounded down to two decimals
-amount.currency	|String| Invoice currency identifier (Alpha-3 ISO 4217 code:  `RUB`, `USD`, `EUR`)
-status|Object|Invoice current status data
-status.value	|String|String representation of the [status](#invoice_status)
-status.changedDateTime|String|Status refresh date. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh`
-customFields|Object|Additional data
-customer|Object|Customer data. Possible elements:<br> `email`, `phone`, `account`
-comment|String|Comment to the invoice
-creationDateTime|String| System date of the invoice issue. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh`
-payUrl|String|New Payment Form URL
-expirationDateTime|String|Expiration date of the Payment Form link (invoice payment's due date). Date format:<br>`YYYY-MM-DDThh:mm:ss±hh`
+[More request details](#invoice_put)
 
-Redirect the customer to the link from `payUrl` field. It opens the Payment Form. 
+**1a. Obtain transaction id for capture operation**
 
-**2. Wait until the notification**
-
-When customer pays for the invoice, we send server callback on the successfully processed payment.
-
->Processed payment notification body example
+>Notification body example
 
 ~~~json
 {
- "payment":{
-   "paymentId":"9999999",
-   "type":"PAYMENT",
-   "createdDateTime":"2019-06-03T08:19:16+03:00",
-   "status":{
-     "value":"SUCCESS",
-     "changedDateTime":"2019-06-03T08:19:16+03:00"},
-   "amount":{
-     "value":111.11,
-     "currency":"RUB"},
-   "paymentMethod":{
-     "type":"CARD",
-     "cardHolder":"CARD HOLDER",
-     "cardExpireDate":"1/2025",
-     "maskedPan":"411111******0001"},
-   "gatewayData":{
-     "type":"ACQUIRING",
-     "authCode":"181218",
-     "rrn":"123"},
-   "customer":{},
-   "billId":"f1e1a1f11ae111a11a111111e1111111",
-   "flags":["SALE"]
- },
- "type":"PAYMENT",
- "version":"1"
+  "payment":
+  {
+    "paymentId":"804900",  <==paymentId necessary for capture operation
+    "type":"PAYMENT",
+    "createdDateTime":"2019-08-28T12:58:49+03:00",
+    "status":{
+        "value":"SUCCESS",
+        "changedDateTime":"2019-08-28T12:58:53+03:00"
+    },
+    "amount":{
+      "value":1.00,
+      "currency":"RUB"
+    },
+    "paymentMethod":{
+      "type":"CARD",
+      "maskedPan":"444444XXXXXX4444",
+      "rrn":null,
+      "authCode":null,
+      "type":"CARD"
+    },
+    "customer":{
+      "phone":"75167693659"
+    },
+    "gatewayData":{
+      "type":"ACQUIRING",
+      "eci":"6",
+      "authCode":"181218"
+    },
+    "billId":"autogenerated-a51d0d2c-6c50-405d-9305-bf1c13a5aecd",
+    "flags":[]
+  },
+  "type":"PAYMENT",
+  "version":"1"
 }
 ~~~
 
-Notification field|Type|Description
---------|---|--------
-paymentId|String| Unique payment identifier in the merchant's system
-type|String | Operation type `PAYMENT`
-createdDateTime|String| System date of the payment creation. Date format:<br>`YYYY-MM-DDThh:mm:ssZ`
-amount|Object| Payment amount data
-amount.value|Number| Payment amount. The number is rounded down to two decimals
-amount.currency	|String| Payment currency identifier (Code Alpha-3 ISO 4217: `RUB`, `USD`, `EUR`)
-status|Object|Payment status data
-status.value	|String|Current [payment status](#payment_status)
-status.changedDateTime|String|Status refresh date. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh`
-paymentMethod|Object|Payment method data
-paymentMethod.type|String|Payment method type. Possible values: `TOKEN`, `CARD`
-paymentMethod.maskedPan|String| Masked card PAN
-paymentMethod.cardHolder|String|Card holder name
-paymentMethod.cardExpireDate|String|Card expiration date
-gatewayData|String| Payment gateway data
-gatewayData.type|String| Gateway type. Possible value: `ACQUIRING`
-gatewayData.authcode|String| Auth code
-gatewayData.rrn|String| RRN value (ISO 8583)
-customer|Object| Customer identifiers. Possible elements: `email`, `phone`, `account`
-billId|String| Corresponding invoice ID
-flags|Array of Strings|  Operation flags: `SALE` - one-step payment scenario
+When payment is successfully processed, you will receive [server notification](#payment_callback). Take `paymentId` parameter from the notification for  `capture` operation.
 
-See detailed description of server notifications and their types in [Server Notifications](#callback).
+You also may use the [invoice status](#invoice_get) method to get actual payment status and `paymentId` parameter.
+
+
+**2. Confirm operation**
+
+Using operation ID (`paymentId`), you can make `capture` request which confirms the operation.
+
+Send HTTP PUT request with empty body to URL:
+
+`/payin/v1/sites/{siteId}/payments/{paymentId}/captures/{captureId}`
+
+where:
+
+* **{siteId}** - unique RSP ID which you see in  [response](#hold) to the request for holding funds
+* **{paymentId}** - operation ID, string, obtained from the payment callback
+* **{captureId}** - confirmation ID, string, unique identifier for the RSP which generates it by itself
+
+[More request details](#capture)
 
 ## Payment Form {#payform}
 
@@ -341,13 +328,16 @@ Call function  `QiwiCheckout.openInvoice`
 |--------------|-------------|-------------|--------------|
 | payUrl | Pay form link from `payUrl` field of response to [invoice issue request](#invoice_put)| String | + |
 
-## Two-Step Scenario {#two_step}
+## One-Step Scenario {#two_step}
 
-Two-step scenario includes (1) holding funds on the customer's card and (2) confirming the operation.
+One-step scenario is used for payments without card funds holding.
 
-**1. How to hold funds**
+**1. Issue invoice to customer**
 
->Hold request example
+First, obtain a link to Payment Form and redirect the customer there.
+
+<!-- Request body -->
+>Request example
 
 ~~~http
 PUT /partner/payin/v1/sites/23044/bills/893794793973 HTTP/1.1
@@ -359,123 +349,138 @@ Host: api.qiwi.com
 {
    "amount": {  
      "currency": "RUB",  
-     "value": 42.24
+     "value": 100.00
    },
-   "comment": "Spasibo",
-   "expirationDateTime": "2019-09-13T14:30:00+03:00",
-   "customer": {},
-   "customFields": {},
-   "paymentFlags":["AUTH"]
+   "expirationDateTime": "2018-04-13T14:30:00+03:00",
+   "flags": [ "SALE" ]
 }
 ~~~
 
+Send HTTP PUT-request to API URL:
 
-Add to the invoice request body the following parameter: `"paymentFlags":["AUTH"]`.
+`/payin/v1/sites/{siteId}/bills/{billId}`
 
-Parameter|Type|Description
---------|--------|-------
-billId|String|Unique identifier in the RSP system
-amount|Object|Invoice amount data
-amount.value| Number(6.2)| Amount of invoice rounded down to two decimals
-amount.currency |String| Invoice currency (Code Alpha-3 ISO 4217: `RUB`, `USD`, `EUR`)
-expirationDateTime |URL encoded string<br>`YYYY-MM-DDhh:mm+\-hh:mm` |  Invoice due date. Time should be specified with time zone. When date is overdue, invoice status becomes `EXPIRED` final status and invoice payment is not possible.
-paymentFlags|Array of strings|Additional payment options.<br>Use value `AUTH` to perform two-step scenario of funds authorization
+with parameters:
 
->Response example:
+* **{siteId}** - unique RSP ID;
+* **{billId}** - unique identifier in the RSP system;
+* in JSON-body of the request:
+
+    * **amount** - invoice amount (`amount.value`) and currency (`currency`) data;
+    * **expirationDateTime** - invoice due date. Time should be specified with time zone. When date is overdue, invoice status becomes `EXPIRED` final status and invoice payment is not possible.
+	* **flags** - array with operation type `SALE` means one-step payment without funds holding
+
+Add to the invoice request body the following parameter: `"flags":["SALE"]`.
+
+[More request details](#invoice_put)
+
+
+>Response example
 
 ~~~http
 HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
-    "siteId": "test-01",
-    "billId": "gg",
+    "siteId": "23044",
+    "billId": "893794793973",
     "amount": {
-        "currency": "RUB",
-        "value": 42.24
+      "value": 100.00,
+      "currency": "RUB"
     },
     "status": {
-        "value": "WAITING",
-        "changedDateTime": "2019-08-28T16:26:36.835+03:00"
+      "value": "WAITING",
+      "changedDateTime": "2018-03-05T11:27:41+03:00"
     },
-    "customFields": {
-        "AUTH": "true"
-    },
-    "comment": "Spasibo",
-    "creationDateTime": "2019-08-28T16:26:36.835+03:00",
-    "expirationDateTime": "2019-09-13T14:30:00+03:00",
-    "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=78d60ca9-7c99-481f-8e51-0100c9012087"
+    "comment": "Text comment",
+    "creationDateTime": "2018-03-05T11:27:41",
+    "expirationDateTime": "2018-04-13T14:30:00+03:00",
+    "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
 }
 ~~~
 
-<a name="hold"></a>
+In response you receive the following data:
 
-You receive an URL of the Payment Form in the `payUrl` parameter of the response.
+Response field|Type|Description
+--------|---|--------
+billId|String| Unique invoice identifier in the merchant's system
+siteId|String| Merchant's site identifier in QIWI Kassa
+amount|Object| Invoice amount data
+amount.value|Number| Invoice amount. The number is rounded down to two decimals
+amount.currency	|String| Invoice currency identifier (Alpha-3 ISO 4217 code:  `RUB`, `USD`, `EUR`)
+status|Object|Invoice current status data
+status.value	|String|String representation of the [status](#invoice_status)
+status.changedDateTime|String|Status refresh date. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh`
+customFields|Object|Additional invoice data
+customer|Object|Customer data. Possible elements:<br> `email`, `phone`, `account`
+comment|String|Comment to the invoice
+creationDateTime|String| System date of the invoice issue. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh`
+payUrl|String|New Payment Form URL
+expirationDateTime|String|Expiration date of the Payment Form link (invoice payment's due date). Date format:<br>`YYYY-MM-DDThh:mm:ss±hh`
 
-**1a. Obtain transaction id for capture operation**
+Redirect the customer to the link from `payUrl` field. It opens the Payment Form. 
 
->Notification body example
+**2. Wait until the notification**
+
+When customer pays for the invoice, we send server callback on the successfully processed payment.
+
+>Processed payment notification body example
 
 ~~~json
 {
-  "payment":
-  {
-    "paymentId":"804900",  <==paymentId necessary for capture operation
-    "type":"PAYMENT",
-    "createdDateTime":"2019-08-28T12:58:49+03:00",
-    "status":{
-        "value":"SUCCESS",
-        "changedDateTime":"2019-08-28T12:58:53+03:00"
-    },
-    "amount":{
-      "value":1.00,
-      "currency":"RUB"
-    },
-    "paymentMethod":{
-      "type":"CARD",
-      "maskedPan":"444444XXXXXX4444",
-      "rrn":null,
-      "authCode":null,
-      "type":"CARD"
-    },
-    "customer":{
-      "phone":"75167693659"
-    },
-    "gatewayData":{
-      "type":"ACQUIRING",
-      "eci":"6",
-      "authCode":"181218"
-    },
-    "billId":"autogenerated-a51d0d2c-6c50-405d-9305-bf1c13a5aecd",
-    "flags":[]
-  },
-  "type":"PAYMENT",
-  "version":"1"
+ "payment":{
+   "paymentId":"9999999",
+   "type":"PAYMENT",
+   "createdDateTime":"2019-06-03T08:19:16+03:00",
+   "status":{
+     "value":"SUCCESS",
+     "changedDateTime":"2019-06-03T08:19:16+03:00"},
+   "amount":{
+     "value":111.11,
+     "currency":"RUB"},
+   "paymentMethod":{
+     "type":"CARD",
+     "cardHolder":"CARD HOLDER",
+     "cardExpireDate":"1/2025",
+     "maskedPan":"411111******0001"},
+   "gatewayData":{
+     "type":"ACQUIRING",
+     "authCode":"181218",
+     "rrn":"123"},
+   "customer":{},
+   "billId":"f1e1a1f11ae111a11a111111e1111111",
+   "flags":["SALE"]
+ },
+ "type":"PAYMENT",
+ "version":"1"
 }
 ~~~
 
-When payment is successfully processed, you will receive [server notification](#payment_callback). Take `paymentId` parameter from the notification for  `capture` operation.
+Notification field|Type|Description
+--------|---|--------
+paymentId|String| Unique payment identifier in the merchant's system
+type|String | Operation type `PAYMENT`
+createdDateTime|String| System date of the payment creation. Date format:<br>`YYYY-MM-DDThh:mm:ssZ`
+amount|Object| Payment amount data
+amount.value|Number| Payment amount. The number is rounded down to two decimals
+amount.currency	|String| Payment currency identifier (Code Alpha-3 ISO 4217: `RUB`, `USD`, `EUR`)
+status|Object|Payment status data
+status.value	|String|Current [payment status](#payment_status)
+status.changedDateTime|String|Status refresh date. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh`
+paymentMethod|Object|Payment method data
+paymentMethod.type|String|Payment method type. Possible values: `TOKEN`, `CARD`
+paymentMethod.maskedPan|String| Masked card PAN
+paymentMethod.cardHolder|String|Card holder name
+paymentMethod.cardExpireDate|String|Card expiration date
+gatewayData|String| Payment gateway data
+gatewayData.type|String| Gateway type. Possible value: `ACQUIRING`
+gatewayData.authcode|String| Auth code
+gatewayData.rrn|String| RRN value (ISO 8583)
+customer|Object| Customer identifiers. Possible elements: `email`, `phone`, `account`
+billId|String| Corresponding invoice ID
+flags|Array of Strings|  Operation flags: `SALE` - one-step payment scenario
 
-You also may use the [invoice status](#invoice_get) method to get actual payment status and `paymentId` parameter.
-
-
-**2. Confirm operation**
-
-Using operation ID (`paymentId`), you can make `capture` request which confirms the operation.
-
-Request structure:
-
-HTTP PUT request with empty body to API URL with `{API_REQUEST}`:
-
-`/payin/v1/sites/{siteId}/payments/{paymentId}/captures/{captureId}`
-
-where:
-
-* **{siteId}** - unique RSP ID which you see in  [response](#hold) to the request for holding funds
-* **{paymentId}** - operation ID, string, obtained from the payment callback
-* **{captureId}** - confirmation ID, string, unique identifier for the RSP which generates it by itself
-
-[Request details](#capture)
+See detailed description of server notifications and their types in [Server Notifications](#callback).
 
 # API {#api}
 
@@ -1156,7 +1161,7 @@ Host: api.qiwi.com
       "account":"token32" 
    }, 
    "customFields": {}, 
-   "paymentFlags":["BIND_PAYMENT_TOKEN"] 
+   "flags":["BIND_PAYMENT_TOKEN"] 
 } 
 ~~~
 
@@ -1203,7 +1208,7 @@ Host: api.qiwi.com
 
 Add the following fields in the [invoice request](#invoicing):
 
-* `paymentFlags:["BIND_PAYMENT_TOKEN"]` - a command requesting the issue of payment token
+* `flags:["BIND_PAYMENT_TOKEN"]` - a command requesting the issue of payment token
 * `customer.account` - Customer unique ID in RSP's information system. **Do not use the same `account` value for your Customers. It may allow any Customer to pay from another's cards.**
 
 The payment token data is returned in the subsequent `PAYMENT` type notification after successful processing of the invoice payment:
@@ -1487,7 +1492,7 @@ To process 3DS operation, use `unknown name` as card holder name.
 
 ## Invoice creation {#invoice_put}
 
-<div id="bill_v1_bills__billId__put_checkout">
+<div id="payin_v1_sites__siteId__bills__billId__put_checkout">
   <script>
     $(document).ready(function(){
       $.getJSON('../../eui_jsons/payin-checkout-payment-put.json', function( data ) {
