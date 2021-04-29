@@ -5,6 +5,8 @@ metatitle: Online payments protocol
 
 metadescription: Online payments protocol allows RSP to start accepting  secure payments from their customers' credit cards.
 
+category: acquiring
+
 language_tabs:
   - json: Examples
 
@@ -1130,13 +1132,9 @@ To send payment data to QIWI, it is necessary to add in the `paymentMethod` of t
 
 The **Protocol** supports card payment tokens. It allows you to save customer's card data in encrypted payment token and use it for recurring payments.
 
-By default, card payment token issue in the protocol is disabled. Contact your personal support manager to enable this option.
-
-To use payment tokens, you need to register two [site identifiers](#test_mode) and get two API tokens: first (with 3DS support, as a rule) for [payment token issue](#token_issue), second for [payments](#token_pay) by card payment token.
-
 ## Payment Token Issue {#token_issue}
 
-To issue payment card token, use identifiers (`siteId`, API token) of the site registered for payment tokens issue.
+By default, card payment token issue in the protocol is disabled. Contact your personal support manager to enable this option.
 
 <aside class="warning">In case of the customer's 3DS authentication, the payment token is issued only after successful payment authorization by the issuer.</aside>
 
@@ -1206,7 +1204,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-Add the following fields in the [invoice request](#invoicing):
+To issue card payment token, add the following fields in the [invoice request](#invoicing):
 
 * `flags:["BIND_PAYMENT_TOKEN"]` - a command requesting the issue of payment token
 * `customer.account` - Customer unique ID in RSP's information system. **Do not use the same `account` value for your Customers. It may allow any Customer to pay from another's cards.**
@@ -1291,7 +1289,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-Add the following fields in the [payment request](#payments):
+To issue card payment token, фdd the following fields in the [payment request](#payments):
 
 * `flags:["BIND_PAYMENT_TOKEN"]` - a command requesting the issue of payment token
 * `customer.account` - Customer unique ID in RSP's information system. **Do not use the same `account` value for your Customers. It may allow any Customer to pay with someone else's cards.**
@@ -1331,12 +1329,9 @@ In both cases, payment token data are also provided in subsequent `PAYMENT` type
 }
 ~~~
 
-You can pay by payment token using [API](#api) methods only.
+You can pay by payment token using [API](#api) method only.
 
-In [payment request](#payments):
-
-* Use identifiers (`siteId`, API token) of the site registered for payments by payment tokens
-* Put payment token parameters into `paymentMethod` object, instead of card data, and add customer identifier:
+Put payment token parameters into `paymentMethod` object of [payment request](#payments), instead of card data, and add customer identifier:
 
 Parameter|Type|Description
 --------|---|--------
@@ -1347,10 +1342,10 @@ customer.account|String| Customer unique ID in RSP's information system for whic
 
 # QIWI Wallet Payment {#qiwi-wallet-payment}
 
-Making payment from the customer's QIWI Wallet is possible with [Payment Form](#payform) only.
-
+> Request
+ 
 ~~~http
-PUT /partner/payin/v1/sites/23044/bills/893794793973 HTTP/1.1
+PUT /partner/bill/v1/bills/893794793973 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -1365,13 +1360,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-Payments from QIWI Wallet are enabled for a merchant on QIWI side. To get access to payments from QIWI Wallet, you need to address your personal support manager.
-
-For accepting QIWI Wallet payments, use [Invoice creation](#invoice_put). Send the following PUT request to URL:
-
-`/payin/v1/sites/{siteId}/bills/{billId}`
-
-> Ответ сервера
+> Response
 
 ~~~json
 {
@@ -1391,26 +1380,34 @@ For accepting QIWI Wallet payments, use [Invoice creation](#invoice_put). Send t
 }
 ~~~
 
-В ответе придет ссылка на платежную форму (см. поле `payUrl`). На платежной форме пользователю будет доступен способ оплаты с баланса КИВИ Кошелька.
+For your customers, QIWI Wallet payments are possible with [QIWI Payment Form](#payform) only.
 
-<aside class="notice">Если у вас подключена оплата с карт на платежной форме, пользователю будут доступны оба способа оплаты.</aside>
+To get access to payments from QIWI Wallet, contact your personal support manager in QIWI.
 
-Процесс оплаты выглядит следующим образом:
+For QIWI Wallet payments, use [Invoice creation for QIWI Wallet payment](#invoice_qw_put) request. Send the following PUT request to URL:
 
-1. Пользователь открывает форму.
+`/bill/v1/bills/{billId}`
+
+Payment form URL is in `payUrl` field of the response. Redirect customer to the URL. QIWI Wallet payment button is available on the Payment form.
+
+<aside class="notice">Card payment is also available for the customer on the Payment form, if you enable it for your site.</aside>
+
+For customer, QIWI Wallet payment flow looks like this:
+
+1. The Payment form after redirect.
      
     ![Wallet Invoice](/images/wallet_invoice.jpg)
-2. Пользователь авторизуется в КИВИ Кошельке.
+2. Authorize in QIWI Wallet.
     
     ![Wallet Auth](/images/wallet_auth.jpg)
-3. Пользователь оплачивает счет.
+3. Pay for the invoice.
     
     ![Wallet Pay](/images/wallet_pay.jpg)
 
 <!-- После успешной оплаты вам придет уведомление [BILL](#bill_callback). -->
 
-> Уведомление REFUND
-
+> REFUND notification
+ 
 ~~~json
 {
   "refund":
@@ -1445,7 +1442,7 @@ For accepting QIWI Wallet payments, use [Invoice creation](#invoice_put). Send t
 }
 ~~~
 
-Возвраты выполняются с помощью метода API [Операция возврата](#refund-api). В случае успешного возврата вам придет уведомление [REFUND](#payment_callback).
+Make refunds for QIWI Wallet payments by [Refund for QIWI Wallet payment](#refund-bill-qw) request. You get [REFUND](#payment_callback) notification in case of successful refund.
 
 # Reimbursement {#reimburse}
 
@@ -1490,7 +1487,7 @@ To process 3DS operation, use `unknown name` as card holder name.
 
 <aside class="notice">Additional fields might be added to the requests and responses. Check <a href="https://github.com/QIWI-API/payments-docs/blob/master/payments_en.html.md">Github</a> for updates.</aside>
 
-## Invoice creation {#invoice_put}
+## Invoice {#invoice_put}
 
 <div id="payin_v1_sites__siteId__bills__billId__put_checkout">
   <script>
@@ -1500,6 +1497,86 @@ To process 3DS operation, use `unknown name` as card holder name.
             data,
             "checkout",
             "payin/v1/sites/{siteId}/bills/{billId}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~json
+{
+   "amount": {  
+     "currency": "RUB",  
+     "value": 100.00
+   },
+   "comment": "Text comment",
+   "expirationDateTime": "2018-04-13T14:30:00+03:00",
+   "customer": {},
+   "customFields": {}  
+   }
+}
+~~~
+
+
+<!-- 200 -->
+~~~json
+{
+    "siteId": "23044",
+    "billId": "893794793973",
+    "amount": {
+      "value": 100.00,
+      "currency": "RUB"
+    },
+    "status": {
+      "value": "WAITING",
+      "changedDateTime": "2018-03-05T11:27:41+03:00"
+    },
+    "comment": "Text comment",
+    "creationDateTime": "2018-03-05T11:27:41",
+    "expirationDateTime": "2018-04-13T14:30:00+03:00",
+    "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
+}
+~~~
+
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "payin.resource.not.found",
+  "userMessage" : "Resource not found",
+  "description" : "Resource not found",
+  "traceId" : "c3564ba25e221fe3",
+  "dateTime" : "2018-11-13T16:30:52.464+03:00"
+}
+~~~
+
+
+## Invoice for QIWI Wallet payment {#invoice_qw_put}
+
+<div id="bill_v1_bills__billId__put_checkout">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../eui_jsons/payin-checkout-payment-qw-put.json', function( data ) {
+        window.requestUI(
+            data,
+            "checkout",
+            "bill/v1/bills/{billId}",
             "put",
             ['RequestBody', '200', '4xx', '5xx']
           )
@@ -2224,7 +2301,7 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
 ~~~
 
 
-## Capture status {#capture_status}
+## Payment confirmation status {#capture_status}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__captures__captureId__get_api">
   <script>
@@ -2344,6 +2421,76 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
   "traceId" : "fd0e2a08c63ace83"
 }
 ~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "payin.resource.not.found",
+  "userMessage" : "Resource not found",
+  "description" : "Resource not found",
+  "traceId" : "c3564ba25e221fe3",
+  "dateTime" : "2018-11-13T16:30:52.464+03:00"
+}
+~~~
+
+## Refund for QIWI Wallet payment {#refund_qw}
+
+
+<div id="bill_v1_bills__billId__refunds__refundId__put_checkout">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../eui_jsons/payin-checkout-refund-put.json', function( data ) {
+        window.requestUI(
+            data,
+            "checkout",
+            "bill/v1/bills/{billId}/refunds/{refundId}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~json
+{
+  "amount": {
+    "value": 2.34,
+    "currency": "RUB"
+  }
+}
+~~~
+
+
+
+
+<!-- 200 -->
+~~~json
+{
+    "amount": {
+      "value": 50.50,
+      "currency": "RUB"
+    },
+    "datetime": "2018-03-01T16:06:57+03",
+    "refundId": "1",
+    "status": "PARTIAL"
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
 
 <!-- 5xx -->
 ~~~json

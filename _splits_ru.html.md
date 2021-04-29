@@ -1,0 +1,627 @@
+# Сплитование платежей {#payments_split}
+
+Сплитование платежей - решение, разработанное специально для маркетплейсов. Сплитование платежей позволяет рассчитываться с несколькими поставщиками услуг, производя одно списание с карты покупателя.
+
+Чтобы подключить сплитование платежей:
+
+1. Обратитесь к вашему сопровождающему менеджеру и запросите подключение решения.
+2. Выполните интеграцию согласно описанию в разделе [Регистрация маркетплейсов](#split-boarding).
+
+## Интеграция с Платежной формой QIWI {#use-splits-qiwi-form}
+
+Чтобы отправить платеж со сплитованием, передайте в запросе API [Создание счета](#invoice_put) массив<br/>`splits` c данными поставщиков.
+
+### Описание данных
+
+> Пример выставления счета со сплитованием
+
+~~~shell
+curl --location --request PUT 'https://api.qiwi.com/partner/payin/v1/sites/Obuc-02/bills/eqwptt' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer token \
+--data-raw '{
+    "amount": {
+        "value": 3.00,
+        "currency": "RUB"
+    },
+    "expirationDateTime": "2021-12-31T23:59:59+03:00",
+    "comment": "сomment",
+    "splits": [
+        {
+            "type": "MERCHANT_DETAILS",
+            "siteUid": "Obuc-00",
+            "splitAmount": {
+                "value": 2.00,
+                "currency": "RUB"
+            },
+            "orderId": "dressesforwhite",
+            "comment": "платьица для Тани"
+        },
+        {
+            "type": "MERCHANT_DETAILS",
+            "siteUid": "Obuc-01",
+            "splitAmount": {
+                "value": 1.00,
+                "currency": "RUB"
+            },
+            "orderId": "shoesforvalya",
+            "comment": "туфельки для Вали"
+        }
+    ]
+}
+'
+~~~
+
+> Пример ответа при выставлении счета со сплитованием
+
+~~~json
+{
+    "billId": "eqwptt",
+    "invoiceUid": "44b2ef2a-edc6-4aed-87d3-01cf37ed2732",
+    "amount": {
+        "currency": "RUB",
+        "value": "3.00"
+    },
+    "expirationDateTime": "2021-12-31T23:59:59+03:00",
+    "status": {
+        "value": "CREATED",
+        "changedDateTime": "2021-02-05T10:21:17+03:00"
+    },
+    "comment": "сomment",
+    "flags": [
+        "TEST"
+    ],
+    "payUrl": "https://oplata.qiwi.com/form?invoiceUid=44b2ef2a-edc6-4aed-87d3-01cf37ed2732",
+    "splits": [
+        {
+            "type": "MERCHANT_DETAILS",
+            "siteUid": "Obuc-00",
+            "splitAmount": {
+                "currency": "RUB",
+                "value": "2.00"
+            },
+            "orderId": "dressesforwhite",
+            "comment": "платьица для Тани"
+        },
+        {
+            "type": "MERCHANT_DETAILS",
+            "siteUid": "Obuc-01",
+            "splitAmount": {
+                "currency": "RUB",
+                "value": "1.00"
+            },
+            "orderId": "shoesforvalya",
+            "comment": "туфельки для Вали"
+        }
+    ]
+}
+~~~
+
+Описание массива `splits`:
+
+Название | Тип | Описание
+----|------|-------
+splits | Array | Массив данных о поставщиках
+-----|------|------
+type | String | Тип передаваемых данных. Доступные значения - `MERCHANT_DETAILS` (данные поставщика)
+siteUid | String | [ID поставщика](#start)
+splitAmount | Object | Возмещение поставщику
+----|----|-----
+value | Number | Сумма возмещения
+currency | String(3) | Буквенный код валюты возмещения по ISO. Доступен только `RUB`
+-----|-----|-----
+orderId | String | Номер заказа (необязательный)
+comment | String | Комментарий к заказу (необязательный)
+
+<aside class="warning">Сумма возмещений поставщикам должна равняться сумме списания с карты плательщика.</aside>
+
+В объекте `splits` ответа содержатся данные о сплитованных платежах и комиссиях:
+
+Поле ответа | Тип | Описание
+----|------|-------
+splits | Array | Массив с данными о сплитованных платежах
+-----|------|------
+type | String | Тип передаваемых данных. Всегда возвращается строка `MERCHANT_DETAILS`
+siteUid | String | [ID поставщика](#start)
+splitAmount | Object | Данные о возмещении поставщику
+----|----|-----
+value | String | Сумма возмещения
+currency | String(3) | Буквенный код валюты возмещения по ISO
+-----|-----|-----
+orderId | String | Номер заказа
+comment | String | Комментарий к заказу
+
+## Интеграция с Платежной формой ТСП {#use-splits-merchant-form}
+
+Чтобы отправить платеж со сплитованием, передайте в запросе API [Платеж](#payments) JSON-массив `paymentSplits` с данными поставщиков.
+
+### Описание данных
+
+~~~json
+{
+ "paymentMethod": "...",
+ "customer": "....",
+ "deviceData": "...",
+ "paymentSplits": [
+   {
+     "type":"MERCHANT_DETAILS",
+     "siteUid":"shop_mst-01",
+     "splitAmount": {
+       "value":300.00,
+       "currency":"RUB"
+     },
+     "orderId":"dasdad444ll4ll",
+     "comment":"flowers for my girlfriend"
+  },
+  {
+    "type":"MERCHANT_DETAILS",
+    "siteUid":"shop_mst-02",
+    "splitAmount": {
+      "value":200.00,
+      "currency":"RUB"
+      },
+      "orderId":"sdadada887sdDDDDd",
+      "comment":"watermelon"
+    }
+  ]
+}
+~~~
+
+> Пример ответа
+
+~~~json
+{
+   "paymentId": "23",
+   "billId": "autogenerated-2a8fcfab-45cb-43b9-81bd-edf65e0ef874",
+   "createdDateTime": "2020-10-12T15:29:12+03:00",
+   "amount": {
+   "currency": "RUB",
+   "value": "100.00"
+},
+   "capturedAmount": {
+   "currency": "RUB",
+   "value": "100.00"
+},
+   "refundedAmount": {
+   "currency": "RUB",
+   "value": "0.00"
+},
+   "paymentMethod": "..",
+   "status": "..",
+   "paymentCardInfo": "..",
+   "paymentSplits": [
+       {
+          "type": "MERCHANT_DETAILS",
+          "siteUid": "shop_mst-01",
+          "splitAmount": {
+          "currency": "RUB",
+          "value": "30.00"
+       },
+          "splitCommissions": {
+          "merchantCms": {
+          "currency": "RUB",
+          "value": "10.00"
+       }
+       },
+          "orderId": "313fh1f23j13k1k",
+          "comment": "i want to buy some goods"
+       },
+       {
+          "type": "MERCHANT_DETAILS",
+          "siteUid": "shop_mst-02",
+          "splitAmount": {
+             "currency": "RUB",
+             "value": "20.00"
+           },
+          "splitCommissions": {
+               "merchantCms": {
+                   "currency": "RUB",
+                   "value": "10.00"
+                }
+            },
+          "orderId": "sdadada887sdDDDDd",
+          "comment": "watermelon"
+       },
+       {
+          "type": "MERCHANT_DETAILS",
+          "siteUid": "shop_mst-03",
+          "splitAmount": {
+            "currency": "RUB",
+            "value": "50.00"
+          },
+          "splitCommissions": {
+            "merchantCms": {
+              "currency": "RUB",
+              "value": "10.00"
+            }
+          },
+          "orderId": "dasdad444ll4ll",
+          "comment": "flowers for my girlfriend"
+       }
+    ]
+}
+~~~
+
+Описание массива `paymentSplits`:
+
+Название | Тип | Описание
+----|------|-------
+paymentSplits | Array | Массив данных о поставщиках
+-----|------|------
+type | String | Тип передаваемых данных. Доступные значения - `MERCHANT_DETAILS` (данные поставщика)
+siteUid | String | [ID поставщика](#start)
+splitAmount | Object | Возмещение поставщику
+----|----|-----
+value | Number | Сумма возмещения
+currency | String(3) | Буквенный код валюты возмещения по ISO. Доступен только `RUB`
+-----|-----|-----
+orderId | String | Номер заказа (необязательный)
+comment | String | Комментарий к заказу (необязательный)
+
+<aside class="warning">Сумма возмещений поставщикам должна равняться сумме списания с карты плательщика.</aside>
+
+В объекте `paymentSplits` ответа содержатся данные о принятых платежах и комиссиях:
+
+Поле ответа | Тип | Описание
+----|------|-------
+paymentSplits | Array | Массив с данными о принятых платежах
+-----|------|------
+type | String | Тип передаваемых данных. Всегда возвращается строка `MERCHANT_DETAILS`
+siteUid | String | [ID поставщика](#start)
+splitAmount | Object | Данные о возмещении поставщику
+----|----|-----
+value | String | Сумма возмещения
+currency | String(3) | Буквенный код валюты возмещения по ISO
+----|----|-----
+splitCommissions | Object | Данные о комиссии (необязательный)
+-----|----|-----
+merchantCms | Object | Данные о комиссии с поставщика
+----|-----|----
+value | String | Сумма комиссии
+currency | String(3) |Буквенный код валюты комиссии по ISO
+-----|-----|-----
+orderId | String | Номер заказа
+comment | String | Комментарий к заказу
+
+## Возвраты по сплитованным платежам {#split-refund}
+
+После успешной авторизации списания денежных средств доступен возврат средств по операции сплитованного платежа.
+
+> Пример запроса
+
+~~~http
+PUT /partner/payin/v1/sites/test-01/payments/23/refunds/1 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  },
+  "refundSplits": [
+  {
+    "type": "MERCHANT_DETAILS",
+    "siteUid": "shop_mst-01",
+    "splitAmount": {
+      "value": 30.00,
+      "currency": "RUB"
+    },
+    "orderId": "sdadada887sdDDDDd",
+    "comment": "watermelon"
+  },
+  {
+    "type": "MERCHANT_DETAILS",
+    "siteUid": "shop_mst-02",
+    "splitAmount": {
+      "value": 20.00,
+      "currency": "RUB"
+    },
+   
+    "orderId": "313fh1f23j13k1k",
+    "comment": "i want to buy some goods"
+  },
+  {
+    "type": "MERCHANT_DETAILS",
+    "siteUid": "shop_mst-03",
+    "splitAmount": {
+      "value": 50.00,
+      "currency": "RUB"
+    },
+    "orderId": "dasdad444ll4ll",
+    "comment": "flowers for my girlfriend"
+  }
+  ]
+}
+~~~
+
+> Пример ответа
+
+~~~json
+{
+    "refundId": "1",
+    "createdDateTime": "2020-10-12T15:32:29+03:00",
+    "amount": {
+        "currency": "RUB",
+        "value": "100.00"
+    },
+    "status": {
+        "value": "COMPLETED",
+        "changedDateTime": "2020-10-12T15:32:30+03:00"
+    },
+    "refundSplits": [
+        {
+            "type": "MERCHANT_DETAILS",
+            "siteUid": "shop_mst-02",
+            "splitAmount": {
+                "currency": "RUB",
+                "value": "20.00"
+            },
+            "splitCommissions": {
+                "merchantCms": {
+                    "currency": "RUB",
+                    "value": "10.00"
+                }
+            },
+            "orderId": "sdadada887sdDDDDd",
+            "comment": "watermelon"
+        },
+        {
+            "type": "MERCHANT_DETAILS",
+            "siteUid": "shop_mst-01",
+            "splitAmount": {
+                "currency": "RUB",
+                "value": "30.00"
+            },
+            "splitCommissions": {
+                "merchantCms": {
+                    "currency": "RUB",
+                    "value": "10.00"
+                }
+            },
+            "orderId": "313fh1f23j13k1k",
+            "comment": "i want to buy some goods"
+        },
+        {
+            "type": "MERCHANT_DETAILS",
+            "siteUid": "shop_mst-03",
+            "splitAmount": {
+                "currency": "RUB",
+                "value": "50.00"
+            },
+            "splitCommissions": {
+                "merchantCms": {
+                    "currency": "RUB",
+                    "value": "10.00"
+                }
+            },
+            "orderId": "dasdad444ll4ll",
+            "comment": "flowers for my girlfriend"
+        }
+    ]
+}
+~~~
+
+В запросе API [Операция возврата](#refund-api) передайте JSON-массив `refundSplits` с данными о возвратах поставщикам. Укажите общую сумму возврата и сумму возврата для каждого поставщика. Поддерживается как частичный, так и полный возврат. 
+
+<aside class="warning">Сумма отмененных возмещений поставщикам должна равняться общей сумме возврата.</aside>
+
+Описание массива `refundSplits`:
+
+Название | Тип | Описание
+----|------|-------
+refundSplits | Array | Массив данных о возвратах поставщикам
+-----|------|------
+type | String | Тип передаваемых данных. Доступные значения - `MERCHANT_DETAILS` (данные поставщика)
+siteUid | String | [ID поставщика](#start)
+splitAmount | Object | Данные об отмене возмещения поставщику
+----|----|-----
+value | Number | Сумма отмены возмещения
+currency | String(3) | Буквенный код валюты отмены возмещения по ISO. Доступен только `RUB`
+-----|-----|-----
+orderId | String | Номер заказа (необязательный)
+comment | String | Комментарий к заказу (необязательный)
+
+В JSON-массиве `refundSplits` ответа содержатся данные о принятых возвратах:
+
+Поле ответа | Тип | Описание
+----|------|-------
+refundSplits | Array | Массив данных о возвратах поставщикам
+-----|------|------
+type | String | Тип передаваемых данных. Всегда возвращается строка `MERCHANT_DETAILS`
+siteUid | String | [ID поставщика](#start)
+splitAmount | Object | Данные об отмене возмещения поставщику
+----|----|-----
+value | String | Сумма отмены возмещения
+currency | String(3) | Буквенный код валюты 	 по ISO
+----|----|-----
+splitCommissions | Object | Данные о комиссии (необязательный)
+-----|----|-----
+merchantCms | Object | Данные о комиссии с поставщика
+----|-----|----
+value | String | Сумма комиссии
+currency | String(3) | Буквенный код валюты комиссии по ISO
+-----|-----|-----
+orderId | String | Номер заказа
+comment | String | Комментарий к заказу
+
+## Уведомления по сплитованным операциям {#split-operations-notification}
+
+> Пример уведомления по сплитованным платежам
+
+~~~json
+{
+    "payment": {
+        "paymentId": "134d707d-fec4-4a84-93f3-781b4f8c24ac",
+        "customFields": {
+            "comment": "сomment"
+        },
+        "paymentCardInfo": {
+            "issuingCountry": "643",
+            "issuingBank": "Unknown",
+            "paymentSystem": "VISA",
+            "fundingSource": "UNKNOWN",
+            "paymentSystemProduct": "Unknown"
+        },
+        "type": "PAYMENT",
+        "createdDateTime": "2021-02-05T11:29:38+03:00",
+        "status": {
+            "value": "SUCCESS",
+            "changedDateTime": "2021-02-05T11:29:39+03:00"
+        },
+        "amount": {
+            "value": 3,
+            "currency": "RUB"
+        },
+        "paymentMethod": {
+            "type": "TOKEN",
+            "paymentToken": "1620161e-d498-431b-b006-c52bb78c6bf2",
+            "maskedPan": "425600******0003",
+            "cardHolder": "CARD HOLDER",
+            "cardExpireDate": "11/2022"
+        },
+        "customer": {
+            "email": "glmgmmxr@qiwi123.com",
+            "account": "sbderxuftsrt",
+            "phone": "13387571067",
+            "country": "yccsnnfjgthu",
+            "city": "sqdvseezbpzo",
+            "region": "shbvyjgspjvu"
+        },
+        "gatewayData": {
+            "type": "ACQUIRING",
+            "authCode": "181218",
+            "rrn": "123"
+        },
+        "billId": "autogenerated-19cf2596-62a8-47f2-8721-b8791e9598d0",
+        "flags": [],
+        "paymentSplits": [
+            {
+                "type": "MERCHANT_DETAILS",
+                "siteUid": "Obuc-00",
+                "splitAmount": {
+                    "value": 2,
+                    "currency": "RUB"
+                },
+                "splitCommissions": {
+                    "merchantCms": {
+                        "value": 0.2,
+                        "currency": "RUB"
+                    },
+                    "userCms": null
+                },
+                "orderId": "dressesforwhite",
+                "comment": "платьица для Тани"
+            },
+            {
+                "type": "MERCHANT_DETAILS",
+                "siteUid": "Obuc-01",
+                "splitAmount": {
+                    "value": 1,
+                    "currency": "RUB"
+                },
+                "splitCommissions": {
+                    "merchantCms": {
+                        "value": 0.02,
+                        "currency": "RUB"
+                    },
+                    "userCms": null
+                },
+                "orderId": "shoesforvalya",
+                "comment": "туфельки для Вали"
+            }
+        ]
+    },
+    "type": "PAYMENT",
+    "version": "1"
+}
+~~~
+
+> Пример уведомления по возвратам сплитованных платежей
+
+~~~json
+{
+    "refund": {
+        "refundId": "42f5ca91-965e-4cd0-bb30-3b64d9284048",
+        "type": "REFUND",
+        "createdDateTime": "2021-02-05T11:31:40+03:00",
+        "status": {
+            "value": "SUCCESS",
+            "changedDateTime": "2021-02-05T11:31:40+03:00"
+        },
+        "amount": {
+            "value": 3,
+            "currency": "RUB"
+        },
+        "paymentMethod": {
+            "type": "TOKEN",
+            "paymentToken": "1620161e-d498-431b-b006-c52bb78c6bf2",
+            "maskedPan": null,
+            "cardHolder": null,
+            "cardExpireDate": null
+        },
+        "customer": {
+            "email": "glmgmmxr@qiwi123.com",
+            "account": "sbderxuftsrt",
+            "phone": "13387571067",
+            "country": "yccsnnfjgthu",
+            "city": "sqdvseezbpzo",
+            "region": "shbvyjgspjvu"
+        },
+        "gatewayData": {
+            "type": "ACQUIRING",
+            "authCode": "181218",
+            "rrn": "123"
+        },
+        "billId": "autogenerated-19cf2596-62a8-47f2-8721-b8791e9598d0",
+        "flags": [
+            "REVERSAL"
+        ],
+        "refundSplits": [
+            {
+                "type": "MERCHANT_DETAILS",
+                "siteUid": "Obuc-00",
+                "splitAmount": {
+                    "value": 2,
+                    "currency": "RUB"
+                },
+                "splitCommissions": {
+                    "merchantCms": {
+                        "value": 0,
+                        "currency": "RUB"
+                    },
+                    "userCms": null
+                },
+                "orderId": "dressesforwhite",
+                "comment": ""
+            },
+            {
+                "type": "MERCHANT_DETAILS",
+                "siteUid": "Obuc-01",
+                "splitAmount": {
+                    "value": 1,
+                    "currency": "RUB"
+                },
+                "splitCommissions": {
+                    "merchantCms": {
+                        "value": 0.02,
+                        "currency": "RUB"
+                    },
+                    "userCms": null
+                },
+                "orderId": "shoesforvalya",
+                "comment": ""
+            }
+        ]
+    },
+    "type": "REFUND",
+    "version": "1"
+}
+~~~
+
+Уведомления по сплитованным платежам и по возвратам сплитованных платежей формируются аналогично описанным выше ответам на запросы API:
+
+* В тело [уведомления](#payment_callback) с типом `PAYMENT` добавляется JSON-массив `paymentSplits`, используемый для передачи данных о платежах поставщиков. Формат массива см. [выше](#use-splits-merchant-form). 
+* В тело [уведомления](#payment_callback) с типом `REFUND` добавляется JSON-массив `refundSplits`, используемый для передачи данных о возвратах поставщикам. Формат массива см. [выше](#split-refund). 
