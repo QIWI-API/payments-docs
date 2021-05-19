@@ -1,93 +1,17 @@
-# Справочник методов {#api-reference}
+# Method Reference {#references}
 
-<aside class="notice">В запросы и ответы могут добавляться новые параметры. Следите за обновлениями на <a href="https://github.com/QIWI-API/payments-docs/blob/master/payments_ru.html.md">Github</a>.</aside>
+<aside class="notice">Additional fields might be added to the requests and responses. Check <a href="https://github.com/QIWI-API/payments-docs/blob/master/payments_en.html.md">our Github</a> for updates.</aside>
 
-
-## Создание счета {#invoice_put}
+## Invoice {#invoice_put}
 
 <div id="payin_v1_sites__siteId__bills__billId__put_checkout">
   <script>
     $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-checkout-payment-put.json', function( data ) {
+      $.getJSON('../../eui_jsons/payin-checkout-payment-put.json', function( data ) {
         window.requestUI(
             data,
             "checkout",
             "payin/v1/sites/{siteId}/bills/{billId}",
-            "put",
-            ['RequestBody', '200', '4xx']
-          )
-      })
-    });
-  </script>
-</div>
-
-<!-- Request body -->
-~~~http
-PUT /partner/payin/v1/sites/{siteId}/bills/893794793973 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
-{
-   "amount": {  
-     "currency": "RUB",  
-     "value": 100.00
-   },
-   "comment": "Text comment",
-   "expirationDateTime": "2018-04-13T14:30:00+03:00",
-   "customer": {},
-   "customFields": {}  
-   }
-}
-~~~
-
-
-<!-- 200 -->
-~~~json
-{
-    "siteId": "23044",
-    "billId": "893794793973",
-    "amount": {
-      "value": 100.00,
-      "currency": "RUB"
-    },
-    "status": {
-      "value": "WAITING",
-      "changedDateTime": "2018-03-05T11:27:41+03:00"
-    },
-    "comment": "Text comment",
-    "creationDateTime": "2018-03-05T11:27:41",
-    "expirationDateTime": "2018-04-13T14:30:00+03:00",
-    "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
-}
-~~~
-
-
-<!-- 4xx -->
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
-  }
-}
-~~~
-
-
-## Создание счета для оплаты с QIWI Кошелька {#invoice_qw_put}
-
-<div id="bill_v1_bills__billId__put_checkout">
-  <script>
-    $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-checkout-payment-qw-put.json', function( data ) {
-        window.requestUI(
-            data,
-            "checkout",
-            "bill/v1/bills/{billId}",
             "put",
             ['RequestBody', '200', '4xx', '5xx']
           )
@@ -97,13 +21,7 @@ Host: api.qiwi.com
 </div>
 
 <!-- Request body -->
-~~~http
-PUT /partner/bill/v1/bills/893794793973 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
+~~~json
 {
    "amount": {  
      "currency": "RUB",  
@@ -163,18 +81,19 @@ Host: api.qiwi.com
 }
 ~~~
 
-## Статус счета {#invoice_get}
 
-<div id="payin_v1_sites__siteId__bills__billId__get_checkout">
+## Invoice for QIWI Wallet payment {#invoice_qw_put}
+
+<div id="bill_v1_bills__billId__put_checkout">
   <script>
     $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-checkout-payment-get.json', function( data ) {
+      $.getJSON('../../eui_jsons/payin-checkout-payment-qw-put.json', function( data ) {
         window.requestUI(
             data,
             "checkout",
-            "payin/v1/sites/{siteId}/bills/{billId}",
-            "get",
-            ['RequestBody', '200', '4xx']
+            "bill/v1/bills/{billId}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
           )
       })
     });
@@ -182,13 +101,84 @@ Host: api.qiwi.com
 </div>
 
 <!-- Request body -->
-~~~http
-GET /partner/payin/v1/sites/{siteId}/bills/893794793973 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
+~~~json
+{
+   "amount": {  
+     "currency": "RUB",  
+     "value": 100.00
+   },
+   "comment": "Text comment",
+   "expirationDateTime": "2018-04-13T14:30:00+03:00",
+   "customer": {},
+   "customFields": {}  
+   }
+}
 ~~~
+
+
+<!-- 200 -->
+~~~json
+{
+    "siteId": "23044",
+    "billId": "893794793973",
+    "amount": {
+      "value": 100.00,
+      "currency": "RUB"
+    },
+    "status": {
+      "value": "WAITING",
+      "changedDateTime": "2018-03-05T11:27:41+03:00"
+    },
+    "comment": "Text comment",
+    "creationDateTime": "2018-03-05T11:27:41",
+    "expirationDateTime": "2018-04-13T14:30:00+03:00",
+    "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
+}
+~~~
+
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "payin.resource.not.found",
+  "userMessage" : "Resource not found",
+  "description" : "Resource not found",
+  "traceId" : "c3564ba25e221fe3",
+  "dateTime" : "2018-11-13T16:30:52.464+03:00"
+}
+~~~
+
+## Invoice status {#invoice_get}
+
+<div id="payin_v1_sites__siteId__bills__billId__get_checkout">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../eui_jsons/payin-checkout-payment-get.json', function( data ) {
+        window.requestUI(
+            data,
+            "checkout",
+            "payin/v1/sites/{siteId}/bills/{billId}",
+            "get",
+            ['200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
 
 <!-- 200 -->
 ~~~json
@@ -276,7 +266,7 @@ Host: api.qiwi.com
             }
         },
         "status": {
-            "value": "DECLINED",
+            "value": "DECLINE",
             "changedDateTime": "2020-03-26T19:32:54+03:00",
             "reason": "ACQUIRING_NOT_PERMITTED"
         },
@@ -338,6 +328,7 @@ Host: api.qiwi.com
 ]
 ~~~
 
+
 <!-- 4xx -->
 ~~~json
 {
@@ -350,12 +341,25 @@ Host: api.qiwi.com
 }
 ~~~
 
-## Платеж {#payments}
+<!-- 5xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+
+## Payment {#payments}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__put_api">
   <script>
     $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-payment-put.json', function( data ) {
+      $.getJSON('../../eui_jsons/payin-payment-put.json', function( data ) {
         window.requestUI(
             data,
             "api",
@@ -368,21 +372,9 @@ Host: api.qiwi.com
   </script>
 </div>
 
-
 <!-- Request body -->
-~~~http
-PUT /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
+~~~ json
 {
-  "billId": "string",
-  "amount": {
-    "currency": "RUB",
-    "value": 200.00
-  },
   "paymentMethod" : {
     "type" : "CARD",
     "pan" : "4444443616621049",
@@ -390,8 +382,11 @@ Host: api.qiwi.com
     "cvv2" : "123",
     "holderName" : "CARDHOLDER NAME"
   },
-  "callbackUrl": "https://example.com/callbacks",
-  "comment": "Example payment",
+  "amount": {
+    "currency": "RUB",
+    "value": 200.00
+  },
+  "billId": "string",
   "customer": {
     "account": "string",
     "address": {
@@ -411,6 +406,8 @@ Host: api.qiwi.com
     "timeOnPage": 1440,
     "userAgent": "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion"
   },
+  "callbackUrl": "https://example.com/callbacks",
+  "comment": "Example payment",
   "customFields": {},
   "flags": [
     "SALE"
@@ -512,7 +509,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-<!-- 4xx-->
+<!-- 4xx -->
 ~~~json
 {
   "serviceName" : "payin-core",
@@ -527,48 +524,36 @@ Host: api.qiwi.com
 <!-- 5xx -->
 ~~~json
 {
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
+  "serviceName" : "payin-core",
+  "errorCode" : "payin.resource.not.found",
+  "userMessage" : "Resource not found",
+  "description" : "Resource not found",
+  "traceId" : "c3564ba25e221fe3",
+  "dateTime" : "2018-11-13T16:30:52.464+03:00"
 }
 ~~~
 
-
-## Статус платежа {#payment_get}
+## Payment status {#payment_status}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__get_api">
   <script>
     $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-payment-get.json', function( data ) {
+      $.getJSON('../../eui_jsons/payin-payment-get.json', function( data ) {
         window.requestUI(
             data,
             "api",
             "payin/v1/sites/{siteId}/payments/{paymentId}",
             "get",
-            ['RequestBody', '200', '4xx', '5xx']
+            ['200', '4xx', '5xx']
           )
       })
     });
   </script>
 </div>
 
-<!-- Request body -->
-~~~http
-GET /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-~~~
-
 <!-- 200 -->
 ~~~json
 {
-  "paymentId" : "223E",
-  "createdDatetime" : "2018-11-01T17:10:31.284+03:00",
   "amount" : {
     "currency" : "RUB",
     "value" : 200.00
@@ -585,6 +570,7 @@ Host: api.qiwi.com
     "type" : "CARD",
     "maskedPan" : "444444******1049"
   },
+  "createdDatetime" : "2018-11-01T17:10:31.284+03:00",
   "customer" : { },
   "deviceData" : { },
   "requirements" : {
@@ -617,26 +603,24 @@ Host: api.qiwi.com
 <!-- 5xx -->
 ~~~json
 {
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
-
+  "serviceName" : "payin-core",
+  "errorCode" : "payin.resource.not.found",
+  "userMessage" : "Resource not found",
+  "description" : "Resource not found",
+  "traceId" : "c3564ba25e221fe3",
+  "dateTime" : "2018-11-13T16:30:52.464+03:00"
 }
 ~~~
 
-## Завершение аутентификации клиента {#payment_complete}
-
+## Completing authentication {#payment_complete}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__complete_post_api">
   <script>
     $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-complete-post.json', function( data ) {
+      $.getJSON('../../eui_jsons/payin-complete-post.json', function( data ) {
         window.requestUI(
           data,
-            "api",
+          "api",
           "payin/v1/sites/{siteId}/payments/{paymentId}/complete",
           "post",
           ['RequestBody', '200', '4xx', '5xx']
@@ -646,24 +630,14 @@ Host: api.qiwi.com
   </script>
 </div>
 
-
 <!-- Request body -->
-~~~http
-POST /partner/payin/v1/sites/test-01/payments/1811/complete HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
+~~~json
 {
   "threeDS": {
     "pares": "eJzVWFevo9iyfu9fMZrzaM0QjWHk3tIiGptgooE3cgabYMKvv3jvTurTc3XOfbkaJMuL...."
   }
 }
 ~~~
-
-
-
 
 <!-- 200 -->
 ~~~json
@@ -718,16 +692,14 @@ Host: api.qiwi.com
 <!-- 5xx -->
 ~~~json
 {
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
-
+  "serviceName" : "payin-core",
+  "errorCode" : "payin.resource.not.found",
+  "userMessage" : "Resource not found",
+  "description" : "Resource not found",
+  "traceId" : "c3564ba25e221fe3",
+  "dateTime" : "2018-11-13T16:30:52.464+03:00"
 }
 ~~~
-
 
 <!--
 ~~~shell
@@ -741,7 +713,6 @@ user@server:~$ curl -X POST "https://api.qiwi.com/partner/pay/v1/sites/112/payme
   }
 }'
 ~~~ -->
-
 
 <!-- ~~~http
 POST /payin-core/v1/sites/112/payments/332121DS/complete HTTP/1.1
@@ -758,7 +729,7 @@ Host: edge.qiwi.com
 ~~~
 -->
 
-## Подтверждение покупки {#capture}
+## Payment confirmation {#capture}
 
 
 <!--
@@ -779,10 +750,11 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
 ~~~
 -->
 
+
 <div id="payin_v1_sites__siteId__payments__paymentId__captures__captureId__put_api">
   <script>
     $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-capture-put.json', function( data ) {
+      $.getJSON('../../eui_jsons/payin-capture-put.json', function( data ) {
         window.requestUI(
             data,
             "api",
@@ -795,15 +767,8 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
   </script>
 </div>
 
-
 <!-- Request body -->
-~~~http
-PUT /partner/payin/v1/sites/test-01/payments/1811/captures/bxwd8096 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
+~~~json
 {
   "callbackUrl": "https://example.com/callbacks",
   "comment": "Example capture"
@@ -841,42 +806,33 @@ Host: api.qiwi.com
 <!-- 5xx -->
 ~~~json
 {
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
-
+  "serviceName" : "payin-core",
+  "errorCode" : "payin.resource.not.found",
+  "userMessage" : "Resource not found",
+  "description" : "Resource not found",
+  "traceId" : "c3564ba25e221fe3",
+  "dateTime" : "2018-11-13T16:30:52.464+03:00"
 }
 ~~~
 
-## Статус подтверждения {#capture_get}
+
+## Payment confirmation status {#capture_status}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__captures__captureId__get_api">
   <script>
     $(document).ready(function(){
-        $.getJSON('../../rui_jsons/payin-capture-get.json', function( data ) {
+        $.getJSON('../../eui_jsons/payin-capture-get.json', function( data ) {
           window.requestUI(
             data,
             "api",
             "payin/v1/sites/{siteId}/payments/{paymentId}/captures/{captureId}",
             "get",
-            ['RequestBody', '200', '4xx', '5xx']
+            ['200', '4xx', '5xx']
           )
       })
     });
   </script>
 </div>
-
-<!-- Request body -->
-~~~http
-GET /partner/payin/v1/sites/test-01/payments/1811/captures/bxwd8096 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-~~~
 
 <!-- 200 -->
 ~~~json
@@ -909,71 +865,6 @@ Host: api.qiwi.com
 <!-- 5xx -->
 ~~~json
 {
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
-}
-~~~
-
-<!--
-### Статус подтверждений
-
-<div id="v1_sites__siteUid__payments__paymentId__captures_get">
-  <script>
-    $(document).ready(function(){
-        $.getJSON('../../rui_jsons/payin-captures-get.json', function( data ) {
-          window.requestUI(
-              data,
-              "v1/sites/{siteUid}/payments/{paymentId}/captures",
-              "get",
-              [200, 400, 401, 403, 404, 500, 501, 503]
-              )
-          })
-    });
-  </script>
-</div>
--->
-
-<!-- 200 -->
-<!--
-~~~json
-{
-  "captureId": "bxwd8096",
-  "createdDatetime": "2018-11-20T16:29:58.96+03:00",
-  "amount": {
-    "currency": "RUB",
-    "value": "6.77"
-  },
-  "status": {
-    "value": "COMPLETED",
-    "changedDateTime": "2018-11-20T16:29:58.963+03:00"
-  }
-}
-~~~
--->
-<!-- 400 -->
-<!--
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83",
-  "cause" : {
-    "amount" : [ "Invalid format. Amount value must be greater then zero" ]
-  }
-}
-~~~
--->
-<!-- 401 -->
-<!--
-~~~json
-{
   "serviceName" : "payin-core",
   "errorCode" : "payin.resource.not.found",
   "userMessage" : "Resource not found",
@@ -982,81 +873,14 @@ Host: api.qiwi.com
   "dateTime" : "2018-11-13T16:30:52.464+03:00"
 }
 ~~~
--->
-<!-- 403 -->
-<!--
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "payin.resource.not.found",
-  "userMessage" : "Resource not found",
-  "description" : "Resource not found",
-  "traceId" : "c3564ba25e221fe3",
-  "dateTime" : "2018-11-13T16:30:52.464+03:00"
-}
-~~~
--->
-<!-- 404 -->
-<!--
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "payin.resource.not.found",
-  "userMessage" : "Resource not found",
-  "description" : "Resource not found",
-  "traceId" : "c3564ba25e221fe3",
-  "dateTime" : "2018-11-13T16:30:52.464+03:00"
-}
-~~~
--->
 
-<!-- 500 -->
-<!--
-~~~json
-{
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
 
-}
-~~~
--->
-<!-- 501 -->
-<!--
-~~~json
-{
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
- }
-~~~
--->
-<!-- 503 -->
-<!--
-~~~json
-{
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
- }
-~~~
--->
-
-## Операция возврата {#refund-api}
+## Refund {#refund}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__refunds__refundId__put_api">
   <script>
     $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-refund-put.json', function( data ) {
+      $.getJSON('../../eui_jsons/payin-refund-put.json', function( data ) {
         window.requestUI(
             data,
             "api",
@@ -1071,13 +895,7 @@ Host: api.qiwi.com
 
 
 <!-- Request body -->
-~~~http
-PUT /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
+~~~json
 {
   "amount": {
     "value": 2.34,
@@ -1085,6 +903,7 @@ Host: api.qiwi.com
   }
 }
 ~~~
+
 
 
 <!-- 200 -->
@@ -1121,29 +940,29 @@ Host: api.qiwi.com
 <!-- 5xx -->
 ~~~json
 {
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
-
+  "serviceName" : "payin-core",
+  "errorCode" : "payin.resource.not.found",
+  "userMessage" : "Resource not found",
+  "description" : "Resource not found",
+  "traceId" : "c3564ba25e221fe3",
+  "dateTime" : "2018-11-13T16:30:52.464+03:00"
 }
 ~~~
 
 <!--
-## Возврат по платежу с QIWI Кошелька {#invoice_refund_qw}
+## Refund for QIWI Wallet payment {#refund_qw}
+
 
 <div id="bill_v1_bills__billId__refunds__refundId__put_checkout">
   <script>
     $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-checkout-refund-put.json', function( data ) {
+      $.getJSON('../../eui_jsons/payin-checkout-refund-put.json', function( data ) {
         window.requestUI(
             data,
             "checkout",
             "bill/v1/bills/{billId}/refunds/{refundId}",
             "put",
-            ['RequestBody', '200', '4xx']
+            ['RequestBody', '200', '4xx', '5xx']
           )
       })
     });
@@ -1152,13 +971,7 @@ Host: api.qiwi.com
 -->
 <!-- Request body -->
 <!--
-~~~http
-PUT /partner/bill/v1/bills/89123232/refunds/tcwv3132 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
+~~~json
 {
   "amount": {
     "value": 2.34,
@@ -1166,7 +979,10 @@ Host: api.qiwi.com
   }
 }
 ~~~
+
+
 -->
+
 <!-- 200 -->
 <!--
 ~~~json
@@ -1176,7 +992,7 @@ Host: api.qiwi.com
       "currency": "RUB"
     },
     "datetime": "2018-03-01T16:06:57+03",
-    "refundId": "tcwv3132",
+    "refundId": "1",
     "status": "PARTIAL"
 }
 ~~~
@@ -1193,34 +1009,39 @@ Host: api.qiwi.com
   "traceId" : "fd0e2a08c63ace83"
 }
 ~~~
+
+-->
+<!-- 5xx -->
+<!--
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "payin.resource.not.found",
+  "userMessage" : "Resource not found",
+  "description" : "Resource not found",
+  "traceId" : "c3564ba25e221fe3",
+  "dateTime" : "2018-11-13T16:30:52.464+03:00"
+}
+~~~
 -->
 
-## Статус возврата {#refund-api-status}
+## Refund status {#refund_status}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__refunds__refundId__get_api">
   <script>
     $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-refund-get.json', function( data ) {
+      $.getJSON('../../eui_jsons/payin-refund-get.json', function( data ) {
         window.requestUI(
             data,
             "api",
             "payin/v1/sites/{siteId}/payments/{paymentId}/refunds/{refundId}",
             "get",
-            ['RequestBody', '200', '4xx']
+            ['200', '4xx', '5xx']
           )
       })
     });
   </script>
 </div>
-
-<!-- Request body -->
-~~~http
-GET /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-~~~
 
 <!-- 200 -->
 ~~~json
@@ -1253,32 +1074,35 @@ Host: api.qiwi.com
 }
 ~~~
 
-## Статус возвратов {#refunds-api-status}
+<!-- 5xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "payin.resource.not.found",
+  "userMessage" : "Resource not found",
+  "description" : "Resource not found",
+  "traceId" : "c3564ba25e221fe3",
+  "dateTime" : "2018-11-13T16:30:52.464+03:00"
+}
+~~~
+
+## All refunds status {#refunds_status}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__refunds_get_api">
   <script>
     $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-refunds-get.json', function( data ) {
+      $.getJSON('../../eui_jsons/payin-refunds-get.json', function( data ) {
         window.requestUI(
             data,
             "api",
             "payin/v1/sites/{siteId}/payments/{paymentId}/refunds",
             "get",
-            ['RequestBody', '200', '4xx', '5xx']
+            ['200', '4xx', '5xx']
           )
       })
     });
   </script>
 </div>
-
-<!-- Request body -->
-~~~http
-GET /partner/payin/v1/sites/test-01/payments/1811/refunds HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-~~~
 
 <!-- 200 -->
 ~~~json
@@ -1316,20 +1140,22 @@ Host: api.qiwi.com
 <!-- 5xx -->
 ~~~json
 {
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
+  "serviceName" : "payin-core",
+  "errorCode" : "payin.resource.not.found",
+  "userMessage" : "Resource not found",
+  "description" : "Resource not found",
+  "traceId" : "c3564ba25e221fe3",
+  "dateTime" : "2018-11-13T16:30:52.464+03:00"
 }
 ~~~
 
-## Регистрация маркетплейсов {#split-boarding}
+## Marketplace registration {#split-boarding}
 
-Чтобы подключить сплитование платежей, выполните онбординг маркетплейса в нашем сервисе.
+For split payments, proceed with the following steps to onboard your marketplace in our servie.
 
-### Выпуск ключа {#split-api-keys}
+### Key issue {#split-api-keys}
+
+> Request
 
 ~~~shell
 curl --location --request POST 'https://kassa.qiwi.com/api/users/edge_login' \
@@ -1340,7 +1166,7 @@ curl --location --request POST 'https://kassa.qiwi.com/api/users/edge_login' \
 }'
 ~~~
 
-> Ответ
+> Response
 
 ~~~http
 HTTP/1.1 200 OK
@@ -1356,31 +1182,31 @@ Cookie: TokenTail:11w-www1-wwww1111wwww;
 }
 ~~~
 
-Чтобы авторизоваться в API для маркетплейсов, отправьте POST-запрос на URL:
+To authorize in the API for marketplaces, send POST request to the URL:
 
-`/api/users/edge_login`
+`https://kassa.qiwi.com/api/users/edge_login`
 
-В теле запроса укажите параметры:
+Send the parameters in the request body:
 
-* `username` (string) — логин к вашему ЛК. Данный логин появляется в процессе онбординга маркетплейса;
-* `password` (string) — заданный пользователем пароль к ЛК.
+* `username` (string) — login for your profile. It is issued on the start of the onboarding;
+* `password` (string) — specified password.
 
-В ответе придут части Bearer-токена для последующих запросов.
+In the response, there will be Bearer-token separated into two parts, for future requests.
 
-Чтобы сформировать Bearer-токен, выполните конкатенацию значений в `token_head` и Cookie `TokenTail`. В примере ответа получится такой ключ API: 
+To produce Bearer-token, concatenate values from `token_head` field in the response and Cookie `TokenTail`. In the example you will get API key: 
 
 `kassa-11ww11ee-11ww-111w-www1-wwww1111wwww`
 
-Токен действителен 1 месяц. По истечении месяца необходимо повторно выполнить авторизацию в API.
+Obtained token is valid for a month. After a month, you must re-authorize in API.
 
-Возможные статусы ответов:
+Possible response statuses:
 
-* 401 — указана неверная пара логин-пароль;
+* 401 — wrong login-password pair;
 * 200 — ОК.
 
-### Передача данных по конечному поставщику {#split-register-merchant}
+### Transfer data of the merchant {#split-register-merchant}
 
-> Пример запроса
+> Request example
 
 ~~~shell
 curl --location --request POST 'https://kassa.qiwi.com/edge/kassa-api/api/requests/v2' \
@@ -1439,57 +1265,58 @@ curl --location --request POST 'https://kassa.qiwi.com/edge/kassa-api/api/reques
 }'
 ~~~
 
+Pass the set of data for the merchant. The set is not complete and will be expanded.
 
-Передайте набор данных по конечному поставщику. Набор данных не полный и будет расширяться.
+Send a POST request to URL:
 
-Отправьте POST-запрос на URL:
+`https://kassa.qiwi.com/edge/kassa-api/api/requests/v2`
 
-`edge/kassa-api/api/requests/v2`
+The value of [the API token](#split-api-keys) is indicated in the HTTP header `Authorization`, which is formed as
 
-Значение [токена API](#split-api-keys) указывается в заголовке `Authorization`, который формируется как `Bearer "Token"`.
+`Bearer "Token"`.
 
-Параметры JSON-тела запроса:
+JSON-body request parameters:
 
-Параметр | Тип | Описание
+Parameter | Type | Description
 ----|----|-----
-partner_name | string | Название конечного мерчанта/поставщика на латинице (бренд)
-partner_type_code | string | Значение по умолчанию `FIRM`
-workflow_code | string | Значение по умолчанию `RU`
-request_site | string | URL сайта, на котором будет производиться покупка товаров в пользу этого поставщика в рамках сплитования
-request_site_name | string | Название сайта на латинице
-request_type_code | string | Значение по умолчанию `PAYIN_SPLIT` для подключения поставщика на сплитование
-request_inn | number | ИНН поставщика
-extras | json-object | Объект, содержащий все остальные данные по поставщику, будет расширяться. Набор экстр строго определен.
-extras.extra_code | string | Название экстры, содержащей данные по поставщику
-extras.extra_value | string | Значение экстры
+partner_name | string | The name (brand) of the final merchant, Latin letters
+partner_type_code | string | By default, `FIRM`
+workflow_code | string | By default, `RU`
+request_site | string | The URL of the site where the goods will be purchased in favor of this merchant as part of the split payments
+request_site_name | string | Site name, Latin letters
+request_type_code | string | By default, `PAYIN_SPLIT` for registering merchant to split payments
+request_inn | number | Merchant's TIN
+extras | JSON-object | An object containing all the other merchant data, the set is not final. The set of extras is strictly defined.
+extras.extra_code | string | The name of the extra containing merchant data
+extras.extra_value | string | Extra value
 
-**Элементы объекта extras**
+**JSON-object extras**
 
-extra_code | Тип | Описание
+extra_code | Type | Description
 -----|-----|------
-MARKET_SITE_ID | string | Идентификатор маркетплейса, в рамках которого будет производиться сплитование
-MERCHANT_CMS | string | Комиссия в процентах с конечного поставщика по договору. Округленная до двух знаков после запятой. 
-MARKET_CMS | string | Комиссия маркетплейса в процентах, по договору. Округленная до двух знаков после запятой. 
-KPP	| number	| КПП (для конечных поставщиков-юридических лиц)
-OPER_ACCOUNT	| number	| Расчетный счет конечного мерчанта
-BIC	| number	| БИК банка конечного мерчанта
-CORR_ACCOUNT|number|	Корреспондентский счет конечного мерчанта
-BANK_NAME	|string	|Название банка конечного мерчанта
-CHIEF_NEW	| object| Данные о руководителе компании
+MARKET_SITE_ID | string | Marketplace ID, which will be used in split payments
+MERCHANT_CMS | string | The commission in percentages for the merchant under the contract. Rounded to two digits after the comma. 
+MARKET_CMS | string | The marketplace commission in percentages. Rounded to two digits after the comma. 
+KPP	| number	| PPC for end-merchant legal entities
+OPER_ACCOUNT	| number	| Merchant's account
+BIC	| number	| Bank identifier (BIK) of the merchant
+CORR_ACCOUNT|number|	Correspondent account of the merchant
+BANK_NAME	|string	| Settlement bank name for the merchant
+CHIEF_NEW	| object| Company CEO personal data
 ----|----|-----
-surname | string |Фамилия
-name | string |Имя
-patronymic | string |Отчество
-phone  |number |Телефон
+surname | string | Surname
+name | string | Name
+patronymic | string | Patronymic
+phone  |number | Phone number
 ----|----|-----
-CONFIDANT_NEW	| object	| Данные о доверенном лице (если есть)
+CONFIDANT_NEW	| object	| Confidant personal data (if any)
 ----|----|-----
-surname |string |Фамилия
-name |string|Имя
-patronymic |string|Отчество
-phone |number|Телефон
+surname |string |Surname
+name |string|Name
+patronymic |string|Patronymic
+phone |number| Phone number
 
-> Пример ответа
+> Response
 
 ~~~json
 {
@@ -1498,20 +1325,22 @@ phone |number|Телефон
 }
 ~~~
 
-В ответ вы получите сообщение со следующими данными:
+You get the following data in response:
 
-* `request_uid` (string) — Uid созданной заявки на подключение конечного поставщика. В дальнейшем используется для передачи документов по заявке.
-* `partner_uid` (string) — Uid созданного конечного поставщика. Данный Uid необходимо использовать для получения созданных процессинговых идентификаторов.
+* `request_uid` (string) — Uid of the created application to connect the merchant. In the future, it is used to transfer documents on application.
+* `partner_uid` (string) — Uid of the registered merchant. This Uid should be used to obtain the processing identifiers you have created.
 
-### Передача документов {#docs-provision}
+### Transfer of documents
 
-Далее необходимо передать пакет документов по подключаемому поставщику. Каждый документ отправляется отдельным запросом.
+Next, you need to pass the package of documents of the merchant. Each document is sent in a separate request.
 
-Отправьте POST-запрос на URL:
+Send POST request to the URL:
 
-`/edge/kassa-api/api/files/upload`
+`https://kassa.qiwi.com/edge/kassa-api/api/files/upload`
 
-Значение [токена API](#split-api-keys) указывается в заголовке `Authorization`, который формируется как `Bearer "Token"`.
+Value of [API token](#split-api-keys) is present in `Authorization` header, which is constructed as `Bearer "Token"`.
+
+> Request to transfer document
 
 ~~~shell
 curl --location --request POST 'https://kassa.qiwi.com/edge/kassa-api/api/files/upload' \
@@ -1521,31 +1350,31 @@ curl --location --request POST 'https://kassa.qiwi.com/edge/kassa-api/api/files/
 --form 'properties={"request_uid":"c852ae0bf","file_code":"SPLIT_STATEMENT"}; type=application/json'
 ~~~
 
-Параметры запроса передаются как `formData`:
+Request parameters are sent as `formData`:
 
-Параметр | Тип параметра | Тип данных | Описание
+Parameter | Parameter type | Data type | Description
 ----|----|-----
-fileValueObject | formData | object | Объект, содержащий описание файла, принимает параметры:<br/>request_uid — uid заявки из предыдущего запроса<br/>file_code — код передаваемого документа (см. описание ниже).
-multipartFile | formData | file | Передаваемый документ
+fileValueObject | formData | object | JSON-object with description of the document file. It includes parameters:<br/>`request_uid` — uid of the created application from [the previous response](#split-register-merchant) <br/>`file_code` — code of the document (see below the possible codes).
+multipartFile | formData | file | Transferred document
 
-Возможные значения кода документа:
+Possible codes for the document:
 
-* `SPLIT_STATEMENT` — Заявление о присоединении к оферте, подписанное  конечным поставщиком и маркетплейсом;
-* `CLIENT_QUESTIONNAIRE` — Анкета конечного поставщика (формат анкеты описан в [Приложении №2 документа](https://static.qiwi.com/ru/doc/ishop/public-offer-ishop-new.pdf))
+* `SPLIT_STATEMENT` — Application for joining the offer, signed by the merchant and the marketplace;
+* `CLIENT_QUESTIONNAIRE` — Merchant questionnaire (the questionnaire format is described in the ["Annex No.2 of the document"](https://static.qiwi.com/ru/doc/ishop/public-offer-ishop-new.pdf))
 
-Набор передаваемых кодов также будет расширяться.
+A list of codes will be extended in the future.
 
-> Пример ответа
+> Response example
 
 ~~~shell
 "861d0207-54b3-4e3a-bcfb-6f379f329328"
 ~~~
 
-В ответе вы получите uid добавленной экстры.
+You get uid of the added extra in response.
 
-### Получение информации о ходе подключения конечного поставщика {#info-merchant-register}
+### Getting information about the progress of the merchant registration {#check-merchant-registration}
 
-> Пример ответа
+> Example of the current status of registration
 
 ~~~json
 {
@@ -1628,52 +1457,52 @@ multipartFile | formData | file | Передаваемый документ
 }
 ~~~
 
-Чтобы узнать статус подключения конечного поставщика, отправьте GET-запрос на URL:
+To find out the status of the merchant registration, send a GET request to the URL:
 
-`edge/kassa-api/api/requests?request_uid={uid созданной заявки}`
+`https://kassa.qiwi.comedge/kassa-api/api/requests?request_uid={application uid}`
 
-В ответ вы получите перечень отправленных данных, а также шаг и статус заявки на подключение.
+You get the list of the registration data, the current step, and status of the application.
 
-Поле ответа | Тип | Описание
+Field in response | Type | Description
 -----|-----|------
-request_id | number | Численная ID заявки на подключение. Данная ID может быть использована для обращения в Службу поддержки для уточнения вопросов по подключению.
-request_site | string | Переданный в [запросе](#split-register-merchant) сайт
-request_site_name | string|	Переданное в [запросе](#split-register-merchant) название конечного поставщика
-request_user_message |string|	Поле не используется
-request_manager_message| string|	Поле не используется
-request_inn| string	| Переданный в [запросе](#split-register-merchant) ИНН конечного поставщика
-request_qiwi_account | string|	Поле не используется
-request_type| object	|Служебные данные, описание типа заявки на подключение. Всегда возвращается значение<br/>"request_type": {<br/>"request_type_code": "PAYIN_SPLIT",<br/>"request_type_name": "Подключение поставщиков по сплитам PayIn",<br/>"options": []<br/>}
-request_status | object	|Объект, характеризующий статус заявки на подключение.
+request_id | number | Numerical ID of the application.<br/>This ID can be used to contact Support to clarify registration issues.
+request_site | string | Site name that is transferred in [the request](#split-register-merchant)
+request_site_name | string|	Merchant name that is sent in [the request](#split-register-merchant)
+request_user_message |string|The field is not used
+request_manager_message| string|	The field is not used
+request_inn| string	| Merchant TIN that is sent in [the request](#split-register-merchant)
+request_qiwi_account | string|	The field is not used
+request_type| object	|Service data, description of the type of application.<br/>The following value is always returned<br/>`"request_type": {`<br/>`"request_type_code": "PAYIN_SPLIT",`<br/>`"request_type_name": "Подключение поставщиков`<br/>`по сплитам PayIn",`<br/>`"options": []`<br/>`}`
+request_status | object	|JSON-object with information about status of the application.
 -----|-----|------
-request_status_code | string| Код статуса.<br/>Возможные коды статуса:<br/>MANAGER_WORK — заявка на рассмотрении<br/>REJECTED — заявка отклонена<br/>ACCEPTED — заявка подтверждена, конечный мерчант переведен в производственную среду
-request_status_name | string |Русское название для статуса.
+request_status_code | string| Status code.<br/>Possible values:<br/>MANAGER_WORK — application pending<br/>REJECTED — application rejected<br/>ACCEPTED — application confirmed, merchant transferred to production environment
+request_status_name | string |Russian name for status.
 -----|-----|------
-request_step | object	| Объект, характеризующий шаг заявки на подключение.
+request_step | object	| The object that characterizes the current step of the application.
 -----|-----|------
-request_step_code |string|Служебные данные
-request_step_name | string| Служебные данные
-extras | object | Список переданных ранее данных
+request_step_code |string|Service data
+request_step_name | string|Service data
+extras | object | List of previously transmitted data
 -----|-----|------
-extra_code | string | Название экстры, содержащей данные по поставщику
-extra_name | string |  Русское название экстры, содержащей данные по поставщику
-extra_order | number | Служебные данные
-extra_is_unique | bool | Служебные данные
-extra_type_code | string| Тип данных экстры
-extra_values | array of objects| Значение экстры
+extra_code | string | The name of the extras containing merchant data
+extra_name | string |  Russian name of the extras containing merchant data
+extra_order | number | Service data
+extra_is_unique | bool | Service data
+extra_type_code | string| Type of data for the extras
+extra_values | array of objects| Extras value
 -----|-----|------
-uid | string | Внутренний идентификатор для хранения данного значения экстры
-value | string | Переданное значение экстры
+uid | string | Internal ID to store this extra value
+value | string | Transferred extras value
 -----|-----|------
-request_flow | object	| Служебные данные 
-request_uid | string	| Uid созданной заявки заявки на подключение
-request_updated_dtime | number	| Unix-time даты последнего обновления данных по заявке и ее статуса
-merchant_site_external_ids | object	| Объект, содержащий данные о созданных процессинговых `MerchantSiteId` для конечного поставщика. Данный ID приходит не сразу, необходимо повторять данный запрос до получения ID, либо статуса REJECTED.
-merchant_uids | object	| Служебные данные.
-check_failures | object	| Не используется
+request_flow | object	| Service data 
+request_uid | string	| Uid of the created application
+request_updated_dtime | number	| Unix-time date of the last update of the application data and its status
+merchant_site_external_ids | object	| An object containing data on the created `MerchantSiteId` in QIWI processing for the merchant. This ID does not come immediately, you need to repeat this request before receiving the ID, or REJECTED status.
+merchant_uids | object	| Service data
+check_failures | object	| The field is not used
 
-Для отслеживания статуса заявки проверьте значение поля `request_status.request_status_code` в ответе:
+To track the status of the application, check the value of the `request_status.request_status_code` field in response:
 
-* `REJECTED` — регистрация мерчанта отклонена. По номеру `request_id` вы можете обратиться в поддержку за уточнением подробностей.
-* `ACCEPTED` — регистрация мерчанта прошла успешно, он переведен в производственный режим. 
-* `MANAGER_WORK` — идет регистрация мерчанта, процессинговый идентификатор поставщика находится в тестовом режиме.
+* `REJECTED` — The registration of the merchant is rejected. By `request_id` you can ask for more details in the Support.
+* `ACCEPTED` — registration of the merchant was successful, it was transferred to production environment.
+* `MANAGER_WORK` — merchant registration is underway, the processing ID of the merchant is in test mode.

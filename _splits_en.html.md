@@ -1,19 +1,19 @@
-# Сплитование платежей {#payments_split}
+# Split Payments {#payments_split}
 
-Сплитование платежей — решение, разработанное специально для маркетплейсов. Сплитование платежей позволяет рассчитываться с несколькими поставщиками услуг, производя одно списание с карты покупателя.
+Split payments is a solution developed for marketplaces. Split payments provides a way to pay multiple service providers, making one charging operation from the customer's card.
 
-Чтобы подключить сплитование платежей:
+To connect to split payments:
 
-1. Обратитесь к вашему сопровождающему менеджеру и запросите подключение решения.
-2. Выполните интеграцию согласно описанию в разделе [Регистрация маркетплейсов](#split-boarding).
+1. Contact your Support manager and request access to the solution.
+2. Integrate the solution according to [Marketplace registration](#split-boarding) section.
 
-## Интеграция с Платежной формой QIWI {#use-splits-qiwi-form}
+## Integration with QIWI Payment form {#use-splits-qiwi-form}
 
-Чтобы отправить платеж со сплитованием, передайте в запросе API [Создание счета](#invoice_put) массив<br/>`splits` c данными поставщиков.
+To send split payments, send in API request [Invoice](#invoice_put) a JSON-array<br/>`splits` with merchants data.
 
-### Описание данных
+### Data format
 
-> Пример выставления счета со сплитованием
+> Example of invoice request with split payments
 
 ~~~shell
 curl --location --request PUT 'https://api.qiwi.com/partner/payin/v1/sites/Obuc-02/bills/eqwptt' \
@@ -52,7 +52,7 @@ curl --location --request PUT 'https://api.qiwi.com/partner/payin/v1/sites/Obuc-
 '
 ~~~
 
-> Пример ответа при выставлении счета со сплитованием
+> Response example with invoice and split payments
 
 ~~~json
 {
@@ -97,45 +97,45 @@ curl --location --request PUT 'https://api.qiwi.com/partner/payin/v1/sites/Obuc-
 }
 ~~~
 
-Описание массива `splits`:
+JSON-array `splits` format:
 
-Название | Тип | Описание
+Name | Type | Description
 ----|------|-------
-splits | Array | Массив данных о поставщиках
+splits | Array | Merchants data array
 -----|------|------
-type | String | Тип передаваемых данных. Доступные значения: `MERCHANT_DETAILS` (данные поставщика)
-siteUid | String | [Зарегистрированный ID поставщика](#split-boarding)
-splitAmount | Object | Возмещение поставщику
+type | String | Data type. Always `MERCHANT_DETAILS` (merchant details)
+siteUid | String | [Registered merchant ID](#split-boarding)
+splitAmount | Object | Merchant reimbursement data
 ----|----|-----
-value | Number | Сумма возмещения
-currency | String(3) | Буквенный код валюты возмещения по ISO. Доступен только `RUB`
+value | Number | Amount of reimbursement
+currency | String(3) | Text code of reimbursement currency, by ISO. Only `RUB` value
 -----|-----|-----
-orderId | String | Номер заказа (необязательный)
-comment | String | Комментарий к заказу (необязательный)
+orderId | String | Order number (optional)
+comment | String | Comment for the order (optional)
 
-<aside class="warning">Сумма возмещений поставщикам должна равняться сумме списания с карты плательщика.</aside>
+<aside class="warning">The amount of reimbursements to merchants should be equal to the amount charged from the customer's card.</aside>
 
-В объекте `splits` ответа содержатся данные о сплитованных платежах и комиссиях:
+In JSON-object `splits` of the response the data on split payments and commissions are present:
 
-Поле ответа | Тип | Описание
+Response field | Type | Description
 ----|------|-------
-splits | Array | Массив с данными о сплитованных платежах
+splits | Array | Array with split payments data
 -----|------|------
-type | String | Тип передаваемых данных. Всегда возвращается строка `MERCHANT_DETAILS`
-siteUid | String | [Зарегистрированный ID поставщика](#split-boarding)
-splitAmount | Object | Данные о возмещении поставщику
+type | String | Data type. Always `MERCHANT_DETAILS`
+siteUid | String | [Registered merchant ID](#split-boarind)
+splitAmount | Object | Merchant reimbursement data
 ----|----|-----
-value | String | Сумма возмещения
-currency | String(3) | Буквенный код валюты возмещения по ISO
+value | String | Amount of reimbursement
+currency | String(3) | Text code of reimbursement currency, by ISO
 -----|-----|-----
-orderId | String | Номер заказа
-comment | String | Комментарий к заказу
+orderId | String | Order number
+comment | String | Comment for the order
 
-## Интеграция с Платежной формой ТСП {#use-splits-merchant-form}
+## Integration with Merchant's form {#use-splits-merchant-form}
 
-Чтобы отправить платеж со сплитованием, передайте в запросе API [Платеж](#payments) JSON-массив `paymentSplits` с данными поставщиков.
+To send split payment, send in API request [Payment](#payments) a JSON-array<br/> `paymentSplits` with merchants data.
 
-### Описание данных
+### Data format
 
 ~~~json
 {
@@ -242,52 +242,52 @@ comment | String | Комментарий к заказу
 }
 ~~~
 
-Описание массива `paymentSplits`:
+JSON-array `paymentSplits` format:
 
-Название | Тип | Описание
+Name | Type | Description
 ----|------|-------
-paymentSplits | Array | Массив данных о поставщиках
+paymentSplits | Array | Merchants data array
 -----|------|------
-type | String | Тип передаваемых данных. Доступные значения: `MERCHANT_DETAILS` (данные поставщика)
-siteUid | String | [Зарегистрированный ID поставщика](#split-boarding)
-splitAmount | Object | Возмещение поставщику
+type | String | Data type. Always `MERCHANT_DETAILS` (merchant details)
+siteUid | String | [Registered merchant ID](#split-boarding)
+splitAmount | Object | Merchant reimbursement data
 ----|----|-----
-value | Number | Сумма возмещения
-currency | String(3) | Буквенный код валюты возмещения по ISO. Доступен только `RUB`
+value | Number | Amount of reimbursement
+currency | String(3) | Text code of reimbursement currency, by ISO. Only `RUB` value
 -----|-----|-----
-orderId | String | Номер заказа (необязательный)
-comment | String | Комментарий к заказу (необязательный)
+orderId | String | Order number (optional)
+comment | String | Comment for the order (optional)
 
-<aside class="warning">Сумма возмещений поставщикам должна равняться сумме списания с карты плательщика.</aside>
+<aside class="warning">The amount of reimbursements to merchants should be equal to the amount charged from the customer's card.</aside>
 
-В объекте `paymentSplits` ответа содержатся данные о принятых платежах и комиссиях:
+In JSON-object `paymentSplits` of the response the data on split payments and commissions are present:
 
-Поле ответа | Тип | Описание
+Response field | Type | Description
 ----|------|-------
-paymentSplits | Array | Массив с данными о принятых платежах
+paymentSplits | Array | Array with split payments data
 -----|------|------
-type | String | Тип передаваемых данных. Всегда возвращается строка `MERCHANT_DETAILS`
-siteUid | String | [Зарегистрированный ID поставщика](#split-boarding)
-splitAmount | Object | Данные о возмещении поставщику
+type | String | Data type. Always `MERCHANT_DETAILS`
+siteUid | String | [Registered merchant ID](#split-boarind)
+splitAmount | Object | Merchant reimbursement data
 ----|----|-----
-value | String | Сумма возмещения
-currency | String(3) | Буквенный код валюты возмещения по ISO
-----|----|-----
-splitCommissions | Object | Данные о комиссии (необязательный)
+value | String | Amount of reimbursement
+currency | String(3) | Text code of reimbursement currency, by ISO
+-----|-----|-----
+splitCommissions | Object | Commission data (optional)
 -----|----|-----
-merchantCms | Object | Данные о комиссии с поставщика
+merchantCms | Object | Commission from the merchant
 ----|-----|----
-value | String | Сумма комиссии
-currency | String(3) |Буквенный код валюты комиссии по ISO
+value | String | Amount of the commission
+currency | String(3) |Text code of the commission currency, by ISO
 -----|-----|-----
-orderId | String | Номер заказа
-comment | String | Комментарий к заказу
+orderId | String | Order number
+comment | String | Comment for the order
 
-## Возвраты по сплитованным платежам {#split-refund}
+## Refunds on split payments {#split-refund}
 
-После успешной авторизации списания денежных средств доступен возврат средств по операции сплитованного платежа.
+After a successful authentication of the charging, a refund is available for the split payment transaction.
 
-> Пример запроса
+> Example of refund request
 
 ~~~http
 PUT /partner/payin/v1/sites/test-01/payments/23/refunds/1 HTTP/1.1
@@ -337,7 +337,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-> Пример ответа
+> Example of response
 
 ~~~json
 {
@@ -404,52 +404,52 @@ Host: api.qiwi.com
 }
 ~~~
 
-В запросе API [Операция возврата](#refund-api) передайте JSON-массив `refundSplits` с данными о возвратах поставщикам. Укажите общую сумму возврата и сумму возврата для каждого поставщика. Поддерживается как частичный, так и полный возврат. 
+To send split payments refund, send in API request [Refund](#refund-api) a JSON-array<br/>`refundSplits` with merchants refunds. Put the total amount of the refund and the refund amount for each merchant. Both partial and complete refund are supported. 
 
-<aside class="warning">Сумма отмененных возмещений поставщикам должна равняться общей сумме возврата.</aside>
+<aside class="warning">The amount of refunded reimbursements to merchants should be equal to the total amount of the refund.</aside>
 
-Описание массива `refundSplits`:
+JSON-array `refundSplits` format:
 
-Название | Тип | Описание
+Name | Type | Description
 ----|------|-------
-refundSplits | Array | Массив данных о возвратах поставщикам
+refundSplits | Array | Merchants refunds data array
 -----|------|------
-type | String | Тип передаваемых данных. Доступные значения: `MERCHANT_DETAILS` (данные поставщика)
-siteUid | String | [Зарегистрированный ID поставщика](#split-boarding)
-splitAmount | Object | Данные об отмене возмещения поставщику
+type | String | Data type. Always `MERCHANT_DETAILS` (merchant details)
+siteUid | String | [Registered merchant ID](#split-boarding)
+splitAmount | Object | Merchant reimbursement refund data
 ----|----|-----
-value | Number | Сумма отмены возмещения
-currency | String(3) | Буквенный код валюты отмены возмещения по ISO. Доступен только `RUB`
+value | Number | Amount of reimbursement refund
+currency | String(3) | Text code of reimbursement refund currency, by ISO. Only `RUB` value
 -----|-----|-----
-orderId | String | Номер заказа (необязательный)
-comment | String | Комментарий к заказу (необязательный)
+orderId | String | Order number (optional)
+comment | String | Comment for the order (optional)
 
-В JSON-массиве `refundSplits` ответа содержатся данные о принятых возвратах:
+In JSON-object `refundSplits` of the response the data on accepted refunds are present:
 
-Поле ответа | Тип | Описание
+Response field | Type | Description
 ----|------|-------
-refundSplits | Array | Массив данных о возвратах поставщикам
+refundSplits | Array | Array with refunds data
 -----|------|------
-type | String | Тип передаваемых данных. Всегда возвращается строка `MERCHANT_DETAILS`
-siteUid | String | [Зарегистрированный ID поставщика](#split-boarding)
-splitAmount | Object | Данные об отмене возмещения поставщику
+type | String | Data type. Always `MERCHANT_DETAILS`
+siteUid | String | [Registered merchant ID](#split-boarind)
+splitAmount | Object | Merchant reimbursement refund data
 ----|----|-----
-value | String | Сумма отмены возмещения
-currency | String(3) | Буквенный код валюты 	 по ISO
-----|----|-----
-splitCommissions | Object | Данные о комиссии (необязательный)
+value | String | Amount of reimbursement refund
+currency | String(3) | Text code of reimbursement refund currency, by ISO
+-----|-----|-----
+splitCommissions | Object | Commission data (optional)
 -----|----|-----
-merchantCms | Object | Данные о комиссии с поставщика
+merchantCms | Object | Commission from the merchant
 ----|-----|----
-value | String | Сумма комиссии
-currency | String(3) | Буквенный код валюты комиссии по ISO
+value | String | Amount of the commission
+currency | String(3) |Text code of the commission currency, by ISO
 -----|-----|-----
-orderId | String | Номер заказа
-comment | String | Комментарий к заказу
+orderId | String | Order number
+comment | String | Comment for the order
 
-## Уведомления по сплитованным операциям {#split-operations-notification}
+## Notifications on split payments and refunds {#split-operations-notification}
 
-> Пример уведомления по сплитованным платежам
+> Notification for a split payments
 
 ~~~json
 {
@@ -539,7 +539,7 @@ comment | String | Комментарий к заказу
 }
 ~~~
 
-> Пример уведомления по возвратам сплитованных платежей
+> Notification for a split payments refund
 
 ~~~json
 {
@@ -621,7 +621,7 @@ comment | String | Комментарий к заказу
 }
 ~~~
 
-Уведомления по сплитованным платежам и по возвратам сплитованных платежей формируются аналогично описанным выше ответам на запросы API:
+Notifications for split payments and split payment refunds are formed similarly to the API requests described above:
 
-* В тело [уведомления](#payment_callback) с типом `PAYMENT` добавляется JSON-массив `paymentSplits`, используемый для передачи данных о платежах поставщиков. Формат массива см. [выше](#use-splits-merchant-form). 
-* В тело [уведомления](#payment_callback) с типом `REFUND` добавляется JSON-массив `refundSplits`, используемый для передачи данных о возвратах поставщикам. Формат массива см. [выше](#split-refund). 
+* The JSON-array `paymentSplits` is added to the [notification](#payment_callback) body with the `PAYMENT` type, which is used to transmit merchants' payment data. See [the array format](#use-splits-merchant-form). 
+* The JSON-array `refundSplits` is added to the [notification](#payment_callback) body with the `REFUND` type, which is used to transmit refund data to the merchants. See [the format above](#split-refund).
