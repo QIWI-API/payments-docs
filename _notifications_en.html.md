@@ -194,7 +194,11 @@ cf1 | Extra field with some information to operation data | String(256)|In all n
 cf2 | Extra field with some information to operation data | String(256)|In all notification types
 cf3 | Extra field with some information to operation data | String(256)|In all notification types
 cf4 | Extra field with some information to operation data | String(256)|In all notification types
-cf5 | Extra field with some information to operation data | String(256)|In all notification types 
+cf5 | Extra field with some information to operation data | String(256)|In all notification types
+`FROM_MERCHANT_CONTRACT_ID`| Contract ID between the merchant and the customer |String(256)|In all notification types
+`FROM_MERCHANT_BOOKING_NUMBER` | Booking number for the customer  |String(256)|In all notification types
+`FROM_MERCHANT_PHONE` | Phone number of the customer | String(256)|In all notification types
+`FROM_MERCHANT_FULL_NAME` | Full name of the customer |String(256)|In all notification types
 ----|------|-------|--------
 flags| Additional API commands| Array of Strings. Possible elements — `SALE` / `REVERSAL`|In all notification types
 tokenData | [Payment token data](#token_issue) | Object|PAYMENT, if payment token issue was requested

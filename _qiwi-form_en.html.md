@@ -225,89 +225,38 @@ To confirm payment:
      * From the response to the [Invoice status](#invoice_get) request.
 * Send API request [Payment confirmation](#capture) with received `paymentId` identifier.
 
-## Payment token {#qiwi-form-cardtoken}
+## Payment token {#qiwi-token-pay}
 
-In **Payment protocol** card payment tokens generation is supported. The tokens can be used for debiting cards without entering card details. On issuing payment token, card details are stored securely on QIWI side.
-
-### Features {#qiwi-token-special}
-
-By default, the issue of payment tokens of cards is disabled. Contact your Support manager to enable that.
-
-<aside class="warning">Payment token is issued only after the successful authentication of payment by the issuer bank.</aside>
-
-### Payment token issue {#qiwi-form-token-issue}
-
->Example of request with invoice and payment token issue
+> Invoice payable with payment token
 
 ~~~http
-PUT /partner/payin/v1/sites/23044/bills/893794793973 HTTP/1.1
+PUT /partner/payin/v1/sites/test-02/bills/1815 HTTP/1.1
 Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Authorization: Bearer 7uc4b25xx93xxx5d9cb8cd17480356f9
 Content-type: application/json
 Host: api.qiwi.com
 
 {
    "amount": {  
      "currency": "RUB",  
-     "value": 10.00
+     "value": 100.00
    },
-   "expirationDateTime": "2021-04-13T14:30:00+03:00",
-    "customer": { 
-      "account":"token32" 
-   }, 
-   "customFields": {}, 
-   "flags":["BIND_PAYMENT_TOKEN"] 
-} 
-~~~
-
->Notification example with payment token
-
-~~~json
-{
-  "payment":
-  {
-    "paymentId":"9790769",
-    "tokenData": {
-      "paymentToken":"66aebf5f-098e-4e36-922a-a4107b349a96",
-      "expiredDate":"2021-12-31T00:00:00+03:00"
-    },
-    "type":"PAYMENT",
-    "createdDateTime":"2020-01-23T15:07:35+03:00",
-    "status": "..",
-    "amount": {
-      "value":2211.24,
-      "currency":"RUB"
-    },
-    "paymentMethod": "..",
-    "customer": "..",
-    "billId":"testing1222213",
-    "flags":["SALE"]
-  },
-  "type":"PAYMENT",
-  "version":"1"
+   "comment": "Text comment",
+   "expirationDateTime": "2018-04-13T14:30:00+03:00",
+   "customer": {
+     "account": "token234"
+   },
+   "customFields": {
+    "cf1": "Some data",
+    "FROM_MERCHANT_CONTRACT_ID": "1234"
+   }  
+   }
 }
 ~~~
 
-To issue a payment token, include additional options in the API request [Invoice](#invoice_put):
+The payment token is used for charging a customer without additional input of card details or QIWI Wallet number. By default, the use of payment tokens is disabled. Contact your Support manager to enable that.
 
-* `"flags": ["BIND_PAYMENT_TOKEN"]` is a flag for issuing a payment token.
-* `customer.account` is a unique customer ID in the RSP system. **Put different `account` values for different users to ensure the security of customers' card data.**
-
-<aside class="warning">
-The payment token is linked with the site ID and the customer ID that you have specified in the original invoicing request with paymen token command. The customer will be able to make payment by payment token only on this site.
-
-To make the payment token valid on other sites of the same merchant, send a request to Support.
-</aside>
-
-After you've paid the bill in the [notification](#payment_callback) of `PAYMENT` type you will receive the payment token details:
-
-Notification field|Data type|Description
---------|-------|----------
-tokenData|Object| Object with payment token data
-tokenData.paymentToken|String| Payment token
-tokenData.expiredDate|String| Expiration date of the payment token. Date format:<br>`YYYY-MM-DDThh:mm:ss±hh:mm`
-
-### Using payment token {#qiwi-token-pay}
+You can read about the issue of a payment token [in this section](#payment-token-issue).
 
 <aside class="warning">
 Customer will be able to make payment by payment token only on the site where payment token was issued.
@@ -320,12 +269,12 @@ To create an invoice payable with payment token, send in API request [Invoice](#
 * API access key.
 * Amount of the invoice.
 * Last date of payment for the invoice.
-* Customer identifier in `customer.account` parameter. **Payment by payment token is not possible without this parameter.**
+* Customer identifier for which the payment token was issued, in `customer.account` parameter. **Payment by payment token is not possible without this parameter.**
 * Other information about the invoice.
 
 If one or more payment tokens have been issued for the customer, the Payment form will display their linked cards. 
 
-! [qiwi-form-tokens] (/images/qiwi-form-token.png)
+![qiwi-form-tokens](/images/qiwi-form-token.png)
 
 To use the payment token, it is enough for the customer to choose one of their linked cards. Customer doesn't need to provide card data or 3-D Secure authentication.
 

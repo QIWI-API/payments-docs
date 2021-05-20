@@ -37,7 +37,10 @@ Host: api.qiwi.com
    "comment": "Text comment",
    "expirationDateTime": "2018-04-13T14:30:00+03:00",
    "customer": {},
-   "customFields": {}  
+   "customFields": {
+     "cf1": "Some data",
+     "FROM_MERCHANT_CONTRACT_ID": "1234"
+   }  
    }
 }
 ~~~
@@ -53,12 +56,16 @@ Host: api.qiwi.com
       "currency": "RUB"
     },
     "status": {
-      "value": "WAITING",
-      "changedDateTime": "2018-03-05T11:27:41+03:00"
+      "value": "CREATED",
+      "changedDateTime": "2018-03-05T11:27:41"
     },
     "comment": "Text comment",
+    "customFields": {
+      "cf1": "Some data",
+      "FROM_MERCHANT_CONTRACT_ID": "1234"
+    },
     "creationDateTime": "2018-03-05T11:27:41",
-    "expirationDateTime": "2018-04-13T14:30:00+03:00",
+    "expirationDateTime": "2018-04-13T14:30:00",
     "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
 }
 ~~~
@@ -128,12 +135,12 @@ Host: api.qiwi.com
       "currency": "RUB"
     },
     "status": {
-      "value": "WAITING",
-      "changedDateTime": "2018-03-05T11:27:41+03:00"
+      "value": "CREATED",
+      "changedDateTime": "2018-03-05T11:27:41"
     },
     "comment": "Text comment",
     "creationDateTime": "2018-03-05T11:27:41",
-    "expirationDateTime": "2018-04-13T14:30:00+03:00",
+    "expirationDateTime": "2018-04-13T14:30:00",
     "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
 }
 ~~~
@@ -411,7 +418,10 @@ Host: api.qiwi.com
     "timeOnPage": 1440,
     "userAgent": "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion"
   },
-  "customFields": {},
+  "customFields": {
+    "cf1": "Some data",
+    "FROM_MERCHANT_CONTRACT_ID": "1234"
+  },
   "flags": [
     "SALE"
   ]
@@ -507,7 +517,10 @@ Host: api.qiwi.com
     "fundingSource": "CREDIT",
     "paymentSystemProduct": "P|Visa Gold"
   },
-  "customFields" : { },
+  "customFields" : {
+    "cf1": "Some data",
+    "FROM_MERCHANT_CONTRACT_ID": "1234"
+  },
   "flags" : [ ]
 }
 ~~~

@@ -21,6 +21,7 @@ includes:
   - payments/notifications_en
   - payments/refunds-reversal_en
   - payments/splits_en
+  - payments/payment-token_en
   - payments/reports_en
   - payments/reimburse_en
   - payments/statuses_en
