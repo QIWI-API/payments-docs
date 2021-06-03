@@ -25,7 +25,7 @@ Operation type is returned in `{operation}.type` field of the [notification](#ca
 Operation type | Description
 ---|----
 PAYMENT | The payment. There can be field `flag: [ "SALE" ]` (one-step payment) or `flag: [ "AUTH" ]` (two-step payment with holding funds) in the notification.
-CAPTURE | Operation of the confirmation. 
+CAPTURE | Operation of the payment confirmation. 
 REFUND | Operation of the refund. There can be field `flag: [ "REVERSAL" ]` in the notification. It means that there was no financial operation (charging from customer's account) and commission fee would not be hold.
 
 ## Operation statuses {#operation-statuses}

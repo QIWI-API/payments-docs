@@ -14,7 +14,7 @@
 
 **3DS**: 3-D Secure — protection protocol used to authenticate card holder while making a payment transaction over the Internet. QIWI supports both 3DS 1.0 version and 3DS 2.0 version of the protocol.
 
-**ТСП**, **Мерчант** — Retail Service Provider.
+**RSP**, **Merchant** — Retail Service Provider.
 
 **MPI**: Merchant Plug-In — programming module performing 3DS authentication.
 
@@ -59,12 +59,14 @@ Payment protocol provides several ways of integration:
 
 Method|Payment through QIWI Form|Payment through merchant form
 -----|---------|--------------
-Credit/debit card|+|+
-Payment by payment token |+|+
-Apple Pay | + | +
-Google Pay | + | +
-[Faster Payments System](http://www.cbr.ru/eng/psystem/sfp/) | + | -
-QIWI Wallet Balance |+|-
+Credit/debit card|✓|✓
+Payment by payment token |✓|✓
+Apple Pay | ✓ | ✓
+Google Pay | ✓ | ✓
+[Faster Payments System](http://www.cbr.ru/eng/psystem/sfp/) | × | ✓
+QIWI Wallet Balance |✓|✓*
+
+`*` — by issuing a payment token for QIWI wallet
 
 ## Operation Types {#operations}
 
@@ -73,8 +75,8 @@ The following operations are available in the protocol:
 * An Invoice — an electronic document that the merchant has issued to the customer. Contains information about the amount and number of the customer order. It is not a financial entity and has a limited lifespan. Billing is required to obtain a URL to the QIWI payment form.
 * Payment — a cash write-off transaction from the customer in favour of the merchant. The actual write-off occurs only after confirmation (see Capture). When working through the QIWI payment form, Payment is an attempt to pay the bill (see Invoice).
 * Complete — the completion of 3DS verification of the customer. It is used when working through the Merchant Payment Form.
-* Confirmation (Capture) — confirmation of authorization (writing-off) of the funds.
-* Refund — refund to the customer on a successful payment. Financial operation of debiting money from the merchant in favor of the customer. If there was no confirmation of Payment operation, you will receive the Reversal flag in the response to Refund operation request and the money from the customer's account will not be transferred to the Merchant's account (the acquiring fee is also not withheld).
+* Confirmation (Capture) — confirmation of authorization (charging) of the funds.
+* Refund — refund to the customer on a successful payment. Financial operation of debiting money from the merchant in favor of the customer. If there was no confirmation for Payment operation, you will receive the Reversal flag in the response to Refund operation request and the money from the customer's account will not be transferred to the Merchant's account (the acquiring fee is also not withheld).
 
 ## Payment processing and settlements scheme {#principial-scheme}
 

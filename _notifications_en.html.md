@@ -2,7 +2,7 @@
 
 QIWI server notification is an incoming HTTP POST request. The JSON-formatted notification message in the request body contains payment/invoice data encoded in UTF-8 codepage.
 
-The Protocol supports the following notification types for API events: `PAYMENT`, `CAPTURE`, and `REFUND`. These notifications are sending when payment operation, payment confirmation, and refund for payment are made, accordingly.
+The Protocol supports the following notification types for API events: `PAYMENT`, `CAPTURE`, and `REFUND`. These notifications are sending when a payment operation, a payment confirmation, and a refund for payment are made, accordingly.
 
 <aside class="notice">
 There is no specific sequence of sending different types' notifications for the same operation. The sequence may vary for different operations.

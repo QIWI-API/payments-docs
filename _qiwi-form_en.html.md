@@ -2,7 +2,7 @@
 
 When you integrate payments through the QIWI form, the default payment method is [Bank Cards](#qiwi-form-card). The following payment methods are connected on demand:
 
-* [Card payment token](#qiwi-form-cardtoken).
+* [Card payment token](#qiwi-token-pay).
 * [Apple Pay/Google Pay](#qiwi-form-applepay).
 * [QIWI Wallet](#qiwi-form-wallet).
 
@@ -10,7 +10,7 @@ When you integrate payments through the QIWI form, the default payment method is
 On QIWI Payment Form, Apple Pay/Google Pay and QIWI Wallet for the same RSP ID <code>siteId</code> cannot be used at the same time. Create two separate identifers for Apple Pay/Google Pay and QIWI Wallet.
 </aside>
 
-## Payment process with QIWI Payment form {#flow-payment-qiwi-form}
+## Payment process {#flow-payment-qiwi-form}
 
 <div class="mermaid">
 sequenceDiagram
@@ -34,7 +34,7 @@ qb->>store:Notification with operation status
 qb->>customer: Redirecting to payment status page (successUrl)
 rect rgb(237, 243, 255)
 Note over store, ips:Two-step payment
-store->>qb:Operation confirmation (capture)
+store->>qb:Payment confirmation (capture)
 qb->>ips:Confirming card charging
 deactivate ips
 qb->>store:Notification on payment confirmation
@@ -254,7 +254,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-The payment token is used for charging a customer without additional input of card details or QIWI Wallet number. By default, the use of payment tokens is disabled. Contact your Support manager to enable that.
+The payment tokens are used for charging a customer balance without entering card details or QIWI Wallet number. By default, the use of payment tokens is disabled. Contact your Support manager to enable that.
 
 You can read about the issue of a payment token [in this section](#payment-token-issue).
 
@@ -384,7 +384,7 @@ You can add the following parameter to the link:
 
 By default, 3-D Secure is required on the QIWI Form.
 
-## Payment form Customization {#custom}
+## Customization of QIWI Payment Form  {#custom}
 
 >Example of calling Custom Payment form
 

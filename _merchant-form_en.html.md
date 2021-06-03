@@ -1,4 +1,4 @@
-# Payment Through Merchant Form {#merchant-api-integration}
+# Payment Through Merchant Web Form {#merchant-api-integration}
 
 <aside class="warning">
 When you integrate with your payment form, you send requests to the API with full card numbers and CVV/CVV2 code. This is only allowed if your organization has a PCI DSS certificate. 
@@ -8,14 +8,12 @@ PCI DSS is an information security standard adopted in the Visa and MasterCard p
 
 When you intergrate payments through your own payment form, [Bank Card](#qiwi-form-card) payment method is available by default. The following payment methods are connected on demand:
 
-* [Card payment token](#merchant-form-cardtoken).
+* [Card and QIWI Wallet payment token](#merchant-token-pay).
 * [Apple Pay](#merchant-form-applepay).
 * [Google Pay](#merchant-form-googlepay).
-* [Faster Payments System](#merhant-form-sbp).
-<!--* [QIWI Кошелек](#qiwi-form-wallet) – запросите подключение в службе поддержки.-->
+* [Faster Payments System](#merchant-form-sbp).
 
-
-## Payment process with Merchant Payment form {#flow-payment-merchant-form}
+## Payment process {#flow-payment-merchant-form}
 
 <div class="mermaid">
 sequenceDiagram
@@ -125,7 +123,7 @@ To start payment with subsequent hold of funds on the customer card (two-step pa
 For the two-step payment, the [reimbursement](#reimburse) is formed only after the [order confirmation](#merchant-capture).
 
 <aside class="notice">
-By default, when holding funds, the service expects <a href="#merchant-capture">confirmation of payment</a> within 72 hours. At the end of the term, the payment is self-confirmed. To increase or reduce the waiting period, or to set up a payment autoreversal, contact Support. The waiting period may not last more than 5 days. 
+By default, when holding funds, the service expects <a href="#merchant-capture">confirmation of the payment</a> within 72 hours. At the end of the term, the payment is self-confirmed. To increase or reduce the waiting period, or to set up a payment autoreversal, contact Support. The waiting period may not last more than 5 days. 
 </aside>
 
 For payment without the customer's authentication (one-step payment), include in the API request [Invoice](#invoice_put) the `"flags":["SALE"]` parameter. If you do not pass this parameter, the unconditional holding of funds for the payment will be made.
@@ -304,9 +302,9 @@ Host: api.qiwi.com
 }
 ~~~
 
-The payment token is used for charging a customer without additional input of card details or QIWI Wallet number. By default, the use of payment tokens is disabled. Contact your Support manager to enable that.
+The payment tokens are used for charging a customer balance without entering card details or QIWI Wallet number. By default, the use of payment tokens is disabled. Contact your Support manager to enable that.
 
-You can read about the issue of a payment token [in this section](#payment-token-issue).
+The issue of a payment token is described [in this section](#payment-token-issue).
 
 <aside class="warning">
 Customer will be able to make payment by payment token only on the site where payment token was issued.
