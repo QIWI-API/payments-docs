@@ -22,6 +22,7 @@ includes:
   - payments/refunds-capture-reversal_ru
   - payments/splits_ru
   - payments/payment-token_ru
+  - payments/card-check_ru
   - payments/reports_ru
   - payments/reimburse_ru
   - payments/statuses_ru
