@@ -1,6 +1,6 @@
 # Термины и сокращения {#articles}
 
-###### Последнее обновление: 2021-03-11 | [Редактировать на GitHub](https://github.com/QIWI-API/payments-docs/blob/master/includes/_intro_ru.html.md)
+###### Последнее обновление: 2021-08-25 | [Редактировать на GitHub](https://github.com/QIWI-API/payments-docs/blob/master/includes/_intro_ru.html.md)
 
 **Ключ доступа к API** — Символьная строка для аутентификации мерчанта в API согласно стандарту OAuth 2.0 [RFC 6749](https://tools.ietf.org/html/rfc6749) [RFC 6750](https://tools.ietf.org/html/rfc6750).
 

@@ -89,10 +89,14 @@ To issue a payment token, include additional options in the API request [Payment
 You will receive the card payment token details:
 
 * In the synchronous response to the payment request (`createdToken` field)
-* In the [notification](#payment_callback) after payment is completed successfully (`tokenData` field).
+* In the [notification](#payment-callback) after payment is completed successfully (`tokenData` field).
+
+You can also issue a payment token by the API request [Card verification](#card-check-api). Include `tokenizationData.account` field with a unique customer ID in the RSP system. **Put different `account` values for different users to ensure the security of customers' card data.**
+
+You will receive the card payment token details after [complete card verification](#how-to-check-card) in  `createdToken` field of the final response.
 
 <aside class="warning">
-The payment token is linked with the site ID and the customer ID that you have specified in the original payment request. The customer will be able to make payment by payment token only on this site.
+The payment token is linked with the site ID and the customer ID that you have specified in the original API request. The customer will be able to make payment by payment token only on this site.
 
 To make the payment token valid on other sites of the same merchant, send a request to Support.
 </aside>

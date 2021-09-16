@@ -272,7 +272,7 @@ The capture step is required only for two-step payments with holding funds.
 To confirm payment:
 
 * Get `paymentId` of the payment:
-     * From [notification](#payment_callback) after successful holding funds.
+     * From [notification](#payment-callback) after successful holding funds.
      * From the response to [Payment status](#payment_get) API request.
 * Send API request [Confirm payment](#capture) with received `paymentId` value.
 
@@ -327,7 +327,7 @@ Customer won't have to enter its card data and proceed with 3-D Secure authentic
 
 ## Apple Pay {#merchant-form-applepay}
 
-pple Pay purchases are made without card data entering. The technology works in mobile apps and the Safari browser on iPhone, iPad, Apple Watch and MacBook.
+Apple Pay purchases are made without card data entering. The technology works in mobile apps and the Safari browser on iPhone, iPad, Apple Watch and MacBook.
 
 To add Apple Pay payment method to the Merchant Payment Form, contact your Support manager.
 
@@ -342,7 +342,7 @@ Visit [Apple's website](https://developer.apple.com/apple-pay/implementation/) t
 
 ### Payment process {#merchant-form-applepay-steps}
 
-The process of making an Apple Pay payment in the API consists of five steps:
+The process of making an Apple Pay payment in the API:
 
 1. Creating an Apple Pay Payment Session.
 2. Validating RSP in Apple Pay.
@@ -353,8 +353,6 @@ The process of making an Apple Pay payment in the API consists of five steps:
      - with decrypted data, when Apple payment token is decrypted in the merchant's side.
 
 ### How to send a payment with encrypted data {#merchant-form-applepay-encrypt}
-
-To send payment data to QIWI, it is necessary to specify the `paymentMethod.type=APPLE _PAY_TOKEN` in the API [Payment request](#payments) body. 
 
 > Sample 'paymentMethod' JSON-object for Apple Pay payment
 
@@ -374,7 +372,7 @@ To send payment data to QIWI, it is necessary to specify the `paymentMethod.type
 }
 ~~~
 
-Specify the following parameters in the `paymentMethod` JSON-object:
+To send payment data to QIWI, specify in the API [Payment request](#payments) body the `paymentMethod` JSON-object with the following parameters:
 
 * `type` — payment method type, `APPLE_PAY_TOKEN` only;
 * `paymentData` — JSON-object with Apple Pay payment token data (required). It is taken from `paymentData` field of the Apple Pay payment token (see [JSON-structure description](https://developer.apple.com/library/archive/documentation/PassKit/Reference/PaymentTokenJSON/PaymentTokenJSON.html)):
@@ -391,7 +389,7 @@ Specify the following parameters in the `paymentMethod` JSON-object:
 
 ### How to send a payment with decrypted data {#merchant-form-applepay-decrypted}
 
-> 3-D Secure data fragment
+> Decrypted cryptogram data fragment
 
 ~~~json
 "external3dSec": {
@@ -403,20 +401,24 @@ Specify the following parameters in the `paymentMethod` JSON-object:
 
 Use this method when Apple Pay payment token is decrypted on your side.
 
-To provide payment data to QIWI, send in API request [Payment](#payments) `paymentMethod` JSON-object containing fields:
+To provide payment data to QIWI, specify in the API [Payment request](#payments) body the `paymentMethod` JSON-object with the following parameters:
 
-* `"type": "CARD"`;
-* data from decrypted APple Pay token:
+* `type` — always `CARD`;
+* data from decrypted Apple Pay payment token:
    * PAN in `"pan"` field;
    * expiration date in `MM/YY` format in `"expiryDate"` field;
-* `external3dSec` JSON-object containing 3-D Secure data from Apple:
-   * `type` — `APPLE_PAY` always;
+* `external3dSec` JSON-object with information from decrypted Apple Pay payment token:
+   * `type` — always `APPLE_PAY`;
    * `onlinePaymentCryptogram` — content of `onlinePaymentCryptogram` field from the decrypted Apple Pay payment token (Base64-encoded string);
-   * `eci` — ECI indicator. It must be transmitted if the `eciIndicator` field is received in Apple Pay payment token. Otherwise, don't pass the option.
+   * `eciIndicator` — ECI indicator. It must be transmitted if the `eciIndicator` field is received in Apple Pay payment token. Otherwise, don't pass the option.
 
 ## Google Pay {#merchant-form-googlepay}
 
-Payments from Visa and MasterCard payment cards are supported for Google Pay™ method. Google Pay™ method integration into merchant's Payment Form consists of the following steps:
+Payments from Visa and MasterCard payment cards are supported for Google Pay™ method.
+
+To add Google Pay™ payment method to the Merchant Payment Form, contact your Support manager.
+
+Steps for Google Pay™ method integration into merchant's Payment Form:
 
 1. Implement the requirements of [Google Pay™ WEB](https://developers.google.com/pay/api/web) for accepting encrypted payment data. Check [Integration checklist for Google Pay™ integration on web-sites](https://developers.google.com/pay/api/web/guides/test-and-deploy/integration-checklist) and [Google Pay™ brand guidelines for web-sites](https://developers.google.com/pay/api/web/guides/brand-guidelines).
 2. To integrate, you need to comply with the data sending requirements:
@@ -440,7 +442,7 @@ Payments from Visa and MasterCard payment cards are supported for Google Pay™ 
 ~~~
 
 
-> Example of encryption/verification for Google Pay paymentToken
+> Example of encryption/verification for Google Pay payment token
 
 ~~~python
 import zlib
@@ -465,7 +467,7 @@ print('resp_token: ', resp_token)
 >> resp_token: 'Hello world'
 ~~~
 
-To send payment data to QIWI, send the following parameters in API request [Payment](#payments) in JSON-object `paymentMethod`:
+To send payment data to QIWI, specify in API request [Payment](#payments) JSON-object `paymentMethod` with the following parameters:
 
 * `paymentMethod.type=GOOGLE_PAY_TOKEN`
 * `paymentMethod.paymentToken`. The field value is calculated by the following algorithm:
@@ -482,18 +484,7 @@ As a result of these Steps, you obtain an encoded string which is the `paymentTo
 
 ### How to send a payment with decrypted data {#merchant-form-googlepay-decrypted}
 
-> Example of a fragment of 3-D Secure verification data
-
-~~~json
-"external3dSec": {
-  "type": "GOOGLE_PAY",
-  "cryptogram": "AOLqt9wP++/WAzN+is7YAoABFA==",
-  "eciIndicator": "05"
-}
-~~~
-
-
-> Example of a payment ready to send
+> Example of a payment with decrypted Google Pay cryptogram data
 
 ~~~json
 {
@@ -523,11 +514,13 @@ As a result of these Steps, you obtain an encoded string which is the `paymentTo
 }
 ~~~
 
-To send payment data to QIWI, send in JSON-object `paymentMethod` in the API request [Payment](#payments) `paymentMethod.type=CARD` field and the JSON object `external3dSec` containing Google's 3-D Secure data:
+To send payment data to QIWI, specify in the API request [Payment](#payments) JSON-object `paymentMethod` with the following parameters:
 
-* `type` — `GOOGLE_PAY` always;
-* `cryptogram` — content of `cryptogram` field from the encrypted Google payment token (Base64-encoded string);
-* `eciIndicator` — ECI indicator. It must be transmitted if the `eciIndicator` field is received in Google Pay payment token. Otherwise, don't pass the option.
+* `type` — always `CARD`;
+* `external3dSec` JSON-object with information from decrypted Google Pay payment token:
+   * `type` — always `GOOGLE_PAY`;
+   * `cryptogram` — content of `cryptogram` field from the decrypted Google Pay payment token (Base64-encoded string);
+   * `eciIndicator` — ECI indicator. It must be transmitted if the `eciIndicator` field is received in Google Pay payment token. Otherwise, don't pass the option.
 
 ## Faster Payments System {#merchant-form-sbp}
 
@@ -626,6 +619,6 @@ The QR-code is active for 72 hours and is deactivated after the period ends.
 }
 ~~~
 
-After paying for the QR-code, the payment will go to the final status and a [notification](#payment_callback) will be sent. 
+After paying for the QR-code, the payment will go to the final status and a [notification](#payment-callback) will be sent.
 
 Without waiting for notification, the status of the payment can be [requested through the API](#payment_get).

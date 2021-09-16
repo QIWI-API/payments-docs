@@ -1,6 +1,6 @@
 # Terms and Abbreviations {#articles}
 
-###### Last update: 2021-04-21 | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/blob/master/includes/_intro_en.html.md)
+###### Last update: 2021-08-25 | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/blob/master/includes/_intro_en.html.md)
 
 **API Key** — String for merchant authentication in API according to OAuth 2.0 standard [RFC 6749](https://tools.ietf.org/html/rfc6749) [RFC 6750](https://tools.ietf.org/html/rfc6750).
 
@@ -134,11 +134,11 @@ For the requests authentication OAuth 2.0 standard is used in accordance with [R
 
 `Bearer <API Key>`
 
-## Test and Production Mode {#test_mode}
+# Test and Production Modes {#test_mode}
 
 During [integration](#start), your `siteId` identifier is in test mode. You can proceed operations without debiting credit card. You can also request a switch to test mode for any of your `siteId`, or add a new `siteId` to test mode through your support manager.
 
-For testing purposes, basic [protocol URLs](api-format) are used.
+For testing purposes, the same [protocol URLs](api-format) are used.
 
 **Test mode is not supported for QIWI Wallet balance payments.**
 
@@ -150,7 +150,7 @@ When integration on your side is completed, we turn your ID to production mode. 
 The API access key, linked to a certain <code>siteId</code>, works for all payment methods enabled for this ID.
 </aside>
 
-### Card payment in test mode {#test_data_card}
+## Card payment in test mode {#test_data_card}
 
 To make tests for payment operations, you may use any card number complied with Luhn algorithm.
 
@@ -176,7 +176,7 @@ Test environment has restrictions on the total amount and number of operations. 
 
 To process 3DS operation, use `unknown name` as card holder name. 3DS in test mode may be properly tested on real card number only.
 
-### Payment through Faster Payments System in test mode {#test_data_sbp}
+## Payment through Faster Payments System in test mode {#test_data_sbp}
 
 To test various payment methods and responses, use different amounts (`amount` field):
 

@@ -221,7 +221,7 @@ By default, when holding funds, the service expects <a href="#qiwi-capture">conf
 To confirm payment:
 
 * Get `paymentId` identifier of the payment:
-     * From [server notification](#payment_callback) after successful holding of funds.
+     * From [server notification](#payment-callback) after successful holding of funds.
      * From the response to the [Invoice status](#invoice_get) request.
 * Send API request [Payment confirmation](#capture) with received `paymentId` identifier.
 

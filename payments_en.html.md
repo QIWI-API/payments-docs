@@ -22,6 +22,7 @@ includes:
   - payments/refunds-reversal_en
   - payments/splits_en
   - payments/payment-token_en
+  - payments/card-check_en
   - payments/reports_en
   - payments/reimburse_en
   - payments/statuses_en

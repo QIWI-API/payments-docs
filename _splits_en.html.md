@@ -623,8 +623,8 @@ comment | String | Comment for the order
 
 Notifications for split payments and split payment refunds are formed similarly to the API requests described above:
 
-* The JSON-array `paymentSplits` is added to the [notification](#payment_callback) body with the `PAYMENT` type, which is used to transmit merchants' payment data. See [the array format](#use-splits-merchant-form). 
-* The JSON-array `refundSplits` is added to the [notification](#payment_callback) body with the `REFUND` type, which is used to transmit refund data to the merchants. See [the format above](#split-refund).
+* The JSON-array `paymentSplits` is added to the [notification](#payment-callback) body with the `PAYMENT` type, which is used to transmit merchants' payment data. See [the array format](#use-splits-merchant-form). 
+* The JSON-array `refundSplits` is added to the [notification](#refund-callback) body with the `REFUND` type, which is used to transmit refund data to the merchants. See [the format above](#split-refund).
 
 
 ## Merchant registration {#split-boarding}
