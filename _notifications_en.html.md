@@ -139,7 +139,7 @@ QIWI notification service sorts unsuccessful notifications on the following queu
 
 Time of secondary sending notification may slightly shift upward.
 
-## PAYMENT Notification Format {#payment_callback}
+## PAYMENT Notification Format {#payment-callback}
 
 <ul class="nestedList header">
     <li><h3>HEADERS</h3>

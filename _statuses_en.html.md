@@ -41,11 +41,11 @@ In the following table all possible statuses and corresponding [operation types]
 Operation status | Operation type | Status description | Where it is returned
 ---|----|-----|------
 WAITING | PAYMENT | Awaiting for 3DS authentication| API responses
-DECLINE | PAYMENT | Request for authentication is rejected | Notifications, API responses
+DECLINED | PAYMENT | Request for authorization is rejected | Notifications, API responses
 DECLINE | REFUND | Request for refund is rejected| Notifications, API responses
 DECLINE | CAPTURE | Request for payment confirmation is rejected| Notifications, API responses
-SUCCESS | PAYMENT | Request for authentication is successfully processed| Notifications
-COMPLETED | PAYMENT |Request for authentication is successfully processed|API responses
+SUCCESS | PAYMENT | Request for authorization is successfully processed| Notifications
+COMPLETED | PAYMENT |Request for authorization is successfully processed|API responses
 SUCCESS | REFUND | Request for refund is successfully processed|Notifications
 COMPLETED | REFUND | Request for refund is successfully processed|API responses
 SUCCESS | CAPTURE | Request for payment confirmation is successfully processed|Notifications
@@ -55,23 +55,25 @@ COMPLETED | CAPTURE | Request for payment confirmation is successfully processed
 
 ## API errors reference {#reason-codes}
 
-API errors describe a reason for rejection of the operation. API errors are present: 
+API errors describe a reason for rejection of the operation. API errors are present:
 
-- in API responses — field `status.reason`;
-- in notifications — field `status.reasonCode`.
+* in API responses — field `status.reason`;
+* in notifications — field `status.reasonCode`.
 
 API error| Description
 ------------------|--------
 INVALID_STATE| Incorrect transaction status
 INVALID_AMOUNT| Incorrect payment amount
+INVALID_RECEIVER_DATA | Error on transmitting receiver data
 DECLINED_BY_MPI | Rejected by MPI
 DECLINED_BY_FRAUD| Rejected by fraud monitoring
+REATTEMPT_NOT_PERMITTED| Repeated authorization request forbidden due to obtained response from a Payment system
 GATEWAY_INTEGRATION_ERROR| Acquirer integration error
 GATEWAY_TECHNICAL_ERROR| Technical error on acquirer side
 ACQUIRING_MPI_TECH_ERROR| Technical error on 3DS authentication
 ACQUIRING_GATEWAY_TECH_ERROR| Technical error
 ACQUIRING_ACQUIRER_ERROR| Technical error
-ACQUIRING_AUTH_TECHNICAL_ERROR| Error on funds authentication
+ACQUIRING_AUTH_TECHNICAL_ERROR| Error on funds authorization
 ACQUIRING_ISSUER_NOT_AVAILABLE| Issuer error. Issuer is not available at the moment
 ACQUIRING_SUSPECTED_FRAUD| Issuer error. Fraud suspicion
 ACQUIRING_LIMIT_EXCEEDED| Issuer error. Some limit exceeded

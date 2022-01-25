@@ -23,7 +23,7 @@ participant qb as QIWI (acquirer)
 participant ips as Issuer
 customer->>store:Choose goods, start payment,<br/>enter card data
 activate store
-store->>qb:Платеж<br/>One-step payment — all payment methods<br/>Two-step payment — only cards, Apple Pay, Google Pay
+store->>qb:Payment<br/>One-step payment — all payment methods<br/>Two-step payment — only cards, Apple Pay, Google Pay
 activate qb
 qb->>store:Operation status, 3DS data or<br/>QR code for Faster Payment System
 rect rgb(237, 243, 255)
@@ -122,8 +122,10 @@ To start payment with subsequent hold of funds on the customer card (two-step pa
 
 For the two-step payment, the [reimbursement](#reimburse) is formed only after the [order confirmation](#merchant-capture).
 
+<a name="one-step"></a>
+
 <aside class="notice">
-By default, when holding funds, the service expects <a href="#merchant-capture">confirmation of the payment</a> within 72 hours. At the end of the term, the payment is self-confirmed. To increase or reduce the waiting period, or to set up a payment autoreversal, contact Support. The waiting period may not last more than 5 days. 
+By default, when holding funds, the service expects <a href="#merchant-capture">confirmation of the payment</a> within 72 hours. At the end of the term, the payment is self-confirmed. To increase or reduce the waiting period, or to set up a payment auto-reversal, contact Support. The waiting period may not last more than 5 days. 
 </aside>
 
 For payment without the customer's authentication (one-step payment), include in the API request [Invoice](#invoice_put) the `"flags":["SALE"]` parameter. If you do not pass this parameter, the unconditional holding of funds for the payment will be made.
@@ -195,7 +197,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-If bank requires 3DS authentication of the customer, you will need to pass additional authentication from the issuer. In this case, the payment request adds `requirements.threeDS` JSON-object with fields:
+If bank requires 3DS authentication of the customer, proceed with additional authentication from the issuer. In this case, the payment request adds `requirements.threeDS` JSON-object with fields:
 
 - `acsUrl` — 3-D Secure authentication server URL to redirect to the issuer's confirmation page;
 - `pareq` — an encrypted 3-D Secure authentication request.
@@ -208,9 +210,9 @@ To get the `PaReS` result of authentication, make a POST query to the 3-D Secure
 
 To maintain backward compatibility, using 3-D Secure 1.0 or 3-D Secure 2.0 does not affect your integration with the API. 
 
-The customer's information is passed to the card payment system. The issuer bank either grants permission to charge funds without authentication (frictionless flow) or decides whether to authenticate with a single-time password (challenge flow). After the authorization is passed, the customer is redirected to `TermUrl` URL with the encrypted result of the authentication in the `PaRes` parameter.
+The customer's information is passed to the card payment system. The issuer bank either grants permission to charge funds without authentication (frictionless flow) or decides whether to authenticate with a single-time password (challenge flow). After the authentication is passed, the customer is redirected to `TermUrl` URL with the encrypted result of the authentication in the `PaRes` parameter.
 
-To complete the authentication of the customer, pass on the API request [Completing authentication](#payment_complete):
+To complete the authentication of the customer, pass on the API request [Completing customer authentication](#payment_complete):
 
 * unique RSP ID;
 * payment number (`paymentId` option) from the response to the payment request;
@@ -349,10 +351,10 @@ The process of making an Apple Pay payment in the API:
 3. Getting encrypted payment data from Apple Pay.
 4. Deciphering payment data on the RSP side (optional).
 5. Sending a [request for charging](#payments) to QIWI:
-     - with encrypted data;
-     - with decrypted data, when Apple payment token is decrypted in the merchant's side.
+     * [with encrypted data](#merchant-form-applepay-encrypted);
+     * [with decrypted data](#merchant-form-applepay-decrypted), when Apple payment token is decrypted in the merchant's side.
 
-### How to send a payment with encrypted data {#merchant-form-applepay-encrypt}
+### How to send a payment with encrypted data {#merchant-form-applepay-encrypted}
 
 > Sample 'paymentMethod' JSON-object for Apple Pay payment
 
@@ -422,8 +424,8 @@ Steps for Google Pay™ method integration into merchant's Payment Form:
 
 1. Implement the requirements of [Google Pay™ WEB](https://developers.google.com/pay/api/web) for accepting encrypted payment data. Check [Integration checklist for Google Pay™ integration on web-sites](https://developers.google.com/pay/api/web/guides/test-and-deploy/integration-checklist) and [Google Pay™ brand guidelines for web-sites](https://developers.google.com/pay/api/web/guides/brand-guidelines).
 2. To integrate, you need to comply with the data sending requirements:
-  - [with encrypted data](#merchant-form-googlepay-encrypted),
-  - [with decrypted data](#merchant-form-googlepay-decrypted).
+    * [with encrypted data](#merchant-form-googlepay-encrypted),
+    * [with decrypted data](#merchant-form-googlepay-decrypted).
 3. [Request production access](https://developers.google.com/pay/api/web/guides/test-and-deploy/request-prod-access). Indicate the following data in the request:
     * Tokenization Method — Gateway;
     * Payment Processor or Gateway — `qiwi`;
@@ -500,7 +502,7 @@ As a result of these Steps, you obtain an encoded string which is the `paymentTo
     }
   },
   "amount": {
-    "value": "5900.00",
+    "value": 5900.00,
     "currency": "RUB"
   },
   "flags": [
@@ -535,7 +537,7 @@ By default, SBP payment method is turned off. To use this method, contact your S
 ~~~json
 {
  "amount" : {
-   "value" : "4.05",
+   "value" : 4.05,
    "currency" : "RUB"
 },
  "paymentMethod" : {
@@ -554,7 +556,7 @@ By default, SBP payment method is turned off. To use this method, contact your S
   "createdDateTime": "2020-12-11T11:09:48+03:00",
   "amount": {
     "currency": "RUB",
-    "value": "4.05"
+    "value": 4.05
   },
   "capturedAmount": "..",
   "refundedAmount": "..",

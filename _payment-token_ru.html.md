@@ -84,14 +84,14 @@ Host: api.qiwi.com
 Чтобы выпустить платежный токен карты, укажите в запросах API [Платеж](#payments) или [Создание счета](#invoice_put) дополнительные параметры:
 
 * `"flags": ["BIND_PAYMENT_TOKEN"]` — команда для выпуска платежного токена.
-* `customer.account` — уникальный идентификатор Покупателя в системе ТСП. **Указывайте разные параметры `account` для разных пользователей, чтобы гарантировать безопасность карточных данных покупателей.**
+* `customer.account` — уникальный идентификатор Покупателя в системе ТСП. **Указывайте разные параметры `account` для разных покупателей, чтобы гарантировать безопасность карточных данных покупателей.**
 
 Вы получите информацию о платежном токене карты:
 
 * В синхронном ответе на запрос API  [Платеж](#payments) (поле `createdToken`).
 * После успешного завершения платежа в [уведомлении](#payment-callback) (поле `tokenData`).
 
-Также вы можете выпустить платежный токен карты с помощью запроса API [Проверка карты](#card-check-api). Укажите в нем блок `tokenizationData.account` с уникальным идентификатором Покупателя в системе ТСП. **Указывайте разные параметры `account` для разных пользователей, чтобы гарантировать безопасность карточных данных покупателей.**
+Также вы можете выпустить платежный токен карты с помощью запроса API [Проверка карты](#card-check-api). Укажите в нем блок `tokenizationData.account` с уникальным идентификатором Покупателя в системе ТСП. **Указывайте разные параметры `account` для разных покупателей, чтобы гарантировать безопасность карточных данных.**
 
 Вы получите информацию о платежном токене карты после успешного [завершения проверки](#how-to-check-card) в блоке `createdToken`.
 
@@ -101,13 +101,12 @@ Host: api.qiwi.com
 Чтобы платежный токен действовал на других сайтах одного мерчанта, отправьте запрос в Службу поддержки.
 </aside>
 
-
 ## Выпуск платежного токена QIWI Кошелька {#merchant-form-wallet-token-issue}
 
 >Пример запроса с инициацией выпуска платежного токена QIWI Кошелька
 
 ~~~http
-POST /partner/payin/v1/sites/test-01/token-requests HTTP/1.1
+POST /partner/payin-tokenization-api/v1/sites/test-01/token-requests HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -134,7 +133,7 @@ Host: api.qiwi.com
 >Пример запроса завершения выпуска платежного токена QIWI Кошелька
 
 ~~~http
-PUT /partner/payin/v1/sites/test-01/token-requests/complete HTTP/1.1
+PUT /partner/payin-tokenization-api/v1/sites/test-01/token-requests/complete HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -167,9 +166,9 @@ Host: api.qiwi.com
   
     Отправьте POST-запрос на URL:
 
-    `/partner/payin/v1/sites/{siteId}/token-requests`
+    `/payin-tokenization-api/v1/sites/{siteId}/token-requests`
 
-    где `{siteId}` — идентификатор siteId мерчанта.
+    где `{siteId}` — идентификатор `siteId` мерчанта.
 
     В JSON-теле запроса укажите параметры:
 
@@ -177,15 +176,15 @@ Host: api.qiwi.com
     * `phone` — номер QIWI кошелька покупателя.
     * `accountId` — уникальный идентификатор покупателя в системе ТСП. 
     
-    **Указывайте разные параметры `accountId` для разных пользователей, чтобы гарантировать безопасность платежных данных покупателей.**
+    **Указывайте разные параметры `accountId` для разных покупателей, чтобы гарантировать безопасность платежных данных покупателей.**
 
 2. После этого на телефон покупателя придет SMS с одноразовым кодом. Укажите его в запросе завершения выпуска платежного токена QIWI Кошелька.
   
     Отправьте POST-запрос на URL:
 
-    `/partner/payin/v1/sites/{siteId}/token-requests/complete`
+    `/payin-tokenization-api/v1/sites/{siteId}/token-requests/complete`
 
-    где `{siteId}` — идентификатор siteId мерчанта.
+    где `{siteId}` — идентификатор `siteId` мерчанта.
 
     В JSON-теле запроса укажите параметры:
 

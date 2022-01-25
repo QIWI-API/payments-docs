@@ -1,8 +1,8 @@
 # Terms and Abbreviations {#articles}
 
-###### Last update: 2021-08-25 | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/blob/master/includes/_intro_en.html.md)
+###### Last update: 2021-08-25 | [Propose corrections on GitHub](https://github.com/QIWI-API/payments-docs/)
 
-**API Key** — String for merchant authentication in API according to OAuth 2.0 standard [RFC 6749](https://tools.ietf.org/html/rfc6749) [RFC 6750](https://tools.ietf.org/html/rfc6750).
+**API Key** — String for merchant authorization in API according to OAuth 2.0 standard [RFC 6749](https://tools.ietf.org/html/rfc6749) [RFC 6750](https://tools.ietf.org/html/rfc6750).
 
 **Payment token** — String linked to the card data for payments without entering card details.
 
@@ -12,11 +12,11 @@
 
 **JSON**: JavaScript Object Notation — a lightweight data-interchange format based on JavaScript [RFC 7159](https://tools.ietf.org/html/rfc7159).
 
-**3DS**: 3-D Secure — protection protocol used to authenticate card holder while making a payment transaction over the Internet. QIWI supports both 3DS 1.0 version and 3DS 2.0 version of the protocol.
+**3DS**: 3-D Secure — protection protocol to authenticate card holder while making a payment transaction over the Internet. QIWI supports both 3DS 1.0 version and 3DS 2.0 version of the protocol.
 
 **RSP**, **Merchant** — Retail Service Provider.
 
-**MPI**: Merchant Plug-In — programming module performing 3DS authentication.
+**MPI**: Merchant Plug-In — programming module performing 3DS customer authentication.
 
 **PCI DSS**: Payment Card Industry Data Security Standard – a proprietary information security standard for storing, processing and transmitting credit card data established by Visa, MasterCard, American Express, JCB, and Discover.
 
@@ -115,22 +115,22 @@ API requests' parameters are transferred in the request body JSON data. Paramete
 
 API always responds in JSON format.
 
-### Authentication {#api-auth}
+### Authorization {#api-auth}
 
-> Request with authentication
+> Request with authorization
 
 ~~~shell
 curl -X PUT https://api.qiwi.com/partner/v1/sites/{site_id}/payments/{payment_id} \
      --oauth2-bearer <API Key>
 ~~~
 
-> Authentication header
+> Authorization header
 
 ~~~shell
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 ~~~
 
-For the requests authentication OAuth 2.0 standard is used in accordance with [RFC 6750](https://tools.ietf.org/html/rfc6750). Always put API access key value into `Authorization` HTTP-header as
+For the requests authorization OAuth 2.0 standard is used in accordance with [RFC 6750](https://tools.ietf.org/html/rfc6750). Always put API access key value into `Authorization` HTTP-header as
 
 `Bearer <API Key>`
 
@@ -178,8 +178,7 @@ To process 3DS operation, use `unknown name` as card holder name. 3DS in test mo
 
 ## Payment through Faster Payments System in test mode {#test_data_sbp}
 
-To test various payment methods and responses, use different amounts (`amount` field):
+To test various payment methods and responses, use different payment amounts (`amount` field):
 
-* `100` — operation is immediately successful. Notification will be sent and you will receive `"SUCCESS"` status in [payment status request](#payment_get);
 * `200` — operation is successful with some delay. On the first [payment status request](#payment_get) you will receive `"WAITING"` payment status, on the second request you will get `"SUCCESS"` payment status.
 * For any other amounts the payment would be unsuccessful.

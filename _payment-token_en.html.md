@@ -6,7 +6,7 @@ In **Payment protocol** card and QIWI Wallet payment tokens generation is suppor
 
 By default, the issue of payment tokens is disabled. Contact your Support manager to enable that.
 
-<aside class="warning">Card payment token is issued only after the successful authentication of the payment by the issuer bank.</aside>
+<aside class="warning">Card payment token is issued only after the successful payment  authorization by the issuer bank.</aside>
 
 ## Card payment token issue {#merchant-form-token-issue}
 
@@ -106,7 +106,7 @@ To make the payment token valid on other sites of the same merchant, send a requ
 >Example of a request with QIWI Wallet payment token issue initiation
 
 ~~~http
-POST /partner/payin/v1/sites/test-01/token-requests HTTP/1.1
+POST /partner/payin-tokenization-api/v1/sites/test-01/token-requests HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -133,7 +133,7 @@ Host: api.qiwi.com
 >Example of a request with providing QIWI Wallet payment token
 
 ~~~http
-PUT /partner/payin/v1/sites/test-01/token-requests/complete HTTP/1.1
+PUT /partner/payin-tokenization-api/v1/sites/test-01/token-requests/complete HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -166,9 +166,9 @@ To issue a QIWI Wallet payment token, make the following API requests:
   
     Make POST request to the URL:
 
-    `/partner/payin/v1/sites/{siteId}/token-requests`
+    `/payin-tokenization-api/v1/sites/{siteId}/token-requests`
 
-    where `{siteId}` — merchant siteId identifier.
+    where `{siteId}` — merchant `siteId` identifier.
 
     In the JSON-body of the request specify the parameters:
 
@@ -180,9 +180,9 @@ To issue a QIWI Wallet payment token, make the following API requests:
   
     Make POST request to the URL:
 
-    `/partner/payin/v1/sites/{siteId}/token-requests/complete`
+    `/payin-tokenization-api/v1/sites/{siteId}/token-requests/complete`
 
-    where `{siteId}` — merchant siteId identifier.
+    where `{siteId}` — merchant `siteId` identifier.
 
     In the JSON-body of the request specify the parameters:
 

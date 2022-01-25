@@ -116,8 +116,7 @@
    "comment": "Text comment",
    "expirationDateTime": "2018-04-13T14:30:00+03:00",
    "customer": {},
-   "customFields": {}  
-   }
+   "customFields": {}
 }
 ~~~
 
@@ -178,12 +177,22 @@
             "checkout",
             "payin/v1/sites/{siteId}/bills/{billId}",
             "get",
-            ['200', '4xx', '5xx']
+            ['RequestBody', '200', '4xx', '5xx']
           )
       })
     });
   </script>
 </div>
+
+
+<!-- Request body -->
+~~~http
+GET /partner/payin/v1/sites/site-01/bills/893794793973 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+~~~
 
 
 <!-- 200 -->
@@ -379,7 +388,13 @@
 </div>
 
 <!-- Request body -->
-~~~ json
+~~~http
+PUT /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
 {
   "paymentMethod" : {
     "type" : "CARD",
@@ -556,12 +571,21 @@
             "api",
             "payin/v1/sites/{siteId}/payments/{paymentId}",
             "get",
-            ['200', '4xx', '5xx']
+            ['RequestBody', '200', '4xx', '5xx']
           )
       })
     });
   </script>
 </div>
+
+<!-- Request body -->
+~~~http
+GET /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+~~~
 
 <!-- 200 -->
 ~~~json
@@ -624,7 +648,7 @@
 }
 ~~~
 
-## Completing authentication {#payment_complete}
+## Completing customer authentication {#payment_complete}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__complete_post_api">
   <script>
@@ -643,7 +667,13 @@
 </div>
 
 <!-- Request body -->
-~~~json
+~~~http
+POST /partner/payin/v1/sites/test-01/payments/1811/complete HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
 {
   "threeDS": {
     "pares": "eJzVWFevo9iyfu9fMZrzaM0QjWHk3tIiGptgooE3cgabYMKvv3jvTurTc3XOfbkaJMuL...."
@@ -780,7 +810,13 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
 </div>
 
 <!-- Request body -->
-~~~json
+~~~http
+PUT /partner/payin/v1/sites/test-01/payments/1811/captures/bxwd8096 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
 {
   "callbackUrl": "https://example.com/callbacks",
   "comment": "Example capture"
@@ -839,12 +875,21 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
             "api",
             "payin/v1/sites/{siteId}/payments/{paymentId}/captures/{captureId}",
             "get",
-            ['200', '4xx', '5xx']
+            ['RequestBody', '200', '4xx', '5xx']
           )
       })
     });
   </script>
 </div>
+
+<!-- Request body -->
+~~~http
+GET /partner/payin/v1/sites/test-01/payments/1811/captures/bxwd8096 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+~~~
 
 <!-- 200 -->
 ~~~json
@@ -907,7 +952,13 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
 
 
 <!-- Request body -->
-~~~json
+~~~http
+PUT /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
 {
   "amount": {
     "value": 2.34,
@@ -1048,12 +1099,21 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
             "api",
             "payin/v1/sites/{siteId}/payments/{paymentId}/refunds/{refundId}",
             "get",
-            ['200', '4xx', '5xx']
+            ['RequestBody', '200', '4xx', '5xx']
           )
       })
     });
   </script>
 </div>
+
+<!-- Request body -->
+~~~http
+GET /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+~~~
 
 <!-- 200 -->
 ~~~json
@@ -1109,12 +1169,21 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
             "api",
             "payin/v1/sites/{siteId}/payments/{paymentId}/refunds",
             "get",
-            ['200', '4xx', '5xx']
+            ['RequestBody', '200', '4xx', '5xx']
           )
       })
     });
   </script>
 </div>
+
+<!-- Request body -->
+~~~http
+GET /partner/payin/v1/sites/test-01/payments/1811/refunds HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+~~~
 
 <!-- 200 -->
 ~~~json
@@ -1181,7 +1250,7 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
 
 <!-- Request body -->
 ~~~http
-GET /partner/payin/v1/sites/test-01//validation/card/requests/acd7bf20-22e2-4cbf-a218-38d90e9f29b9 HTTP/1.1
+GET /partner/payin/v1/sites/test-01/validation/card/requests/acd7bf20-22e2-4cbf-a218-38d90e9f29b9 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -1198,6 +1267,81 @@ Host: api.qiwi.com
         "account": "cat_girl"
     }
 }
+~~~
+
+<!-- 200 -->
+~~~json
+{
+    "requestUid": "acd7bf20-22e2-4cbf-a218-38d90e9f29b9",
+    "status": "SUCCESS",
+    "isValidCard": true,
+    "threeDsStatus": "WITHOUT",
+    "checkOperationDate": "2021-07-29T16:30:00+03:00",
+    "cardInfo": {
+        "issuingCountry": "RUS",
+        "issuingBank": "Qiwi bank",
+        "paymentSystem": "VISA",
+        "fundingSource": "DEBIT",
+        "paymentSystemProduct": "Platinum..."
+    },
+    "createdToken": {
+        "token": "1a77343a-dd8a-11eb-ba80-0242ac130004",
+        "name": "111122******4444",
+        "expiredDate": "2034-12-01T00:00:00+03:00",
+        "account": "cat_girl"
+    }
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Card verification status {#card-check-info}
+
+<div id="payin_v1_sites__siteId__validation_card_requests__requestUid__get_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../eui_jsons/payin-card-check-get.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/validation/card/requests/{requestUid}",
+            "get",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+GET /partner/payin/v1/sites/test-01/validation/card/requests/acd7bf20-22e2-4cbf-a218-38d90e9f29b9 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
 ~~~
 
 <!-- 200 -->
@@ -1327,6 +1471,5 @@ Host: api.qiwi.com
   "description":"Internal error",
   "traceId":"3fb3420ee1795dcf",
   "dateTime":"2020-02-12T21:28:01.813+03:00"
-
 }
 ~~~

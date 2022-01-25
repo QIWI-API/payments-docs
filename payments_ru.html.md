@@ -50,6 +50,6 @@ search: true
 
 * Банковские карты Visa, Mastercard, МИР.
 * Apple Pay / Google Pay.
+* Yandex Pay.
 * QIWI Кошелек.
 * Система Быстрых Платежей (СБП).
-

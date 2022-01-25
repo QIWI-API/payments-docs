@@ -323,7 +323,7 @@ To create an invoice payable with QIWI Wallet, send in the API request [Invoice 
 * The date before which the bill must be paid.
 * Other invoice information.
 
-[Redirect customer to the Payment form link](#qiwi-redirect), which will come in response in the `payUrl` field. On the Payment form, the customer will have an option to pay from the balance of the QIWI Wallet.
+[Redirect customer to the Payment form link](#qiwi-redirect) taken from `payUrl` field of the response. On the Payment form, the customer will have an option to pay from the balance of the QIWI Wallet.
 
 The payment process for the customer is as follows:
 
@@ -364,7 +364,7 @@ Content-Type: application/json
 }
 ~~~
 
-After invoice creation, the link to QIWI Form is in `payUrl` field of the response.
+After invoice creation, the URL of the QIWI Form is in `payUrl` field of the response.
 
 <aside class="notice">
 When opening Payment Form in Webview on Android, you should enable <code>settings.setDomStorageEnabled(true)</code> option.
@@ -426,6 +426,6 @@ Some optional data are also used:
 * Yandex.Metrika id;
 * Offer reference.
 
-To use your Custom Payment form, send the alias for the Payment form in `"themeCode"` field in `customFields` object of API request [Invoice](#invoice_put). URL received in `payUrl` field of the response would display your Custom Payment form.
+To use your Custom Payment form, send the alias for the Payment form in `"themeCode"` field in `customFields` object of API request [Invoice](#invoice_put). URL received in `payUrl` field of the response points to the Custom Payment form.
 
 ![Customer form](/images/Custom.png)
