@@ -37,7 +37,6 @@
 }
 ~~~
 
-
 <!-- 200 -->
 ~~~json
 {
@@ -62,7 +61,6 @@
 }
 ~~~
 
-
 <!-- 4xx -->
 ~~~json
 {
@@ -86,7 +84,6 @@
   "dateTime" : "2018-11-13T16:30:52.464+03:00"
 }
 ~~~
-
 
 ## Invoice for QIWI Wallet payment {#invoice_qw_put}
 
@@ -120,7 +117,6 @@
 }
 ~~~
 
-
 <!-- 200 -->
 ~~~json
 {
@@ -140,7 +136,6 @@
     "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
 }
 ~~~
-
 
 <!-- 4xx -->
 ~~~json
@@ -184,7 +179,6 @@
   </script>
 </div>
 
-
 <!-- Request body -->
 ~~~http
 GET /partner/payin/v1/sites/site-01/bills/893794793973 HTTP/1.1
@@ -193,7 +187,6 @@ Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
 Host: api.qiwi.com
 ~~~
-
 
 <!-- 200 -->
 ~~~json
@@ -216,8 +209,7 @@ Host: api.qiwi.com
         },
         "paymentMethod": {
             "type": "CARD",
-            "maskedPan": "427638******1410",
-            "type": "CARD"
+            "maskedPan": "427638******1410"
         },
         "createdToken": {
             "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
@@ -262,8 +254,7 @@ Host: api.qiwi.com
         },
         "paymentMethod": {
             "type": "CARD",
-            "maskedPan": "427638******1410",
-            "type": "CARD"
+            "maskedPan": "427638******1410"
         },
         "createdToken": {
             "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
@@ -310,8 +301,7 @@ Host: api.qiwi.com
             "type": "CARD",
             "maskedPan": "427638******1410",
             "rrn": "008692274763",
-            "authCode": "242847",
-            "type": "CARD"
+            "authCode": "242847"
         },
         "createdToken": {
             "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
@@ -335,14 +325,10 @@ Host: api.qiwi.com
         "customFields": {
             "customer_account": "1",
             "customer_phone": "0"
-        },
-        "flags": [
-            "AFT"
-        ]
+        }
     }
 ]
 ~~~
-
 
 <!-- 4xx -->
 ~~~json
@@ -367,7 +353,6 @@ Host: api.qiwi.com
   "traceId" : "fd0e2a08c63ace83"
 }
 ~~~
-
 
 ## Payment {#payments}
 
@@ -604,7 +589,9 @@ Host: api.qiwi.com
   },
   "paymentMethod" : {
     "type" : "CARD",
-    "maskedPan" : "444444******1049"
+    "maskedPan" : "444444******1049",
+    "rrn": "124",
+    "authCode": "182817",
   },
   "createdDatetime" : "2018-11-01T17:10:31.284+03:00",
   "customer" : { },
@@ -773,7 +760,6 @@ Host: edge.qiwi.com
 
 ## Payment confirmation {#capture}
 
-
 <!--
 ~~~shell
 user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/payments/332121DS/captures/C332121DS"
@@ -791,7 +777,6 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
 }'
 ~~~
 -->
-
 
 <div id="payin_v1_sites__siteId__payments__paymentId__captures__captureId__put_api">
   <script>
@@ -863,7 +848,6 @@ Host: api.qiwi.com
 }
 ~~~
 
-
 ## Payment confirmation status {#capture_status}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__captures__captureId__get_api">
@@ -930,7 +914,6 @@ Host: api.qiwi.com
   "dateTime" : "2018-11-13T16:30:52.464+03:00"
 }
 ~~~
-
 
 ## Refund {#refund}
 
@@ -1015,7 +998,6 @@ Host: api.qiwi.com
 <!--
 ## Refund for QIWI Wallet payment {#refund_qw}
 
-
 <div id="bill_v1_bills__billId__refunds__refundId__put_checkout">
   <script>
     $(document).ready(function(){
@@ -1042,7 +1024,6 @@ Host: api.qiwi.com
   }
 }
 ~~~
-
 
 -->
 
@@ -1394,7 +1375,6 @@ Host: api.qiwi.com
 
 ## Complete 3DS on card verification {#card-check-complete}
 
-
 <div id="payin_v1_sites__siteId__validation_card_requests__requestUid__complete_post_api">
   <script>
     $(document).ready(function(){
@@ -1411,7 +1391,6 @@ Host: api.qiwi.com
   </script>
 </div>
 
-
 <!-- Request body -->
 ~~~http
 POST /partner/payin/v1/sites/test-01/validation/card/requests/acd7bf20-22e2-4cbf-a218-38d90e9f29b9/complete HTTP/1.1
@@ -1424,7 +1403,6 @@ Host: api.qiwi.com
     "pares": "eJzVWFevo9iyfu9fMZrzaM0QjWHk3tIiGptgooE3cgabYMKvv3jvTurTc3XOfbkaJMuL...."
 }
 ~~~
-
 
 <!-- 200 -->
 ~~~json

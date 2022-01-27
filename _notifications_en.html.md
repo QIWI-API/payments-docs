@@ -11,16 +11,16 @@ Host: server.ru
 
 {
    "payment":{
-      "paymentid":"4504751",
-      "tokendata":{
-         "paymenttoken":"4cc975be-483f-8d29-2b7de3e60c2f",
-         "expireddate":"2021-12-31t00:00:00+03:00"
+      "paymentId":"4504751",
+      "tokenData":{
+         "paymentToken":"4cc975be-483f-8d29-2b7de3e60c2f",
+         "expiredDate":"2021-12-31t00:00:00+03:00"
       },
       "type":"payment",
-      "createddatetime":"2019-10-08t11:31:37+03:00",
+      "createdDateTime":"2019-10-08t11:31:37+03:00",
       "status":{
          "value":"success",
-         "changeddatetime":"2019-10-08t11:31:37+03:00"
+         "changedDateTime":"2019-10-08t11:31:37+03:00"
       },
       "amount":{
          "value":2211.24,
@@ -28,10 +28,9 @@ Host: server.ru
       },
       "paymentMethod":{
          "type":"CARD",
-         "maskedPan":"220024/*/*/*/*/*/*5036",
-         "rrn":null,
-         "authCode":null,
-         "type":"CARD"
+         "maskedPan":"220024******5036",
+         "rrn":"124",
+         "authCode":"181211"
       },
       "paymentCardInfo": {
          "issuingCountry": "810",
@@ -174,11 +173,12 @@ errorCode| Error code| Number|Always
 ----|------|-------|--------
 paymentMethod| Payment method data| Object|Always
 ----|------|-------|--------
-type| Payment method type| String
-paymentToken| Card payment token| String | When payment token is used for the operation
-maskedPan| Masked card PAN| String|Always
-rrn| Payment RRN (ISO 8583)| Number|Always
-authCode| Payment Auth code| Number|Always
+type| Payment method type| String|Always
+paymentToken| Card payment token| String | When payment token is used for the payment
+maskedPan| Masked card PAN| String|When card or payment token is used for the payment
+rrn| Payment RRN (ISO 8583)| Number| When card or payment token is used for the payment
+authCode| Payment Auth code| Number| When card or payment token is used for the payment
+---|---|---|-------
 paymentCardInfo | Card information | Object|Always
 ----|------|-------|--------
 issuingCountry | Issuer country code | String(3)|Always

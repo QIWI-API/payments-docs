@@ -2,7 +2,6 @@
 
 <aside class="notice">В запросы и ответы могут добавляться новые параметры. Следите за обновлениями на <a href="https://github.com/QIWI-API/payments-docs/blob/master/payments_ru.html.md">Github</a>.</aside>
 
-
 ## Создание счета {#invoice_put}
 
 <div id="payin_v1_sites__siteId__bills__billId__put_checkout">
@@ -44,7 +43,6 @@ Host: api.qiwi.com
 }
 ~~~
 
-
 <!-- 200 -->
 ~~~json
 {
@@ -69,7 +67,6 @@ Host: api.qiwi.com
 }
 ~~~
 
-
 <!-- 4xx -->
 ~~~json
 {
@@ -81,7 +78,6 @@ Host: api.qiwi.com
   "traceId" : "fd0e2a08c63ace83"
 }
 ~~~
-
 
 ## Создание счета для оплаты с QIWI Кошелька {#invoice_qw_put}
 
@@ -141,7 +137,6 @@ Host: api.qiwi.com
     "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
 }
 ~~~
-
 
 <!-- 4xx -->
 ~~~json
@@ -215,8 +210,7 @@ Host: api.qiwi.com
         },
         "paymentMethod": {
             "type": "CARD",
-            "maskedPan": "427638******1410",
-            "type": "CARD"
+            "maskedPan": "427638******1410"
         },
         "createdToken": {
             "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
@@ -261,8 +255,7 @@ Host: api.qiwi.com
         },
         "paymentMethod": {
             "type": "CARD",
-            "maskedPan": "427638******1410",
-            "type": "CARD"
+            "maskedPan": "427638******1410"
         },
         "createdToken": {
             "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
@@ -309,8 +302,7 @@ Host: api.qiwi.com
             "type": "CARD",
             "maskedPan": "427638******1410",
             "rrn": "008692274763",
-            "authCode": "242847",
-            "type": "CARD"
+            "authCode": "242847"
         },
         "createdToken": {
             "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
@@ -334,10 +326,7 @@ Host: api.qiwi.com
         "customFields": {
             "customer_account": "1",
             "customer_phone": "0"
-        },
-        "flags": [
-            "AFT"
-        ]
+        }
     }
 ]
 ~~~
@@ -371,7 +360,6 @@ Host: api.qiwi.com
     });
   </script>
 </div>
-
 
 <!-- Request body -->
 ~~~http
@@ -546,7 +534,6 @@ Host: api.qiwi.com
 }
 ~~~
 
-
 ## Статус платежа {#payment_get}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__get_api">
@@ -593,7 +580,9 @@ Host: api.qiwi.com
   },
   "paymentMethod" : {
     "type" : "CARD",
-    "maskedPan" : "444444******1049"
+    "maskedPan" : "444444******1049",
+    "rrn": "124",
+    "authCode": "182817",
   },
   "customer" : { },
   "deviceData" : { },
@@ -638,7 +627,6 @@ Host: api.qiwi.com
 
 ## Завершение аутентификации клиента {#payment_complete}
 
-
 <div id="payin_v1_sites__siteId__payments__paymentId__complete_post_api">
   <script>
     $(document).ready(function(){
@@ -655,7 +643,6 @@ Host: api.qiwi.com
   </script>
 </div>
 
-
 <!-- Request body -->
 ~~~http
 POST /partner/payin/v1/sites/test-01/payments/1811/complete HTTP/1.1
@@ -670,9 +657,6 @@ Host: api.qiwi.com
   }
 }
 ~~~
-
-
-
 
 <!-- 200 -->
 ~~~json
@@ -736,7 +720,6 @@ Host: api.qiwi.com
 }
 ~~~
 
-
 <!--
 ~~~shell
 user@server:~$ curl -X POST "https://api.qiwi.com/partner/pay/v1/sites/112/payments/332121DS/complete"
@@ -749,7 +732,6 @@ user@server:~$ curl -X POST "https://api.qiwi.com/partner/pay/v1/sites/112/payme
   }
 }'
 ~~~ -->
-
 
 <!-- ~~~http
 POST /payin-core/v1/sites/112/payments/332121DS/complete HTTP/1.1
@@ -767,7 +749,6 @@ Host: edge.qiwi.com
 -->
 
 ## Подтверждение платежа {#capture}
-
 
 <!--
 ~~~shell
@@ -802,7 +783,6 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
     });
   </script>
 </div>
-
 
 <!-- Request body -->
 ~~~http
@@ -1076,7 +1056,6 @@ Host: api.qiwi.com
   </script>
 </div>
 
-
 <!-- Request body -->
 ~~~http
 PUT /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132 HTTP/1.1
@@ -1092,7 +1071,6 @@ Host: api.qiwi.com
   }
 }
 ~~~
-
 
 <!-- 200 -->
 ~~~json
@@ -1512,7 +1490,6 @@ Host: api.qiwi.com
   </script>
 </div>
 
-
 <!-- Request body -->
 ~~~http
 POST /partner/payin/v1/sites/test-01/validation/card/requests/acd7bf20-22e2-4cbf-a218-38d90e9f29b9/complete HTTP/1.1
@@ -1525,7 +1502,6 @@ Host: api.qiwi.com
     "pares": "eJzVWFevo9iyfu9fMZrzaM0QjWHk3tIiGptgooE3cgabYMKvv3jvTurTc3XOfbkaJMuL...."
 }
 ~~~
-
 
 <!-- 200 -->
 ~~~json
