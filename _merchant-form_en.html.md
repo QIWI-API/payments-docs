@@ -1,12 +1,12 @@
 # Payment Through Merchant Web Form {#merchant-api-integration}
 
 <aside class="warning">
-When you integrate with your payment form, you send requests to the API with full card numbers and CVV/CVV2 code. This is only allowed if your organization has a PCI DSS certificate. 
+When you integrate with your payment form, you send requests to the API with full card numbers and CVV/CVV2 code. This is only allowed if your organization has a PCI DSS certificate.
 
 PCI DSS is an information security standard adopted in the Visa and MasterCard payment card industry. All companies that accept cards are required to comply with the requirements of the standard.
 </aside>
 
-When you intergrate payments through your own payment form, [Bank Card](#qiwi-form-card) payment method is available by default. The following payment methods are connected on demand:
+When you integrate payments with your own payment form, [Bank Card](#qiwi-form-card) payment method is available by default. The following payment methods are connected on demand:
 
 * [Card and QIWI Wallet payment token](#merchant-token-pay).
 * [Apple Pay](#merchant-form-applepay).
@@ -56,7 +56,6 @@ To create a payment, send the following data in API request [Payment](#payments)
 * amount of payment;
 * payment method;
 * other information for payment creation.
-
 
 ## Bank Card {#merchant-form-card}
 

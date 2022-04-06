@@ -3,7 +3,7 @@
 Refund and reversal operations are available in the following conditions:
 
 * Refunds are only available for successfully completed payment transactions.
-* Reversal of the transaction is only possible for payment transactions until the end of the current day.
+* Reversal of the transaction is possible for [two-step payment operations](#merchant-form-hold) and only for those without received [confirm (CAPTURE)](#merchant-capture).
 
 When the payment is refunded, the QIWI commission fee for the payment is not refunded. An exception is if the reversal operation is performed when the payment is refunded. In this case, there is no financial transaction (charging funds from the customer's account) and there is no commission fee.
 

@@ -79,89 +79,6 @@ Host: api.qiwi.com
 }
 ~~~
 
-## Создание счета для оплаты с QIWI Кошелька {#invoice_qw_put}
-
-<div id="bill_v1_bills__billId__put_checkout">
-  <script>
-    $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-checkout-payment-qw-put.json', function( data ) {
-        window.requestUI(
-            data,
-            "checkout",
-            "bill/v1/bills/{billId}",
-            "put",
-            ['RequestBody', '200', '4xx', '5xx']
-          )
-      })
-    });
-  </script>
-</div>
-
-<!-- Request body -->
-~~~http
-PUT /partner/bill/v1/bills/893794793973 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
-{
-   "amount": {  
-     "currency": "RUB",  
-     "value": 100.00
-   },
-   "comment": "Text comment",
-   "expirationDateTime": "2018-04-13T14:30:00+03:00",
-   "customer": {},
-   "customFields": {}
-}
-~~~
-
-
-<!-- 200 -->
-~~~json
-{
-    "siteId": "23044",
-    "billId": "893794793973",
-    "amount": {
-      "value": 100.00,
-      "currency": "RUB"
-    },
-    "status": {
-      "value": "CREATED",
-      "changedDateTime": "2018-03-05T11:27:41"
-    },
-    "comment": "Text comment",
-    "creationDateTime": "2018-03-05T11:27:41",
-    "expirationDateTime": "2018-04-13T14:30:00",
-    "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
-}
-~~~
-
-<!-- 4xx -->
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
-}
-~~~
-
-<!-- 5xx -->
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "payin.resource.not.found",
-  "userMessage" : "Resource not found",
-  "description" : "Resource not found",
-  "traceId" : "c3564ba25e221fe3",
-  "dateTime" : "2018-11-13T16:30:52.464+03:00"
-}
-~~~
-
 ## Статус счета {#invoice_get}
 
 <div id="payin_v1_sites__siteId__bills__billId__get_checkout">
@@ -1038,6 +955,370 @@ Host: api.qiwi.com
 ~~~
 -->
 
+## Получение QR-кода СБП {#qr-code-sbp}
+
+### Метод PUT {#qr-code-sbp-put}
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeId__put_api">
+  <script>
+    $(document).ready(function(){
+        $.getJSON('../../rui_jsons/payin-sbp-put.json', function( data ) {
+          window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeId}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+PUT /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 999,
+    "image": {
+      "mediaType": "image/png",
+      "width": "300",
+      "height": "300"
+    }
+  },
+  "paymentPurpose": "Flower for my girlfriend",
+  "redirectUrl": "http://someurl.com"
+}
+~~~
+
+<!-- 200 -->
+~~~json
+{
+  "qrCodeUid": "adghj17d1g8",
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  },
+  "paymentPurpose": "Flower for my girlfriend",
+  "redirectUrl": "http://someurl.com",
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 999,
+    "status": "CREATED",
+    "payload": "",
+    "image": {
+      "content": "Base64 string",
+      "mediaType": "image/png",
+      "width": "300",
+      "height": "300",
+    }
+  },
+  "payment": {
+    "paymentUid": "12s1s21",
+    "paymentStatus": "WAITING",
+  }
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+### Метод POST {#qr-code-sbp-post}
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes_post_api">
+  <script>
+    $(document).ready(function(){
+        $.getJSON('../../rui_jsons/payin-sbp-post.json', function( data ) {
+          window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/sbp/qrCodes",
+            "post",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+POST /partner/payin/v1/sites/test-01/sbp/qrCodes HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+  "qrCodeUid": "adghj17d1g8",
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 999,
+    "image": {
+      "mediaType": "image/png",
+      "width": "300",
+      "height": "300"
+    }
+  },
+  "paymentPurpose": "Flower for my girlfriend",
+  "redirectUrl": "http://someurl.com"
+}
+~~~
+
+<!-- 200 -->
+~~~json
+{
+  "qrCodeUid": "adghj17d1g8",
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  },
+  "paymentPurpose": "Flower for my girlfriend",
+  "redirectUrl": "http://someurl.com",
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 999,
+    "status": "CREATED",
+    "payload": "",
+    "image": {
+      "content": "Base64 string",
+      "mediaType": "image/png",
+      "width": "300",
+      "height": "300",
+    }
+  },
+  "payment": {
+    "paymentUid": "12s1s21",
+    "paymentStatus": "WAITING",
+  }
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Статус QR-кода СБП {#qr-code-sbp-get}
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeId__get_api">
+  <script>
+    $(document).ready(function(){
+        $.getJSON('../../rui_jsons/payin-sbp-get.json', function( data ) {
+          window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeId}",
+            "get",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+GET /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+{
+  "qrCodeUid": "adghj17d1g8",
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  },
+  "paymentPurpose": "Flower for my girlfriend",
+  "redirectUrl": "http://someurl.com",
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 999,
+    "status": "CREATED",
+    "payload": "",
+    "image": {
+      "content": "Base64 string",
+      "mediaType": "image/png",
+      "width": "300",
+      "height": "300",
+    }
+  },
+  "payment": {
+    "paymentUid": "12s1s21",
+    "paymentStatus": "WAITING",
+  }
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Платеж токеном СБП {#payment-sbp-token}
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeId__payments__paymentId__put_api">
+  <script>
+    $(document).ready(function(){
+        $.getJSON('../../rui_jsons/payin-sbp-token-put.json', function( data ) {
+          window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeId}/payments/{paymentId}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+PUT /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8/payments/11212334csd HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+  "tokenizationAccount": "customer123",
+  "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6"
+}
+~~~
+
+<!-- 200 -->
+~~~json
+{
+  "qrCodeUid": "adghj17d1g8",
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  },
+  "paymentPurpose": "Flower for my girlfriend",
+  "redirectUrl": "http://someurl.com",
+  "qr": {
+    "type": "DYNAMIC",
+    "ttl": 999,
+    "status": "CREATED",
+    "payload": "",
+    "image": {
+      "content": "Base64 string",
+      "mediaType": "image/png",
+      "width": "300",
+      "height": "300",
+    }
+  },
+  "payment": {
+    "paymentUid": "12s1s21",
+    "paymentStatus": "WAITING",
+  }
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
 ## Операция возврата {#refund-api}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__refunds__refundId__put_api">
@@ -1114,70 +1395,6 @@ Host: api.qiwi.com
   "dateTime":"2020-02-12T21:28:01.813+03:00"
 }
 ~~~
-
-<!--
-## Возврат по платежу с QIWI Кошелька {#invoice_refund_qw}
-
-<div id="bill_v1_bills__billId__refunds__refundId__put_checkout">
-  <script>
-    $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-checkout-refund-put.json', function( data ) {
-        window.requestUI(
-            data,
-            "checkout",
-            "bill/v1/bills/{billId}/refunds/{refundId}",
-            "put",
-            ['RequestBody', '200', '4xx']
-          )
-      })
-    });
-  </script>
-</div>
--->
-<!-- Request body -->
-<!--
-~~~http
-PUT /partner/bill/v1/bills/89123232/refunds/tcwv3132 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
-{
-  "amount": {
-    "value": 2.34,
-    "currency": "RUB"
-  }
-}
-~~~
--->
-<!-- 200 -->
-<!--
-~~~json
-{
-    "amount": {
-      "value": 50.50,
-      "currency": "RUB"
-    },
-    "datetime": "2018-03-01T16:06:57+03",
-    "refundId": "tcwv3132",
-    "status": "PARTIAL"
-}
-~~~
--->
-<!-- 4xx -->
-<!--
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
-}
-~~~
--->
 
 ## Статус возврата {#refund-api-status}
 
@@ -1283,6 +1500,209 @@ Host: api.qiwi.com
   ]
  }
 ]
+~~~
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Операция возврата по платежу СБП {#refund-sbp-api}
+
+### Метод PUT {#refund-sbp-put}
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeId__refunds__refundId__put_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-sbp-refund-put.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeId}/refunds/{refundId}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+PUT /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8/refunds/asdvas7dvasd6va HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  }
+}
+~~~
+
+<!-- 200 -->
+~~~json
+{
+  "qrCodeUid": "adghj17d1g8",
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  },
+  "paymentPurpose": "Flower for my girlfriend",
+  "redirectUrl": "http://someurl.com",
+  "tokenizationPurpose": "",
+  "flags": ["CREATE_TOKEN"],
+  "qr": {
+    "type": "DYNAMIC",
+    "ttl": 999,
+    "status": "CREATED",
+    "payload": "",
+    "image": {
+      "content": "Base64 string",
+      "mediaType": "image/png",
+      "width": "300",
+      "height": "300",
+    }
+  },
+  "token": {
+    "status": "CREATED",
+    "value": "f9ac0f47-1111-2222-b947-33339cdacbc9",
+    "expiredDate": "2022-05-03T14:30:00+03:00",
+  },
+  "payment": {
+    "paymentUid": "12s1s21",
+    "paymentStatus": "COMPLETED"
+  },
+  "refunds": [
+    {
+      "refundUid": "dqw2dx2",
+      "refundStatus": "WAITING"
+    }
+  ]
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+### Метод POST {#refund-sbp-post}
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeId__refunds_post_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-sbp-refund-post.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeId}/refunds",
+            "post",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+POST /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8/refunds HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+  "refundUid": "asdvas7dvasd6va",
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  }
+}
+~~~
+
+<!-- 200 -->
+~~~json
+{
+  "qrCodeUid": "adghj17d1g8",
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  },
+  "paymentPurpose": "Flower for my girlfriend",
+  "redirectUrl": "http://someurl.com",
+  "tokenizationPurpose": "",
+  "flags": ["CREATE_TOKEN"],
+  "qr": {
+    "type": "DYNAMIC",
+    "ttl": 999,
+    "status": "CREATED",
+    "payload": "",
+    "image": {
+      "content": "Base64 string",
+      "mediaType": "image/png",
+      "width": "300",
+      "height": "300",
+    }
+  },
+  "token": {
+    "status": "CREATED",
+    "value": "f9ac0f47-1111-2222-b947-33339cdacbc9",
+    "expiredDate": "2022-05-03T14:30:00+03:00",
+  },
+  "payment": {
+    "paymentUid": "12s1s21",
+    "paymentStatus": "COMPLETED"
+  },
+  "refunds": [
+    {
+      "refundUid": "dqw2dx2",
+      "refundStatus": "WAITING"
+    }
+  ]
+}
 ~~~
 
 <!-- 4xx -->
@@ -1472,7 +1892,6 @@ Host: api.qiwi.com
 ~~~
 
 ## Завершение аутентификации при проверке карты {#card-check-complete}
-
 
 <div id="payin_v1_sites__siteId__validation_card_requests__requestUid__complete_post_api">
   <script>

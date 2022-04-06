@@ -1,7 +1,5 @@
 # Terms and Abbreviations {#articles}
 
-###### Last update: 2021-08-25 | [Propose corrections on GitHub](https://github.com/QIWI-API/payments-docs/)
-
 **API Key** — String for merchant authorization in API according to OAuth 2.0 standard [RFC 6749](https://tools.ietf.org/html/rfc6749) [RFC 6750](https://tools.ietf.org/html/rfc6750).
 
 **Payment token** — String linked to the card data for payments without entering card details.
@@ -59,14 +57,16 @@ Payment protocol provides several ways of integration:
 
 Method|Payment through QIWI Form|Payment through merchant form
 -----|---------|--------------
-Credit/debit card|✓|✓
+Credit/debit card*|✓|✓
 Payment by payment token |✓|✓
 Apple Pay | ✓ | ✓
 Google Pay | ✓ | ✓
 [Faster Payments System](http://www.cbr.ru/eng/psystem/sfp/) | × | ✓
-QIWI Wallet Balance |✓|✓*
+QIWI Wallet Balance |✓|✓**
 
-`*` — by issuing a payment token for QIWI wallet
+`*` — default payment method, other methods are available upon request.
+
+`**` — by [issuing a payment token for QIWI wallet](#merchant-form-wallet-token-issue)
 
 ## Operation Types {#operations}
 
@@ -111,7 +111,7 @@ API endpoint:
 
 `https://api.qiwi.com/partner/`
 
-API requests' parameters are transferred in the request body JSON data. Parameters in HTTP GET-requests are placed in URL. 
+API requests' parameters are transferred in the request body JSON data. Parameters in HTTP GET-requests are placed in URL.
 
 API always responds in JSON format.
 
@@ -144,7 +144,9 @@ For testing purposes, the same [protocol URLs](api-format) are used.
 
 When integration on your side is completed, we turn your ID to production mode. In the production mode cards are debited.
 
-**You don't need to re-release the API access key when you go into production mode. However, if you change the permanent URL for notifications from a test notification (such as a https://your-shop-test.ru/callbacks) to a production one (such as https://your-shop-prod.ru/callbacks), you need to release a new API access key.**
+**You don't need to re-release the API access key when you go into production mode**.
+
+If necessary, change the permanent URL for notifications from a test notification (such as `https://your-shop-test.ru/callbacks`) to a production one (such as `https://your-shop-prod.ru/callbacks`) in your [Account Profile](https://kassa.qiwi.com/service/core/merchants?).
 
 <aside class="notice">
 The API access key, linked to a certain <code>siteId</code>, works for all payment methods enabled for this ID.

@@ -1,6 +1,6 @@
-# Card Verification {#check-card}
+# Customer Card Verification {#check-card}
 
-In **Payment protocol** merchant can use a verification service to check for customer's card details, its validity and availability for purchases. Funds on cardholder's account are not debited until card recurring is confirmed or payment transaction is initiated.
+Merchant can use a verification service to check for customer's card details, its validity and availability for purchases. Funds on cardholder's account are not debited until card recurring is confirmed or payment transaction is initiated.
 
 If card verification is passed successfully, [payment token](#merchant-token-pay) can be issued for the card.
 

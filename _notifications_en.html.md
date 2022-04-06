@@ -68,7 +68,12 @@ The Protocol supports the following notification types for API events:
 There is no specific sequence of sending different types' notifications for the same operation. The sequence may vary for different operations.
 </aside>
 
-Specify the notification server address in your Personal Profile on [kassa.qiwi.com](https://kassa.qiwi.com/) web-site in **Settings** section. You may also specify the address for a separate operation in optional `callbackUrl` parameter of [API requests](#api_requests).
+Specify the notification server address in your [Account Profile](https://kassa.qiwi.com/service/core/merchants?) in **Settings** section.
+
+To put different notification address for a separate operation, use the following parameters in the API requests:
+
+* `callbackUrl` parameter — in the [Payment](#payments), [Payment confirmation](#capture), [Refund](#refund) API requests.
+* `customFields.invoice_callback_url` parameter — in the [Invoice](#invoice_put) API request.
 
 The URL for notifications should start with `https`, as notifications are sent by HTTPS to port 443.
 The site certificate must be issued by a trusted certification center (e.g. Comodo, Verisign, Thawte, etc.)
@@ -119,11 +124,11 @@ Implement the following algorithm to verify notification signature:
 
 2. Calculate hash HMAC value with SHA256 algorithm (signature string and secret key should be UTF8-encoded):
 
-   `hash = HMAС(SHA256, token, parameters)`
+   `hash = HMAС(SHA256, secret, parameters)`
 
    where:
 
-      * `token` – HMAC hash key. Coincides with the [API access key](#auth) used in the original API request for the operation.
+      * `secret` – HMAC hash key. It is the server notification key in **Settings** section of the Merchant Account Profile.
       * `parameters` – string from step 1.
 
 3. Compare the notification signature from `Signature` HTTP-header with the result of step 2. If there is no difference, the validation is successful.
@@ -157,7 +162,7 @@ payment | Payment information | Object | Always
 type| [Operation type](#operation-types)|String(200)|Always
 paymentId|Payment operation unique identifier in RSP's system|String(200)|Always
 createdDateTime| System date of the operation creation | URL-encoded string<br>`YYYY-MM-DDThh:mm:ss`|Always
-amount|Object| Operation amount data|Always 
+amount|Object| Operation amount data|Always
 ----|------|-------|--------
 value | Operation amount rounded down to two decimals | Number(6.2)|Always
 currency | Operation currency (Code: Alpha-3 ISO 4217) | String(3)|Always

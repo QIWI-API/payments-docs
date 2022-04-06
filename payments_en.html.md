@@ -45,9 +45,12 @@ search: true
 
 # Overview {#get-start}
 
+###### Last update: 2022-03-31 | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/)
+
 The Payments protocol provides a payment processing solutions that helps you accept payments in fast and secure way. The protocol gives your customers flexibility to pay the way they want, including:
 
 * Debit or credit cards, like Visa, Mastercard, and MIR.
-* Apple Pay / Google Pay.
+* Apple Pay
+* Google Pay.
 * QIWI Wallet.
 * Faster Payments Systems (SBP).
