@@ -12,6 +12,7 @@ language_tabs:
 
 toc_footers:
   - <a href='/ru/payments-release-notes/index.html'>Список изменений</a>
+  - <a href='/ru/payments-lk-guide/index.html'>Справка по интерфейсу Личного кабинета</a>
   - <a href='/'>На главную</a>
   - <a href='mailto:bss@qiwi.com'>Обратная связь</a>
 

@@ -34,7 +34,7 @@ Host: api.qiwi.com
      "value": 100.00
    },
    "comment": "Text comment",
-   "expirationDateTime": "2018-04-13T14:30:00+03:00",
+   "expirationDateTime": "2022-04-13T14:30:00+03:00",
    "customer": {},
    "customFields": {
      "cf1": "Some data",
@@ -54,15 +54,15 @@ Host: api.qiwi.com
     },
     "status": {
       "value": "CREATED",
-      "changedDateTime": "2018-03-05T11:27:41"
+      "changedDateTime": "2022-04-05T11:27:41"
     },
     "comment": "Text comment",
     "customFields": {
       "cf1": "Some data",
       "FROM_MERCHANT_CONTRACT_ID": "1234"
     },
-    "creationDateTime": "2018-03-05T11:27:41",
-    "expirationDateTime": "2018-04-13T14:30:00",
+    "creationDateTime": "2022-03-05T11:27:41",
+    "expirationDateTime": "2022-04-13T14:30:00",
     "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
 }
 ~~~
@@ -74,12 +74,198 @@ Host: api.qiwi.com
   "errorCode" : "validation.error",
   "description" : "Validation error",
   "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "dateTime" : "2022-03-05T11:49:59.166+03:00",
   "traceId" : "fd0e2a08c63ace83"
 }
 ~~~
 
-## Статус счета {#invoice_get}
+## Статус счета {#invoice-details}
+
+<div id="payin_v1_sites__siteId__bills__billId__details_get_checkout">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-checkout-payment-details-get.json', function( data ) {
+        window.requestUI(
+            data,
+            "checkout",
+            "payin/v1/sites/{siteId}/bills/{billId}/details",
+            "get",
+            ['RequestBody', '200', '4xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+GET /partner/payin/v1/sites/site-01/bills/d35cf63943e54f50badc75f49a5aac7c/details HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+{
+  "billId": "d35cf63943e54f50badc75f49a5aac7c",
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  },
+  "status": {
+    "value": "PAID",
+    "changedDateTime": "2022-03-05T11:27:41"
+  },
+  "comment": "Text comment",
+  "customFields": {
+    "cf1": "Some data",
+    "FROM_MERCHANT_CONTRACT_ID": "1234"
+  },
+  "expirationDateTime": "2022-04-13T14:30:00",
+  "payUrl": "https://oplata.qiwi.com/form/invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77",
+  "payments": [
+    {
+        "siteId": "site-01",
+        "billId": "d35cf63943e54f50badc75f49a5aac7c",
+        "createdDateTime": "2022-03-05T11:23:49+03:00",
+        "amount": {
+            "currency": "RUB",
+            "value": 100.00
+        },
+        "capturedAmount": {
+            "currency": "RUB",
+            "value": 100.00
+        },
+        "refundedAmount": {
+            "currency": "RUB",
+            "value": 0.00
+        },
+        "paymentMethod": {
+            "type": "CARD",
+            "maskedPan": "427638******1410"
+        },
+        "customer": {
+            "account": "1",
+            "phone": "0",
+            "address": {}
+        },
+        "requirements": {
+            "threeDS": {
+                "pareq": "eJxVUWFvgjAQX7gM3fq+hNqO0oI5prexilN1UDEMwl6FcHZZ19m7v63DtRY=",
+                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
+            }
+        },
+        "status": {
+            "value": "DECLINE",
+            "changedDateTime": "2022-03-05T11:23:09+03:00",
+            "reason": "ACQUIRING_NOT_PERMITTED"
+        },
+        "customFields": {
+            "customer_account": "1",
+            "customer_phone": "0"
+        }
+    },
+    {
+        "siteId": "site-01",
+        "billId": "d35cf63943e54f50badc75f49a5aac7c",
+        "createdDateTime": "2022-03-05T11:23:22+03:00",
+        "amount": {
+            "currency": "RUB",
+            "value": 100.00
+        },
+        "capturedAmount": {
+            "currency": "RUB",
+            "value": 100.00
+        },
+        "refundedAmount": {
+            "currency": "RUB",
+            "value": 0.00
+        },
+        "paymentMethod": {
+            "type": "CARD",
+            "maskedPan": "427638******1410"
+        },
+        "customer": {
+            "account": "1",
+            "phone": "0",
+            "address": {}
+        },
+        "requirements": {
+            "threeDS": {
+                "pareq": "eJxVUWFvgjAQ52lBUtjD3M9++qFgCxl0i/OtJv2WT/tv8LXqG0vw==",
+                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
+            }
+        },
+        "status": {
+            "value": "DECLINED",
+            "changedDateTime": "2022-03-05T11:23:54+03:00",
+            "reason": "ACQUIRING_NOT_PERMITTED"
+        },
+        "customFields": {
+            "customer_account": "1",
+            "customer_phone": "0"
+        }
+    },
+    {
+        "siteId": "site-01",
+        "billId": "d35cf63943e54f50badc75f49a5aac7c",
+        "createdDateTime": "2022-03-05T11:26:21+03:00",
+        "amount": {
+            "currency": "RUB",
+            "value": 100.00
+        },
+        "capturedAmount": {
+            "currency": "RUB",
+            "value": 100.00
+        },
+        "refundedAmount": {
+            "currency": "RUB",
+            "value": 0.00
+        },
+        "paymentMethod": {
+            "type": "CARD",
+            "maskedPan": "427638******1410",
+            "rrn": "008692274763",
+            "authCode": "242847"
+        },
+        "customer": {
+            "account": "1",
+            "phone": "0",
+            "address": {}
+        },
+        "requirements": {
+            "threeDS": {
+                "pareq": "eJxVUdtuwjAM7b6t/1fcku04w==",
+                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
+            }
+        },
+        "status": {
+            "value": "COMPLETED",
+            "changedDateTime": "2022-03-05T11:34:43+03:00"
+        },
+        "customFields": {
+            "customer_account": "1",
+            "customer_phone": "0"
+        }
+    }
+]
+~~~
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2022-03-05T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+## Получение списка платежей по счету {#invoice-payments}
 
 <div id="payin_v1_sites__siteId__bills__billId__get_checkout">
   <script>
@@ -329,55 +515,6 @@ Host: api.qiwi.com
   ]
 }
 ~~~
-
-<!--
-~~~shell
-  user@server:~$ curl "https://api.qiwi.com/partner/pay/v1/sites/112/payments/223E"
-    -X PUT --header "Accept: application/json"
-    --header "Authorization: Bearer ***"
-    --header "Content-type: application/json"
-    -d "{
-  "callbackUrl": "https://example.com/callbacks",
-  "comment": "Example payment",
-  "paymentId": "223E",
-  "billId": "string",
-  "amount": {
-    "currency": "RUB",
-    "value": 200
-  },
-  "paymentMethod" : {
-    "type" : "CARD",
-    "pan" : "4444443616621049",
-    "expiryDate" : "12/19",
-    "cvv2" : "123",
-    "holderName" : "CARDHOLDER NAME"
-  },
-  "customer": {
-    "account": "string",
-    "address": {
-      "city": "Moscow",
-      "country": "Russian Federation",
-      "details": "Severnoe chertanovo microdistrict 1a 1",
-      "region": "Moscow city"
-    },
-    "email": "customer@example.com",
-    "phone": "+79991234567"
-  },
-  "deviceData": {
-    "datetime": "2017-09-03T14:30:00+03:00",
-    "fingerprint": "TW96aWxsYS81LjAgKHBsYXRmb3JtOyBydjpnZWNrb3ZlcnNpb24p",
-    "ip": "127.0.0.1",
-    "screenResolution": "1280x1024",
-    "timeOnPage": 1440,
-    "userAgent": "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion"
-  },
-  "customFields": {},
-  "flags": [
-    "SAVE_CARD"
-  ]
-} "
-~~~
--->
 
 <!-- 200 -->
 ~~~json

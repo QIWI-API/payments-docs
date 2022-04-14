@@ -51,10 +51,12 @@ It is an easy way to integrate with the QIWI payment form. When the form is open
 
 To call the form, you need to put `PUBLIC_KEY` identification key into the URL. For each `siteId` the unique key is produced. You can get the key in your [Account Profile](https://kassa.qiwi.com/service/core/merchants?) in **Settings** section.
 
-When paying an invoice in this way, the payment is authorized without the participation of the merchant. Turn on automatic payment confirmation in Support, so you would not need the [Payment confirmation](#capture) request.
+When paying an invoice issued in this way, the payment is authorized without the participation of the merchant. As the two-step scheme payment is used, you need to confirm payment by the [Payment confirmation](#capture) request, or you can confirm the payment by hand in your Account Profile.
+
+By default, the service waits for the payment to be confirmed within 72 hours. At the end of the term, the payment is self-confirmed.
 
 <aside class="notice">
-By default, when customer pay the invoice with the QIWI Payment form URL, the service waits for the payment to be confirmed within 72 hours. You can confirm this payment through your Account. At the end of the term, the payment is self-confirmed. To reduce the waiting period, or to set up a payment auto-refund, contact support.
+ To reduce the waiting period, or to set up a payment auto-refund, contact Technical support.
 </aside>
 
 <h3 class="request method" id="payform_flow">REDIRECT → </h3>
@@ -307,7 +309,7 @@ When opening Payment Form in Webview on Android, you should enable <code>setting
 > Example of the URL with successUrl parameter
 
 ~~~shell
-https://oplata.qiwi.com/form?invoiceUid=606a5f75-4f8e-4ce2-b400-967179502275&successUrl=https://merchant.ru/payments/#introduction
+https://oplata.qiwi.com/form?invoiceUid=606a5f75-4f8e-4ce2-b400-967179502275&successUrl=https://example.com/payments/#introduction
 ~~~
 
 You can add the following parameter to the URL:
@@ -316,7 +318,34 @@ You can add the following parameter to the URL:
 |--------------|--------|-------------|
 | successUrl | URL for customer redirection in case of successful payment. Redirect proceeds after the successful 3DS authentication. URL should be UTF-8 encoded. | URL-encoded string |
 
+> Example of event listener for iframe
+
+~~~javascript
+window.addEventListener('message', function (event) {
+    switch (event.data) {
+        case 'INITIALIZED':
+            // Form loaded
+            break;
+        case 'PAYMENT_ATTEMPT':
+            // Payment attempt
+            break;
+        case 'PAYMENT_SUCCEEDED':
+            // Payment successful
+            break;
+        case 'PAYMENT_FAILED':
+            // Payment failed
+            break;
+    }
+}, false)
+~~~
+
 By default, 3-D Secure is required on the QIWI Form.
+
+When opening URL of the QIWI Form in `<iframe>`, use additional parameter `allow`:
+
+`<iframe allow="payment" src="<ссылка payUrl> ..." />`
+
+You can use `postMessage` method to listen events in the Form.
 
 ## Customization of QIWI Payment Form  {#custom}
 
