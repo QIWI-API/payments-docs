@@ -25,16 +25,16 @@ Operation type is returned in `{operation}.type` field of the [notification](#ca
 Operation type | Description
 ---|----
 PAYMENT | The payment. There can be field `flag: [ "SALE" ]` (one-step payment) or `flag: [ "AUTH" ]` (two-step payment with holding funds) in the notification.
-CAPTURE | Operation of the payment confirmation. 
+CAPTURE | Operation of the payment confirmation.
 REFUND | Operation of the refund. There can be field `flag: [ "REVERSAL" ]` in the notification. It means that there was no financial operation (charging from customer's account) and commission fee would not be hold.
 
 ## Operation statuses {#operation-statuses}
 
-Operation status reflects its current state. 
+Operation status reflects its current state.
 
 API returns synchronous status of the operation in the field `status.value` of the response. 
 
-Status in notifications is in the field `{operation}.status.value`. 
+Status in notifications is in the field `{operation}.status.value`.
 
 In the following table all possible statuses and corresponding [operation types](#operation-types), where each status is used.
 
@@ -85,3 +85,16 @@ ACQUIRING_INSUFFICIENT_FUNDS| Issuer error. Not enough funds
 ACQUIRING_UNKNOWN| Unknown error
 BILL_ALREADY_PAID| Invoice is already paid
 PAYIN_PROCESSING_ERROR| Payment processing error
+QW_LIMIT_ERROR | Exceeded limits for QIWI Wallet (monthly, daily, etc)
+QW_IDENTIFICATION_ERROR | QIWI Wallet identification required or identification level is not enough for the customer
+QW_AUTH_ERROR | The current authentication level does not match the required
+QW_INSUFFICIENT_FUNDS | Insufficient funds
+QW_AMOUNT_ERROR | Forbidden payment amount in QIWI Wallet (amount is less than the minimum allowed amount or larger than the maximum allowed amount, or daily limit exceeded or zero amount)
+QW_REGISTRATION_ERROR | QIWI Wallet registration error
+QW_AGENT_ERROR | QIWI Wallet agent is blocked
+QW_ACCOUNT_ERROR | QIWI Wallet account is blocked
+QW_IDENTIFICATION_STATUS_ERROR | Attempt to transfer limited amount in another currency in QIWI Wallet
+QW_CURRENCY_ERROR | Currency error in QIWI Wallet (currency not found, wallet with that currency is not found)
+QW_PAYMENT_ERROR | QIWI Wallet payment error
+QW_PROVIDER_ERROR | QIWI Wallet provider is blocked
+QW_SMS_CONFIRM_EXPIRED | SMS code is expired in QIWI Wallet
