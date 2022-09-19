@@ -3,8 +3,8 @@
 When you integrate payments through the QIWI form, the only available payment method is by bank cards. The following payment methods are enabled on demand:
 
 * [Card payment token](#qiwi-token-pay).
+* Faster Payments System.
 * QIWI Wallet.
-* Apple Pay/Google Pay.
 
 To create invoice for a payment, use [API to issue an invoice](#qiwi-form-invoice-api) or simply redirect customer to the QIWI Form by the [direct link with the invoice data](#https-qiwi-form).
 
@@ -56,10 +56,10 @@ When paying an invoice issued in this way, the payment is authorized without the
 By default, the service waits for the payment to be confirmed within 72 hours. At the end of the term, the payment is self-confirmed.
 
 <aside class="notice">
- To reduce the waiting period, or to set up a payment auto-refund, contact Technical support.
+ To reduce the waiting period, or to set up a payment auto-refund, contact <a href="mailto:payin@qiwi.com">QIWI Support</a>.
 </aside>
 
-<h3 class="request method" id="payform_flow">REDIRECT → </h3>
+<h3 class="request method" id="payform_flow">GET → </h3>
 
 > Invoice with payment amount
 
@@ -85,27 +85,29 @@ When opening Payment Form in Webview on Android, you should enable <code>setting
     <li><h3>Parameters</h3><span>Invoice parameters put to the URL.</span></li>
 </ul>
 
-Parameter|Description|Type|Required
----------|--------|---|---------|---|----
-publicKey | Merchant identification key|String|+
-billId|Unique invoice identifier in merchant's system. It must be generated on your side with any means. It could be any sequence of digits and letters. Also you might use underscore `_` and dash `-`. If not used, for each URL opening a new invoice is created.|URL-encoded string String(200)|-
-amount| Amount of customer order rounded down to 2 digits (always in rubles) | Number(6.2)|-
-phone | Customer phone number (international format) | URL-encoded string|-
-email | Customer e-mail | URL-encoded string|-
-comment | Comment to the invoice|URL-encoded string String(255)|-
-successUrl|URL for redirect from the QIWI form in case of successful payment. URL should be within the merchant's site.|URL-encoded string|-
-extras[cf1] | Extra field to add any information to invoice data |URL-encoded string| -
-extras[cf2] | Extra field to add any information to invoice data|URL-encoded string | -
-extras[cf3] | Extra field to add any information to invoice data|URL-encoded string | -
-extras[cf4] | Extra field to add any information to invoice data|URL-encoded string | -
-extras[cf5] | Extra field to add any information to invoice data|URL-encoded string | -
-readonly_extras | List of the extra fields which customer cannot edit on the invoice pay form|String, separator of the field names `,`. Example: `cf1,cf3` | -
+Parameter         | Description                                                                                                                                                                                                                             | Type                                                         | Required
+------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|---------
+publicKey         | Merchant identification key                                                                                                                                                                                                             | String                                                       | +
+billId            | Unique invoice identifier in the merchant's system. It must be generated on your side with any means. Arbitrary sequence of digits and letters, `_` and `-` symbols as well. If not used, on each URL opening a new invoice is created. | URL-encoded string String(200)                               | -
+amount            | Amount of customer order rounded down to 2 digits (always in rubles)                                                                                                                                                                    | Number(6.2)                                                  | -
+currency          | Currency code for the purchase. Possible values: `RUB`, `EUR`, `USD`. Default value `RUB`                                                                                                                                               | String(3)                                                    | -
+phone             | Customer phone number (international format)                                                                                                                                                                                            | URL-encoded string                                           | -
+email             | Customer e-mail                                                                                                                                                                                                                         | URL-encoded string                                           | -
+comment           | Comment to the invoice                                                                                                                                                                                                                  | URL-encoded string String(255)                               | -
+successUrl        | URL for redirect from the QIWI form in case of successful payment. URL should be within the merchant's site.                                                                                                                            | URL-encoded string                                           | -
+extras[cf1]       | Extra field to add any information to invoice data                                                                                                                                                                                      | URL-encoded string                                           | -
+extras[cf2]       | Extra field to add any information to invoice data                                                                                                                                                                                      | URL-encoded string                                           | -
+extras[cf3]       | Extra field to add any information to invoice data                                                                                                                                                                                      | URL-encoded string                                           | -
+extras[cf4]       | Extra field to add any information to invoice data                                                                                                                                                                                      | URL-encoded string                                           | -
+extras[cf5]       | Extra field to add any information to invoice data                                                                                                                                                                                      | URL-encoded string                                           | -
+extras[themeCode] | Extra field with [code style of the Payment form](#custom)                                                                                                                                                                              | URL-encoded string                                           | -
+readonly_extras   | List of the extra fields which customer cannot edit on the invoice pay form                                                                                                                                                             | String, separator of the field names `,`. Example: `cf1,cf3` | -
 
 By default, the customer is automatically authenticated after the invoice is paid. Authentication is also automatically completed.
 
 ## API invoice issue and QIWI payment form {#qiwi-form-invoice-api}
 
->Example of invoice creation with payment on hold (two-step payment)
+>Invoice creation when payment is put on hold (two-step payment)
 
 ~~~http
 PUT /partner/payin/v1/sites/{siteId}/bills/893794793973 HTTP/1.1
@@ -115,17 +117,21 @@ Content-type: application/json
 Host: api.qiwi.com
 
 {
-   "amount": {  
-     "currency": "RUB",  
+   "amount": {
+     "currency": "RUB",
      "value": 42.24
    },
+   "billPaymentMethodsType": [
+      "QIWI_WALLET",
+      "SBP"
+   ],
    "comment": "Spasibo",
    "expirationDateTime": "2019-09-13T14:30:00+03:00",
    "customFields": {}
 }
 ~~~
 
->Example of invoice creation with payment without customer authentication (one-step payment)
+>Invoice creation when payment is processed without customer authentication (one-step payment)
 
 ~~~http
 PUT /partner/payin/v1/sites/23044/bills/893794793973 HTTP/1.1
@@ -135,8 +141,8 @@ Content-type: application/json
 Host: api.qiwi.com
 
 {
-   "amount": {  
-     "currency": "RUB",  
+   "amount": {
+     "currency": "RUB",
      "value": 100.00
    },
    "expirationDateTime": "2018-04-13T14:30:00+03:00",
@@ -147,16 +153,16 @@ Host: api.qiwi.com
 ~~~
 
 <aside class="warning">
-On the QIWI Payment Form, by default, the customer can only pay by bank card. To connect the payment methods "QIWI Wallet", "Apple Pay/Google Pay", "Payment with a payment token", please contact your Support manager.
+On the QIWI Payment Form, by default, the customer can only pay by bank card. To connect the other payment methods contact your manager in QIWI Support.
 </aside>
 
-The payment protocol supports both a two-step payment with holding funds on the customer's card, and a one-step payment without the authentication of the customer.
+The payment protocol supports both a two-step payment with holding funds on the customer's card and a one-step payment without the authentication of the customer.
 
 <a name="one_step">
 
-1. To create an invoice with payment through holding funds on the card and customer authentication (two-step scenario), use the API request [Invoice](#invoice_put):
+1. Create an invoice with two-step scenario using the API request [Invoice](#invoice_put):
 
-   * The API access key.
+   * The [API access key](#api-auth).
    * The amount of the invoice (`amount`).
    * The date before which the invoice must be paid (`expirationDateTime`).
    * (optional) Other invoice data:
@@ -164,34 +170,75 @@ The payment protocol supports both a two-step payment with holding funds on the 
      * Comment on the invoice (`comment`).
      * Other information (`customFields`).
 
-   To pay the invoice without the customer's authentication (one-step scenario), include the `"flags":["SALE"]` parameter in the API request. **If you do not pass this parameter, the unconditional holding of funds to pay the invoice will be made**.
-2. [Redirect the customer to QIWI Payment form](#qiwi-redirect) using URL from `payUrl` parameter of the API response.
-3. Wait for the payment completion. Either you receive a [notification] (#payment-callback) or send [Payment status](#invoice_get) API request in cycle to get an information about the payment.
+   To pay the invoice without the customer's authentication (one-step scenario), add the `"flags":["SALE"]` parameter in the API request. **If you do not pass this parameter, the unconditional holding of funds to pay the invoice will be made**.
 
-> Notification example
+   To limit payment methods accessible for the customer on the Payment form, specify them in `billPaymentMethodsType` API parameter. Listed methods should be enabled for `siteId` of the API request.
+
+2. [Redirect the customer to QIWI Payment form](#qiwi-redirect) using URL from `payUrl` parameter of the API response.
+3. Wait for the payment completion. Either you receive a [notification] (#payment-callback) or send [Invoice status](#invoice-details) API request in cycle to get an information about the payment.
+
+> Notification
 
 ~~~json
-{
-  "payment":{
-    "paymentId":"804900",  <==paymentId, необходимый для подтверждения
-    "type":"PAYMENT",
-    "createdDateTime":"2020-11-28T12:58:49+03:00",
-    "status":{
-        "value":"SUCCESS",
-        "changedDateTime":"2020-11-28T12:58:53+03:00"
+  "payment": {
+    "type": "PAYMENT",
+    "paymentId": "824c7744-1650-4836-abaa-842ca7ca8a74",  <== paymentId necessary for confirmation
+    "createdDateTime": "2022-07-27T12:43:35+03:00",
+    "status": {
+        "value": "SUCCESS",
+        "changedDateTime": "2022-07-27T12:43:47+03:00"
     },
-    "amount":{
-      "value":100.00,
-      "currency":"RUB"
+    "amount": {
+        "value": 1.00,
+        "currency": "RUB"
     },
-    "paymentMethod":"..",
-    "customer":"..",
-    "gatewayData":"..",
-    "billId":"autogenerated-a51d0d2c-6c50-405d-9305-bf1c13a5aecd",
-    "flags":[]
+    "paymentMethod": {
+        "type": "CARD",
+        "maskedPan": "512391******6871",
+        "cardHolder": null,
+        "cardExpireDate": "3/2030"
+    },
+    "tokenData": {
+        "paymentToken": "cc123da5-2fdd-4685-912e-8671597948a3",
+        "expiredDate": "2030-03-01T00:00:00+03:00"
+    },
+    "customFields": {
+        "cf2": "dva",
+        "cf1": "1",
+        "cf4": "4",
+        "cf3": "tri",
+        "cf5": "5",
+        "full_name": "full_name",
+        "phone": "phone",
+        "contract_id": "contract_id",
+        "comment": "test",
+        "booking_number": "booking_number"
+    },
+    "paymentCardInfo": {
+        "issuingCountry": "643",
+        "issuingBank": "Тинькофф банк",
+        "paymentSystem": "MASTERCARD",
+        "fundingSource": "UNKNOWN",
+        "paymentSystemProduct": "TNW|TNW|Mastercard® New World—Immediate Debit|TNW|Mastercard New World-Immediate Debit"
+    },
+    "customer": {
+        "email": "darta@mail.ru",
+        "account": "11235813",
+        "phone": "79850223243"
+    },
+    "gatewayData": {
+        "type": "ACQUIRING",
+        "eci": "2",
+        "authCode": "0123342",
+        "rrn": "001239598011"
+    },
+    "billId": "191616216126154",
+    "flags": [
+        "AFT"
+    ]
   },
-  "type":"PAYMENT",
-  "version":"1"
+  "type": "PAYMENT",
+  "version": "1"
 }
 ~~~
 
@@ -208,14 +255,14 @@ Host: api.qiwi.com
 The payment confirmation is required for two-step scenario (payment with holding funds). The [reimbursement](#reimburse) is formed only after the payment confirmation.
 
 <aside class="notice">
-By default, when holding funds, the service expects confirmation of payment within 72 hours. At the end of the term, the payment is self-confirmed. To increase or reduce the waiting period, or to set up a payment auto-reversal, contact Support. The waiting period may not last more than 5 days.
+By default, when holding funds, the service expects confirmation of payment within 72 hours. At the end of the term, the payment is self-confirmed. To increase or reduce the waiting period, or to set up a payment auto-reversal, contact <a href="mailto:payin@qiwi.com">QIWI Support</a>. The waiting period may not last more than 5 days.
 </aside>
 
-To confirm payment:
+To confirm payment on the invoice:
 
 1. Get `paymentId` identifier of the payment:
    * From [server notification](#payment-callback) after successful holding of funds.
-   * From the response to the [Invoice status](#invoice_get) request.
+   * From the response to the [Invoice payments list](#invoice-payments) request.
 2. Send API request [Payment confirmation](#capture) with received `paymentId` identifier.
 
 ### Payment token {#qiwi-token-pay}
@@ -230,8 +277,8 @@ Content-type: application/json
 Host: api.qiwi.com
 
 {
-   "amount": {  
-     "currency": "RUB",  
+   "amount": {
+     "currency": "RUB",
      "value": 100.00
    },
    "comment": "Text comment",
@@ -242,19 +289,19 @@ Host: api.qiwi.com
    "customFields": {
     "cf1": "Some data",
     "FROM_MERCHANT_CONTRACT_ID": "1234"
-   }  
+   }
    }
 }
 ~~~
 
-The payment tokens are used for charging a customer balance without entering card details or QIWI Wallet number. By default, the use of payment tokens is disabled. Contact your Support manager to enable that.
+The payment tokens are used for charging a customer balance without entering card details or QIWI Wallet number. By default, the use of payment tokens is disabled. Contact your manager in QIWI Support to enable that.
 
 You can read about the issue of a payment token [in this section](#payment-token-issue).
 
 <aside class="warning">
 Customer will be able to make payment by payment token only on the site where payment token was issued.
 
-To make the payment token valid on other sites, send a request to Support.
+To make the payment token valid on other sites, send a request to [QIWI Support](mailto:payin@qiwi.com).
 </aside>
 
 To create an invoice payable with payment token, send in API request [Invoice](#invoice_put) the following data:
@@ -265,11 +312,11 @@ To create an invoice payable with payment token, send in API request [Invoice](#
 * Customer identifier for which the payment token was issued, in `customer.account` parameter. **Payment by payment token is not possible without this parameter.**
 * Other information about the invoice (`comment`, `customFields`).
 
-If one or more payment tokens have been issued for the customer, the Payment form will display their linked cards.
+If one or more payment tokens have been issued for the customer, the Payment form would display their linked cards.
 
 ![qiwi-form-tokens](/images/qiwi-form-token.png)
 
-To use the payment token, it is enough for the customer to choose one of their linked cards. Customer doesn't need to provide card data or 3-D Secure authentication.
+To use the payment token, the customer chooses a card from the drop-down list. Card data or 3-D Secure authentication is not required.
 
 To charge funds on a payment token without the customer's participation, use the API method [Payment](#payment). See details in section [Using payment token](#merchant-token-pay) for the merchant's payment form.
 
@@ -314,7 +361,7 @@ https://oplata.qiwi.com/form?invoiceUid=606a5f75-4f8e-4ce2-b400-967179502275&suc
 
 You can add the following parameter to the URL:
 
-| Parameter | Descripton | Type |
+| Parameter | Description | Type |
 |--------------|--------|-------------|
 | successUrl | URL for customer redirection in case of successful payment. Redirect proceeds after the successful 3DS authentication. URL should be UTF-8 encoded. | URL-encoded string |
 
@@ -345,7 +392,7 @@ When opening URL of the QIWI Form in `<iframe>`, use additional parameter `allow
 
 `<iframe allow="payment" src="<ссылка payUrl> ..." />`
 
-You can use `postMessage` method to listen events in the Form.
+You can use `postMessage` [method](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) to listen events in the Form.
 
 ## Customization of QIWI Payment Form  {#custom}
 
@@ -372,23 +419,35 @@ Host: api.qiwi.com
 }
 ~~~
 
-Add your style, customizable logo, background, and color of the buttons to the Payment form on the QIWI side. To do so, contact QIWI Support on <a href='mailto:payin@qiwi.com'>payin@qiwi.com</a> and provide the following information:
+Add your style, customizable logo, background, and color of the buttons to the Payment form on the QIWI side. To do so, contact [QIWI Support](mailto:payin@qiwi.com) and provide the following information:
 
-* unique alias for the Payment form (latin letters, digits, and `-` dash symbol);
-* merchant name to be displayed on the Form;
-* short description of your service (no more than 120 symbols);
-* logo in PNG or SVG format with 310x36 size or proportionally larger;
-* color of background and buttons, in HEX.
+* Unique alias for the Payment form (latin letters, digits, and `-` dash symbol).
+* Merchant name to be displayed on the Form.
+* Short description of your service (no more than 120 symbols).
+* Logo in PNG or SVG format with 310x36 size or proportionally larger.
+* Color of background and buttons, in HEX.
 
 Some optional data are also used:
 
-* Background image in PNG or SVG format with 382x560 size or proportionally larger;
-* A list of three preloaded (the most often) amount of payment ;
-* Contact e-mail to display on the Form;
-* Success payment redirection URL;
-* Yandex.Metrika id;
+* Background image in PNG or SVG format with 382x560 size or proportionally larger.
+* A list of three preloaded (the most often) amount of payment.
+* Contact e-mail to display on the Form.
+* Success payment redirection URL.
+* Yandex.Metrika counter identifier.
 * Offer reference.
 
-To use your Custom Payment form, send the alias for the Payment form in `"themeCode"` field in `customFields` object of API request [Invoice](#invoice_put). URL received in `payUrl` field of the response points to the Custom Payment form.
+To use your Custom Payment form:
+
+* Send the alias for the Payment form in `"themeCode"` field of `customFields` object of API request [Invoice](#invoice_put):
+
+     `"themeCode":"merchant01-theme01"`.
+
+     URL received in `payUrl` field of the API response points to the Custom Payment form.
+
+* Send the alias for the Payment form [in direct call of the form](#https-qiwi-form) in `extras[themeCode]` parameter:
+
+   `...&extras[themeCode]=merchant01-theme01`.
+
+Example of the customized Payment form:
 
 ![Customer form](/images/Custom.png)

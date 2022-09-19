@@ -45,14 +45,13 @@ search: true
 *[Luhn]: Luhn Algorithm — a checksum formula used for verifying and validating identification numbers against accidental errors.
 *[HTTPS]: HTTP protocol extension to encrypt and enforce security. In HTTPS protocol, data transfer over SSL and TLS cryptographic protocols. In contrast with HTTP on port 80, the TCP 443 port is used by default for HTTPS.
 
-# Overview {#get-start}
+# Overview {#get-started}
 
-###### Last update: 2022-04-18 | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/)
+###### Last update: 2022-08-08 | [Doc version 1.14](/en/payments-release-notes/index.html) | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/)
 
 The Payments protocol provides a payment processing solutions that helps you accept payments in fast and secure way. The protocol gives your customers flexibility to pay the way they want, including:
 
 * Debit or credit cards, like Visa, Mastercard, and MIR.
-* Apple Pay
-* Google Pay.
 * QIWI Wallet.
 * Faster Payments Systems (SBP).
+* Mobile phone account.

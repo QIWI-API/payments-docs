@@ -2,7 +2,7 @@
 
 Split payments is a solution developed for marketplaces. Split payments provides a way to pay multiple service providers, making one charging operation from the customer's card.
 
-To connect to split payments, contact your Support manager and request access to the solution.
+To connect to split payments, contact your manager in QIWI Support and request access to the solution.
 
 ## Integration with QIWI Payment form {#use-splits-qiwi-form}
 
@@ -428,7 +428,7 @@ Response field | Type | Description
 refundSplits | Array | Array with refunds data
 -----|------|------
 type | String | Data type. Always `MERCHANT_DETAILS`
-siteUid | String | [Registered merchant ID](#split-boarind)
+siteUid | String | Registered merchant ID
 splitAmount | Object | Merchant reimbursement refund data
 ----|----|-----
 value | String | Amount of reimbursement refund

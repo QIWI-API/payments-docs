@@ -1,7 +1,7 @@
 # Платеж через форму мерчанта {#merchant-api-integration}
 
 <aside class="warning">
-При интеграции со своей платежной формой вы отправляете в API запросы с полными номерами карт и кодом CVV/CVV2. Это допускается только при наличии PCI DSS сертификата у вашей организации. 
+При интеграции со своей платежной формой вы отправляете в API запросы с полными номерами карт и кодом CVV/CVV2. Это допускается только при наличии PCI DSS сертификата у вашей организации.
 
 PCI DSS — стандарт информационной безопасности, принятый в индустрии платежных карт Visa и MasterCard. Соблюдать требования стандарта обязаны все компании, которые принимают карты к оплате.
 </aside>
@@ -9,10 +9,9 @@ PCI DSS — стандарт информационной безопасност
 При подключении платежей через собственную платежную форму по умолчанию сразу доступен способ оплаты [Банковские карты](#qiwi-form-card). Другие способы оплаты доступны по запросу:
 
 * [Платежные токены карт и QIWI Кошелька](#merchant-token-pay).
-* [Apple Pay](#merchant-form-applepay).
-* [Google Pay](#merchant-form-googlepay).
 * [Yandex Pay](#merchant-form-yandexpay).
 * [Система Быстрых Платежей (СБП)](#merchant-form-sbp).
+* [Баланс мобильного телефона](#merchant-form-phone-account)
 
 ## Процесс платежа {#flow-payment-merchant-form}
 
@@ -24,7 +23,7 @@ participant qb as QIWI (эквайер)
 participant ips as Эмитент
 customer->>store:Выбор товаров, Старт оплаты,<br/>ввод платежных данных
 activate store
-store->>qb:Платеж<br/>Одношаговый платеж — все способы оплаты<br/>Двухшаговый платеж — только карты, Apple Pay, Google Pay
+store->>qb:Платеж<br/>Одношаговый платеж — все способы оплаты<br/>Двухшаговый платеж — только карты
 activate qb
 qb->>store:Статус операции, данные для 3DS или QR-код СБП
 rect rgb(237, 243, 255)
@@ -118,14 +117,14 @@ Host: api.qiwi.com
 * ключ API;
 * сумму платежа;
 * метод платежа `CARD` и карточные данные покупателя;
-* другие данные для создания платежа.
+* другая информация для создания платежа.
 
 В двухшаговом платеже [возмещение](#reimburse) формируется только после [подтверждения платежа](#merchant-capture).
 
 <a name="one-step"></a>
 
 <aside class="notice">
-По умолчанию, при холдировании сервис QIWI ожидает <a href="#merchant-capture">подтверждения платежа</a> в течение 72 часов. По истечении срока выполняется автоподтверждение платежа. Чтобы увеличить или уменьшить период ожидания, или настроить автоотмену платежа обратитесь в службу поддержки. Период ожидания не может длиться более 5 суток.
+По умолчанию, при холдировании сервис QIWI ожидает <a href="#merchant-capture">подтверждения платежа</a> в течение 72 часов. По истечении срока выполняется автоподтверждение платежа. Чтобы увеличить или уменьшить период ожидания, или настроить автоотмену платежа обратитесь в Службу поддержки. Период ожидания не может длиться более 5 суток.
 </aside>
 
 Для платежа без авторизации (одношаговый платеж) укажите в запросе API [Платеж](#payments) параметр `"flags":["SALE"]`. Если не передать этот параметр, то будет выполнено безусловное холдирование средств для выполнения платежа.
@@ -274,8 +273,8 @@ Host: api.qiwi.com
 Чтобы подтвердить платеж:
 
 * Получите `paymentId` платежа:
-     * Из [серверного уведомления](#payment-callback) после успешного холдирования средств.
-     * Из отета на запрос [Статус платежа](#payment_get).
+  * Из [серверного уведомления](#payment-callback) после успешного холдирования средств.
+  * Из ответа на запрос [Статус платежа](#payment_get).
 * Отправьте запрос API [Подтверждение платежа](#capture) с полученным `paymentId`.
 
 ## Платежный токен {#merchant-token-pay}
@@ -323,255 +322,9 @@ Host: api.qiwi.com
 --------|---|--------
 paymentMethod.type|String|Тип операции. Только `TOKEN`
 paymentMethod.paymentToken|String| Строка платежного токена
-customer.account|String|Уникальный идентификатор Покупателя в системе ТСП, для которого выпущен платежный токен. **Без данного параметра оплата платежным токеном невозможна.**
+customer.account|String|Уникальный идентификатор Покупателя в системе ТСП, для которого выпущен платежный токен. **Без этого параметра оплата платежным токеном невозможна.**
 
 Покупатель не будет указывать свои карточные данные и проходить проверку 3-D Secure.
-
-## Apple Pay {#merchant-form-applepay}
-
-Оплата покупок с Apple Pay происходит без ввода данных карты. Технология работает в мобильных приложениях и браузере Safari на iPhone, iPad, Apple Watch и MacBook.
-
-Для включения способа оплаты Apple Pay обратитесь к вашему сопровождающему менеджеру.
-
-Для интеграции Apple Pay на Платежную страницу мерчанта понадобится выполнить интеграцию с Apple. Это позволит верифицировать сайт мерчанта и получать платежные данные покупателя. Требования для интеграции Apple Pay на веб-странице:
-
-* Аккаунт разработчика в Apple Developer Program.
-* Использование HTTPS на странице с Apple Pay, поддержка TLS 1.2, действительный SSL сертификат.
-* Соблюдение [правил Apple](https://developer.apple.com/apple-pay/acceptable-use-guidelines-for-websites/) по использованию Apple Pay на сайтах.
-* Использование фреймворка [Apple Pay JS API](https://developer.apple.com/documentation/apple_pay_on_the_web/apple_pay_js_api).
-
-Подробнее об интеграции см. [на сайте Apple](https://developer.apple.com/apple-pay/implementation/).
-
-### Процесс платежа {#merchant-form-applepay-steps}
-
-Процесс выполнения платежа Apple Pay в API:
-
- 1. Создание платежной сессии Apple Pay.
- 2. Валидация ТСП в Apple Pay.
- 3. Получение зашифрованных платежных данных от Apple Pay.
- 4. Расшифровка платежных данных (опционально).
- 5. Отправка запроса на списание средств в QIWI:
-     * [с зашифрованными данными](#merchant-form-applepay-encrypted),
-     * [с расшифрованными данными](#merchant-form-applepay-decrypted) (Если платежный токен Apple расшифрован на стороне ТСП).
-
-### Как отправлять платеж с зашифрованными данными {#merchant-form-applepay-encrypted}
-
-> Пример JSON-объекта 'paymentMethod' для платежа Apple Pay
-
-~~~json
-"paymentMethod": {
-  "type": "APPLE_PAY_TOKEN",
-  "paymentData": {
-    "version":"EC_v1",
-    "data":"IaD7LKDbJsOrGTlNGkKUC95Y+4an2YuN0swstaCaoovlj8dbgf16FmO5j4AX80L0xsRQYKLUpgUHbGoYF26PbraIdZUDtPtja4HdqDOXGESQGsAKCcRIyujAJpFv95+5xkNldDKK2WTe28lHUDTA9bykIgrvasYaN9VWnS92i2CZPpsI7yu13Kk3PrUceuA3Fb6wFgJ0l7HXL1RGhrA7V5JKReo/EwikMsK8AfChK7pvWaB51SsMvbMJF28JnincfVX39vYHdzEwpjSPngNiszGqZGeLdqNE3ngkoEK1AW2ymbYkIoy9KFdXayekELR6hQWnL4MCutLesLjKhyTN26fxBamPHzAf/IczAdWBDq2P/59jheIGrnK30slJJcr1Bocb8rqojyaVZIY+Xk24Nc6dvSdJhfDDyhX56pn5YtWOxWuVOT0tZSJvxBN/HeIuYcNG6R9u7CHpcelsi4I8O+1gruKKZQHweERG2DyCmoUO9zlajOSm",
-    "header": {
-       "ephemeralPublicKey":"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEzLx7FJhw1Z1PmxOLMTQBs1LgKEUT6 hcxLlT8wGrzwyY8tKeG+VPSjryVkTFYECrj+5r28PJWtmvn/unYhbYDaQ==",
-       "publicKeyHash":"OrWgjRGkqEWjdkRdUrXfiLGD0he/zpEu512FJWrGYFo=",
-       "transactionId":"1234567890ABCDEF"
-     },
-    "signature":"ZmFrZSBzaWduYXR1cmU="
-  }
-}
-~~~
-
-Для отправки платежных данных в QIWI передайте в запросе API [Платеж](#payments) объект `paymentMethod` с параметрами:
-
-* `type` — тип платежного метода, только `APPLE_PAY_TOKEN`.
-* `paymentData` — платежный токен (обязательное поле). Данные в `paymentData` берутся из поля `paymentData` платежного токена (см. [описание JSON-структуры токена](https://developer.apple.com/library/archive/documentation/PassKit/Reference/PaymentTokenJSON/PaymentTokenJSON.html)):
-	* `version` — информация о версии платежного токена. Возможные значения: `EC_v1`, `RSA_v1` (обязательное поле);
-	* `data` — зашифрованные платежные данные, Base64-строка (обязательное поле);
-	* `header` — дополнительная информация, используемая для дешифровки и валидации платежа (обязательное поле):
-	  * `applicationData` — SHA-256-хэш поля `applicationData` исходного платежного токена, HEX-строка (необязательное поле);
-	  * `ephemeralPublicKey` — массив байтов эфемерного публичного ключа, закодированный в виде Base64-строки (используется только когда `version=EC_v1`);
-	  * `wrappedKey` — симметричный ключ на основе публичного RSA-ключа, закодированный в виде Base64-строки (используется только когда `version=RSA_v1`);
-	  * `publicKeyHash` — SHA-256-хэш от массива байт публичного ключа сертификата мерчанта, Base64-строка (обязательное поле);
-	  * `transactionId` — идентификатор транзакции, генерируемый на устройстве, где выполняется платёж. HEX-идентификатор, представленный в виде строки (обязательное поле);
-	* `signature` — подпись, вычисленная по платежному токену, Base64-строка (обязательное поле).
-
-### Как отправлять платеж с расшифрованными данными {#merchant-form-applepay-decrypted}
-
-> Пример отправки расшифрованных платежных данных Apple Pay
-
-~~~json
-"paymentMethod": {
-  "type": "CARD",
-  "pan": "4444443616621049",
-  "expiryDate": "12/19",
-  "holderName": "Apple Pay",
-  "external3dSec": {
-    "type": "APPLE_PAY",
-    "onlinePaymentCryptogram": "AOLqt9wP++/WAzN+is7YAoABFA==",
-    "eciIndicator": "05"
-  }
-}
-~~~
-
-Используйте этот способ, если платежный токен Apple расшифрован на вашей стороне.
-
-Для отправки платежных данных в QIWI передайте в запросе API [Платеж](#payments) параметры в объекте `paymentMethod`:
-
-* `type` — всегда `CARD`;
-* данные из расшифрованного платежного токена Apple:
-   * PAN в поле `"pan"`;
-   * срок действия в формате `MM/YY` в поле `"expiryDate"`;
-* объект `external3dSec` с элементами:
-   * `type` — всегда `APPLE_PAY`;
-   * `onlinePaymentCryptogram` — содержимое поля `onlinePaymentCryptogram` платежного токена Apple (Base64-закодированная строка);
-   * `eciIndicator` — ECI индикатор. Необходимо передавать, если поле `eciIndicator` получено в платежном токене Apple. В противном случае параметр не передавать.
-
-## Google Pay {#merchant-form-googlepay}
-
-В способе оплаты Google Pay™ поддерживаются платежи с карт Visa и MasterCard.
-
-Для включения способа оплаты Google Pay™ обратитесь к вашему сопровождающему менеджеру.
-
-Процесс интеграции Google Pay™ на платежную страницу мерчанта:
-
-1. Выполните требования [Google Pay™ WEB](https://developers.google.com/pay/api/web) для приема шифрованных платежных данных. В том числе, проверьте [контрольный список интеграции Google Pay™ для веб-сайтов](https://developers.google.com/pay/api/web/guides/test-and-deploy/integration-checklist) и [правила фирменного оформления Google Pay™ для веб-сайтов](https://developers.google.com/pay/api/web/guides/brand-guidelines).
-2. Для интеграции необходимо выполнить требования к отправке данных:
-    * [с зашифрованными данными](#merchant-form-googlepay-encrypted),
-    * [с расшифрованными данными](#merchant-form-googlepay-decrypted).
-3. Подайте [заявку на доступ к рабочей версии](https://developers.google.com/pay/api/web/guides/test-and-deploy/request-prod-access). В заявке на доступ укажите следующие данные:
-    * Tokenization Method — Gateway;
-    * Payment Processor or Gateway — `qiwi`;
-    * Merchant Name — выдается технической поддержкой компании QIWI.
-4. Google проверит работу вашей платежной формы в рабочей среде и даст одобрение на запуск.
-
-### Как отправлять платеж с зашифрованными данными {#merchant-form-googlepay-encrypted}
-
-> Пример объекта `paymentMethod`
-
-~~~json
-"paymentMethod": {
-    "type": "GOOGLE_PAY_TOKEN",
-    "paymentToken": "eJxVUtuK2zAQfd+vCHGShS9mS0hb8YChjabx……"
-    }
-~~~
-
-> Пример шифрования/проверки токена для Google Pay
-
-~~~python
-import zlib
-import base64
-
-token = 'Hello world'
-
-token_bytes = token.encode('utf-8')
-token_deflated = zlib.compress(token_bytes)
-token_base64 = base64.b64encode(token_deflated)
-token_result = token_base64.decode('utf-8')
-
-resp_base64 = token_result.encode('utf-8')
-resp_deflated = base64.b64decode(resp_base64)
-resp_bytes = zlib.decompress(resp_deflated)
-resp_token = resp_bytes.decode('utf-8')
-
-print('resp_token: ', resp_token)
-~~~
-
-~~~shell
->> resp_token: 'Hello world'
-~~~
-
-Отправьте платежные данные в QIWI. Для этого передайте в запросе API [Платеж](#payments) параметры в объекте `paymentMethod`:
-
-* `paymentMethod.type=GOOGLE_PAY_TOKEN`
-* `paymentMethod.paymentToken`, заполненный по следующему алгоритму:
-
-   `b64_encode_bytes_to_string (compress_bytes_with_zlib (to_bytes (JSON)))`
-
-  Шаг 1 (`to_bytes`) — Объект JSON конвертируется в массив байтов в соответствии с кодировкой UTF-8. **Структура объекта JSON описана в [руководстве по криптографии платежных данных Google](https://developers.google.com/pay/api/web/guides/resources/payment-data-cryptography)**.
-
-  Шаг 2 (`compress_bytes_with_zlib`) — Байты, полученные на предыдущем шаге, сжимаются с помощью библиотеки zlib. При выполнении сжатия необходимо следовать спецификации [RFC1950](http://www.ietf.org/rfc/rfc1950.txt) и обеспечить запись zlib header в начало потока со сжатыми данными.
-
-  Шаг 3 (`b64_encode_bytes_to_string`) — Байты, полученные на предыдущем шаге, кодируются в формат base64.
-
-Полученная в результате закодированная строка является значением поля `paymentToken`.
-
-### Как отправлять платеж с расшифрованными данными {#merchant-form-googlepay-decrypted}
-
-> Пример платежа с данными расшифрованного платежного токена Google Pay (метод CRYPTOGRAM_3DS)
-
-~~~json
-{
-  "paymentMethod": {
-    "type": "CARD",
-    "pan": "4444443616621049",
-    "expiryDate": "12/19",
-    "holderName": "Google Pay",
-    "external3dSec": {
-      "type": "GOOGLE_PAY",
-      "cryptogram": "AOLqt9wP++YAoABFA==",
-      "eciIndicator": "05"
-    }
-  },
-  "amount": {
-    "value": 5900.00,
-    "currency": "RUB"
-  },
-  "flags": [
-    "SALE"
-  ],
-  "customer": {
-    "account": "79111111111",
-    "email": "test@qiwi.com",
-    "phone": "79111111111"
-  }
-}
-~~~
-
-> Пример платежа с данными расшифрованного платежного токена Google Pay (метод PAN_ONLY)
-
-~~~json
-{
-  "paymentMethod": {
-    "type": "CARD",
-    "pan": "4444443616621049",
-    "expiryDate": "12/19",
-    "holderName": "Google Pay",
-    "external3dSec": {
-      "type": "GOOGLE_PAY"
-    }
-  },
-  "amount": {
-    "value": 760.00,
-    "currency": "RUB"
-  },
-  "flags": [
-    "SALE"
-  ],
-  "customer": {
-    "account": "11111",
-    "email": "test@qiwi.com",
-    "phone": "79111111111"
-  }
-}
-~~~
-
-При отправке платежа с расшифрованным платежным токеном Google, формат платежных данных зависит от способа аутентификации, указанного в поле `authMethod` токена:
-
-* `CRYPTOGRAM_3DS`. Без дополнительной аутентификации покупателя.
-  
-  Для отправки платежных данных в QIWI передайте в запросе API [Платеж](#payments) объект `paymentMethod` с параметрами:
-
-  * `type` — всегда `CARD`;
-  * данные из расшифрованного платежного токена Google:
-     * PAN в поле `"pan"`;
-     * срок действия в формате `MM/YY` в поле `"expiryDate"`;
-     * объект `external3dSec` с элементами:
-       * `type` — всегда `GOOGLE_PAY`;
-       * `cryptogram` — содержимое поля `cryptogram` платежного токена Google(Base64-закодированная строка);
-       * `eciIndicator` — ECI индикатор. Необходимо передавать, если поле `eciIndicator` получено в платежном токене Google. В противном случае параметр не передавать.
-
-* `PAN_ONLY`. С дополнительной аутентификацией покупателя (3-D Secure).
-  
-  Для отправки платежных данных в QIWI передайте в запросе API [Платеж](#payments) объект `paymentMethod` с параметрами:
-
-  * `type` — всегда `CARD`;
-  * данные из расшифрованного платежного токена Google:
-     * PAN в поле `"pan"`;
-     * срок действия в формате `MM/YY` в поле `"expiryDate"`;
-     * объект `external3dSec` с полем `type`, всегда равным `GOOGLE_PAY`.
 
 ## Yandex Pay {#merchant-form-yandexpay}
 
@@ -685,8 +438,8 @@ print('resp_token: ', resp_token)
     "ttl": 999,
     "image": {
       "mediaType": "image/png",
-      "width": "300",
-      "height": "300"
+      "width": 300,
+      "height": 300
     }
   },
   "paymentPurpose": "Flower for my girlfriend",
@@ -698,29 +451,24 @@ print('resp_token: ', resp_token)
 
 ~~~json
 {
-  "qrCodeUid": "adghj17d1g8",
+  "qrCodeUid": "Test12",
   "amount": {
-    "value": 100.00,
-    "currency": "RUB"
+    "currency": "RUB",
+    "value": "100.00"
   },
-  "paymentPurpose": "Flower for my girlfriend",
-  "redirectUrl": "http://someurl.com",
   "qrCode": {
     "type": "DYNAMIC",
     "ttl": 999,
-    "status": "CREATED",
-    "payload": "https://qr.nspk.ru/AD10006B89A9QD8FLUT1HEMP1?type=02&sum=405&cur=RUB&crc=5C01D",
     "image": {
-      "content": "iVBORw0KgAAA5fY51AAAR+..",
-      "mediaType": "image/png",
-      "width": "300",
-      "height": "300"
-    }
+        "mediaType": "image/png",
+        "width": 300,
+        "height": 300,
+        "content": "iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAA"
+    },
+    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQDtype=02bank=100000000009&sum=200&cur=RUB&crc=C63A",
+    "status": "CREATED"
   },
-  "payment": {
-    "paymentUid": "12s1s21",
-    "paymentStatus": "WAITING"
-  }
+  "createdOn": "2022-08-11T20:10:32+03:00"
 }
 ~~~
 
@@ -750,97 +498,59 @@ print('resp_token: ', resp_token)
 
 ~~~json
 {
-  "qrCodeUid": "adghj17d1g8",
+  "qrCodeUid": "Test",
   "amount": {
-    "value": 1.00,
-    "currency": "RUB"
+    "currency": "RUB",
+    "value": "1.00"
   },
-  "paymentPurpose": "Flower for my girlfriend",
-  "redirectUrl": "http://someurl.com",
   "qrCode": {
     "type": "DYNAMIC",
     "ttl": 999,
-    "status": "CREATED",
-    "payload": "",
-    "image": {
-      "content": "Base64 string",
-      "mediaType": "image/png",
-      "width": "300",
-      "height": "300"
-    }
+    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQDtype=02bank=100000000009&sum=200&cur=RUB&crc=C63A",
+    "status": "PAYED"
   },
   "payment": {
-    "paymentUid": "12s1s21",
-    "paymentStatus": "WAITING"
-  }
+    "paymentUid": "A22231710446971300200933E625FCB3",
+    "paymentStatus": "COMPLETED"
+  },
+  "createdOn": "2022-08-11T20:10:32+03:00"
 }
 ~~~
 
 Используйте запрос [Статус QR-кода СБП](#qr-code-sbp-get). В ответе возвращается информация о QR-коде, в том числе его текущий статус. Так вы можете определить действует ли QR-код.
 
-### Выпуск токена для оплаты через СБП {#merchant-form-token-issue-sbp}
+## Оплата со счета мобильного телефона {#merchant-form-phone-account}
 
-> Пример тела запроса выпуска токена СБП
+Оплата покупок со счета мобильного телефона происходит без ввода данных карты. Сразу после инициирования платежа покупатель получает SMS-сообщение от своего мобильного оператора с информацией о платеже и подтверждает или отклоняет оплату ответным SMS.
+
+Для включения этого способа оплаты обратитесь к вашему сопровождающему менеджеру.
+
+### Как отправлять платеж {#merchant-form-mobile-payment}
+
+> Пример платежа
 
 ~~~json
 {
-  "qrCodeUid": "adghj17d1g8",
+  "paymentMethod": {
+    "type": "MOBILE_COMMERCE",
+    "phone": "+79111111111"
+  },
   "amount": {
-    "value": 100.00,
+    "value": 5900.00,
     "currency": "RUB"
   },
-  "qrCode": {
-    "type": "TOKEN",
-    "image": {
-        "mediaType": "image/png",
-        "width": "300",
-        "height": "300"
-      }
-  },
-  "tokenizationPurpose": "",
-  "tokenizationAccount": "3e2322",
-  "flags": ["CREATE_TOKEN"]
+  "flags": [
+    "SALE"
+  ],
+  "customer": {
+    "account": "79111111111",
+    "email": "test@qiwi.com",
+    "phone": "79111111111"
+  }
 }
 ~~~
 
-Вы можете выпустить платежный токен СБП для привязки карты покупателя и [последующих оплат через СБП](#token-sbp-payment).
+При отправке платежа укажите в блоке `paymentMethod` в запросе API [Платеж](#payments) параметры:
 
-Чтобы выпустить платежный токен, воспользуйтесь запросом [Получение QR-кода СБП](#qr-code-sbp). В запросе укажите:
-
-* Объект `qrCode` с характеристиками запрашиваемого QR-кода:
-   * Тип QR-кода в параметре `qrCode.type` — `TOKEN`.
-   *  Тип и размер изображения QR-кода в блоке `qrCode.image`.
-* Сумму платежа.
-* Параметр `tokenizationAccount` — уникальный идентификатор Покупателя в системе ТСП.
-* Параметр `"flags":["CREATE_TOKEN"]`.
-* Описание токена в параметре `tokenizationPurpose`.
-
-**Необходимо использовать разные параметры `tokenizationAccount` для разных покупателей, чтобы гарантировать безопасность привязанных карточных данных покупателей.**
-
-Вы получите информацию о платежном токене СБП в объекте `token` ответа.
-
-<aside class="notice">
-Платежный токен будет связан с идентификатором сайта и идентификатором Покупателя, которые вы указали в запросе API.
-</aside>
-
-### Оплата токеном через СБП {#token-sbp-payment}
-
-> Пример тела запроса
-
-~~~json
-{
-  "tokenizationAccount": "customer123",
-  "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6"
-}
-~~~
-
-<aside class="warning">
-Покупатель может совершать оплату платежным токеном только на том сайте, для которого был выпущен платежный токен.
-
-Чтобы платежный токен действовал на других сайтах, отправьте запрос в Службу поддержки.
-</aside>
-
-Чтобы оплатить покупку платежным токеном СБП, передайте в запросе API [Платеж токеном СБП](#payment-sbp-token):
-
-* платежный токен в параметре `token`,
-* идентификатор покупателя, для которого был выпущен платежный токен, в параметре `tokenizationAccount`.
+* `type` — всегда `MOBILE_COMMERCE`.
+* `phone` — номер телефона, с баланса которого выполняется оплата. Номер указывается в международном формате со знаком `+`.

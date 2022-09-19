@@ -59,10 +59,9 @@ Method|Payment through QIWI Form|Payment through merchant form
 -----|---------|--------------
 Credit/debit card*|✓|✓
 Payment by payment token |✓|✓
-Apple Pay | ✓ | ✓
-Google Pay | ✓ | ✓
-[Faster Payments System](http://www.cbr.ru/eng/psystem/sfp/) | × | ✓
+[Faster Payments System](http://www.cbr.ru/eng/psystem/sfp/) | ✓ | ✓
 QIWI Wallet Balance |✓|✓**
+Mobile phone account | × | ✓
 
 `*` — default payment method, other methods are available upon request.
 
@@ -79,7 +78,6 @@ The following operations are available in the protocol:
 * Refund — refund to the customer on a successful payment. Financial operation of debiting money from the merchant in favor of the customer. If there was no confirmation for Payment operation, you will receive the Reversal flag in the response to Refund operation request and the money from the customer's account will not be transferred to the Merchant's account (the acquiring fee is also not withheld).
 
 ## Payment processing and settlements scheme {#principial-scheme}
-
 
 <div class="mermaid">
 sequenceDiagram
@@ -136,7 +134,7 @@ For the requests authorization OAuth 2.0 standard is used in accordance with [RF
 
 # Test and Production Modes {#test_mode}
 
-During [integration](#start), your `siteId` identifier is in test mode. You can proceed operations without debiting credit card. You can also request a switch to test mode for any of your `siteId`, or add a new `siteId` to test mode through your support manager.
+During [integration](#start), your `siteId` identifier is in test mode. You can proceed operations without debiting credit card. You can also request a switch to test mode for any of your `siteId`, or add a new `siteId` to test mode through your manager in QIWI Support.
 
 For testing purposes, the same [protocol URLs](api-format) are used.
 

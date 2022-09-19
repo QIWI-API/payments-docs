@@ -40,7 +40,7 @@ TRANSACTION_ID | Operation number
 SUM | Amount of the operation
 COMMISSION | Commission for the operation from the merchant
 USER_INFO | Masked card number or phone number (in case of QIWI Wallet payment)
-ID | `paymentId` operation number on the mercant's side
+ID | `paymentId` operation number on the merchant's side
 MERCH | Merchant ID
 MERCH_SITE | Merchant `siteId` identifier
 PARENT_TRANSACTION_ID | Refunds include the number of the original payment operation

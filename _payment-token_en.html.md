@@ -4,9 +4,11 @@ In **Payment protocol** card and QIWI Wallet payment tokens generation is suppor
 
 ## Features {#payment-token-special}
 
-By default, the issue of payment tokens is disabled. Contact your Support manager to enable that.
+By default, the issue of payment tokens is disabled. Contact your manager in QIWI Support to enable that.
 
 <aside class="warning">Card payment token is issued only after the successful payment  authorization by the issuer bank.</aside>
+
+If merchant's service uses QIWI Payment Form, contact your manager in QIWI Support to enable displaying list of cards linked to the payment tokens. Otherwise a customer may not use linked cards on the Form. A list of cards is displayed for payments from the same site for which the tokens are issued.
 
 ## Card payment token issue {#merchant-form-token-issue}
 
@@ -20,17 +22,17 @@ Content-type: application/json
 Host: api.qiwi.com
 
 {
-   "amount": {  
-     "currency": "RUB",  
+   "amount": {
+     "currency": "RUB",
      "value": 10.00
    },
    "expirationDateTime": "2021-04-13T14:30:00+03:00",
-    "customer": { 
-      "account":"token32" 
-   }, 
-   "customFields": {}, 
-   "flags":["BIND_PAYMENT_TOKEN"] 
-} 
+    "customer": {
+      "account":"token32"
+   },
+   "customFields": {},
+   "flags":["BIND_PAYMENT_TOKEN"]
+}
 ~~~
 
 >Example of payment request with payment token issue
@@ -43,8 +45,8 @@ Content-type: application/json
 Host: api.qiwi.com
 
 {
-   "amount": {  
-     "currency": "RUB",  
+   "amount": {
+     "currency": "RUB",
      "value": 2211.24
    },
    "customer": {
@@ -88,7 +90,7 @@ To issue a payment token, you may use one of the following methods:
      * either in `tokenizationData` object, in case of [Card verification](#how-to-check-card) request;
      * or in `customer` object, in case of [Invoice issuing](#how-to-check-card-qiwi-payform) request.
    * `"flags":["CHECK_CARD", "BIND_PAYMENT_TOKEN"]` field, in case of [Invoice issuing](#how-to-check-card-qiwi-payform) request.
-  
+
    **Put different `account` values for different users to ensure the security of customers' card data.**
 
    You will receive the card payment token details after [complete card verification](#how-to-check-card):
@@ -103,7 +105,7 @@ To issue a payment token, you may use one of the following methods:
 2. During payment process. Include additional options in the API request [Payment](#payments) or [Invoice](#invoice_put), depending on which API you use:
    * `"flags": ["BIND_PAYMENT_TOKEN"]` is a flag for issuing a payment token.
    * `customer.account` is a unique customer ID in the RSP system.
-  
+
    **Put different `account` values for different users to ensure the security of customers' card data.**
 
    You will receive the card payment token details:
@@ -114,7 +116,7 @@ To issue a payment token, you may use one of the following methods:
 <aside class="warning">
 The payment token is linked with the site ID and the customer ID that you have specified in the original API request. The customer will be able to make payment by payment token only on this site.
 
-To make the payment token valid on other sites of the same merchant, send a request to Support.
+To make the payment token valid on other sites of the same merchant, send a request to <a href="mailto:payin@qiwi.com">QIWI Support</a>.
 </aside>
 
 ## QIWI Wallet payment token issue {#merchant-form-wallet-token-issue}
@@ -179,7 +181,7 @@ Host: api.qiwi.com
 To issue a QIWI Wallet payment token, make the following API requests:
 
 1. Requesting the initiation of the QIWI Wallet's payment token issue.
-  
+
     Make POST request to the URL:
 
     `/payin-tokenization-api/v1/sites/{siteId}/token-requests`
@@ -193,7 +195,7 @@ To issue a QIWI Wallet payment token, make the following API requests:
     * `accountId` — unique customer identifier in your system. **Put different `accountId` values for different users to ensure the security of customers' payment data.**
 
 2. A one-time SMS will be sent to the customer's phone. Include it in the following request to complete the issue of the payment token of the wallet.
-  
+
     Make POST request to the URL:
 
     `/payin-tokenization-api/v1/sites/{siteId}/token-requests/complete`
@@ -213,7 +215,7 @@ In response, you get payment token data:
 <aside class="warning">
 The payment token is linked with the site ID and the customer ID that you have specified in the original payment request. The customer will be able to make payment by payment token only on this site.
 
-To make the payment token valid on other sites of the same merchant, send a request to Support.
+To make the payment token valid on other sites of the same merchant, send a request to <a href="mailto:payin@qiwi.com">QIWI Support</a>.
 </aside>
 
 ## Removal of the payment token {#delete-payment-token}

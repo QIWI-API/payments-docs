@@ -29,10 +29,14 @@ Content-type: application/json
 Host: api.qiwi.com
 
 {
-   "amount": {  
-     "currency": "RUB",  
+   "amount": {
+     "currency": "RUB",
      "value": 100.00
    },
+   "billPaymentMethodsType": [
+      "QIWI_WALLET",
+      "SBP"
+   ],
    "comment": "Text comment",
    "expirationDateTime": "2022-04-13T14:30:00+03:00",
    "customer": {},
@@ -48,6 +52,7 @@ Host: api.qiwi.com
 {
     "siteId": "23044",
     "billId": "893794793973",
+    "invoiceUid": "d875277b-6f0f-445d-8a83-f62c7c07be77",
     "amount": {
       "value": 100.00,
       "currency": "RUB"
@@ -126,47 +131,6 @@ Host: api.qiwi.com
   "expirationDateTime": "2022-04-13T14:30:00",
   "payUrl": "https://oplata.qiwi.com/form/invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77",
   "payments": [
-    {
-        "siteId": "site-01",
-        "billId": "d35cf63943e54f50badc75f49a5aac7c",
-        "createdDateTime": "2022-03-05T11:23:49+03:00",
-        "amount": {
-            "currency": "RUB",
-            "value": 100.00
-        },
-        "capturedAmount": {
-            "currency": "RUB",
-            "value": 100.00
-        },
-        "refundedAmount": {
-            "currency": "RUB",
-            "value": 0.00
-        },
-        "paymentMethod": {
-            "type": "CARD",
-            "maskedPan": "427638******1410"
-        },
-        "customer": {
-            "account": "1",
-            "phone": "0",
-            "address": {}
-        },
-        "requirements": {
-            "threeDS": {
-                "pareq": "eJxVUWFvgjAQX7gM3fq+hNqO0oI5prexilN1UDEMwl6FcHZZ19m7v63DtRY=",
-                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
-            }
-        },
-        "status": {
-            "value": "DECLINE",
-            "changedDateTime": "2022-03-05T11:23:09+03:00",
-            "reason": "ACQUIRING_NOT_PERMITTED"
-        },
-        "customFields": {
-            "customer_account": "1",
-            "customer_phone": "0"
-        }
-    },
     {
         "siteId": "site-01",
         "billId": "d35cf63943e54f50badc75f49a5aac7c",
@@ -295,142 +259,68 @@ Host: api.qiwi.com
 <!-- 200 -->
 ~~~json
 [
-    {
-        "paymentId": "12600406",
-        "billId": "d35cf63943e54f50badc75f49a5aac7c",
-        "createdDateTime": "2020-03-26T19:31:49+03:00",
-        "amount": {
-            "currency": "RUB",
-            "value": 10.00
-        },
-        "capturedAmount": {
-            "currency": "RUB",
-            "value": 10.00
-        },
-        "refundedAmount": {
-            "currency": "RUB",
-            "value": 0.00
-        },
-        "paymentMethod": {
-            "type": "CARD",
-            "maskedPan": "427638******1410"
-        },
-        "createdToken": {
-            "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
-            "name": "427638******1410"
-        },
-        "customer": {
-            "account": "1",
-            "phone": "0",
-            "address": {}
-        },
-        "requirements": {
-            "threeDS": {
-                "pareq": "eJxVUWFvgjAQX7gM3fq+hNqO0oI5prexilN1UDEMwl6FcHZZ19m7v63DtRY=",
-                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
-            }
-        },
-        "status": {
-            "value": "DECLINE",
-            "changedDateTime": "2020-03-26T19:32:09+03:00",
-            "reason": "ACQUIRING_NOT_PERMITTED"
-        },
-        "customFields": {
-            "customer_account": "1",
-            "customer_phone": "0"
-        }
+  {
+    "paymentId": "824c7744-1650-4836-abaa-842ca7ca8a74",
+    "billId": "191616216126154",
+    "createdDateTime": "2022-07-27T12:43:35+03:00",
+    "amount": {
+        "currency": "RUB",
+        "value": "1.00"
     },
-    {
-        "paymentId": "12600433",
-        "billId": "d35cf63943e54f50badc75f49a5aac7c",
-        "createdDateTime": "2020-03-26T19:32:22+03:00",
-        "amount": {
-            "currency": "RUB",
-            "value": 10.00
-        },
-        "capturedAmount": {
-            "currency": "RUB",
-            "value": 10.00
-        },
-        "refundedAmount": {
-            "currency": "RUB",
-            "value": 0.00
-        },
-        "paymentMethod": {
-            "type": "CARD",
-            "maskedPan": "427638******1410"
-        },
-        "createdToken": {
-            "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
-            "name": "427638******1410"
-        },
-        "customer": {
-            "account": "1",
-            "phone": "0",
-            "address": {}
-        },
-        "requirements": {
-            "threeDS": {
-                "pareq": "eJxVUWFvgjAQ52lBUtjD3M9++qFgCxl0i/OtJv2WT/tv8LXqG0vw==",
-                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
-            }
-        },
-        "status": {
-            "value": "DECLINED",
-            "changedDateTime": "2020-03-26T19:32:54+03:00",
-            "reason": "ACQUIRING_NOT_PERMITTED"
-        },
-        "customFields": {
-            "customer_account": "1",
-            "customer_phone": "0"
-        }
+    "capturedAmount": {
+        "currency": "RUB",
+        "value": "0.00"
     },
-    {
-        "paymentId": "12601084",
-        "billId": "d35cf63943e54f50badc75f49a5aac7c",
-        "createdDateTime": "2020-03-26T19:46:21+03:00",
-        "amount": {
-            "currency": "RUB",
-            "value": 10.00
-        },
-        "capturedAmount": {
-            "currency": "RUB",
-            "value": 10.00
-        },
-        "refundedAmount": {
-            "currency": "RUB",
-            "value": 0.00
-        },
-        "paymentMethod": {
-            "type": "CARD",
-            "maskedPan": "427638******1410",
-            "rrn": "008692274763",
-            "authCode": "242847"
-        },
-        "createdToken": {
-            "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6",
-            "name": "427638******1410"
-        },
-        "customer": {
-            "account": "1",
-            "phone": "0",
-            "address": {}
-        },
-        "requirements": {
-            "threeDS": {
-                "pareq": "eJxVUdtuwjAM7b6t/1fcku04w==",
-                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
-            }
-        },
-        "status": {
-            "value": "COMPLETED",
-            "changedDateTime": "2020-03-26T19:46:43+03:00"
-        },
-        "customFields": {
-            "customer_account": "1",
-            "customer_phone": "0"
-        }
+    "refundedAmount": {
+        "currency": "RUB",
+        "value": "0.00"
+    },
+    "paymentMethod": {
+        "type": "CARD",
+        "maskedPan": "561251******6871",
+        "rrn": "002612398011",
+        "authCode": "067842"
+    },
+    "createdToken": {
+        "token": "cc2451a5-2fdd-4685-912e-8671597948a3",
+        "name": "561251******6871",
+        "expiredDate": "2030-03-01T00:00:00+03:00"
+    },
+    "customer": {
+        "account": "11235813",
+        "email": "darta@mail.ru",
+        "phone": "79850223243"
+    },
+    "status": {
+        "value": "COMPLETED",
+        "changedDateTime": "2022-07-27T12:43:47+03:00"
+    },
+    "callbackUrl": "https://qiwi.com",
+    "comment": "test",
+    "customFields": {
+        "customer_email": "darta@mail.ru",
+        "customer_account": "11235813",
+        "customer_phone": "79850223243",
+        "cf1": "1",
+        "cf2": "dva",
+        "cf3": "tri",
+        "cf4": "4",
+        "cf5": "5",
+        "BIND_PAYMENT_TOKEN": "true",
+        "FROM_MERCHANT_CONTRACT_ID": "contract_id",
+        "FROM_MERCHANT_FULL_NAME": "full_name",
+        "FROM_MERCHANT_PHONE": "phone",
+        "FROM_MERCHANT_BOOKING_NUMBER": "booking_number",
+        "themeCode": "customization_OK",
+    },
+    "paymentCardInfo": {
+        "issuingCountry": "643",
+        "issuingBank": "Тинькофф банк",
+        "paymentSystem": "MASTERCARD",
+        "fundingSource": "UNKNOWN",
+        "paymentSystemProduct": "TNW|TNW|Mastercard® NewWorld—ImmediateDebit|TNW|Mastercard New World-ImmediateDebit"
     }
+  }
 ]
 ~~~
 
@@ -1096,14 +986,14 @@ Host: api.qiwi.com
 
 ### Метод PUT {#qr-code-sbp-put}
 
-<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeId__put_api">
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__put_api">
   <script>
     $(document).ready(function(){
         $.getJSON('../../rui_jsons/payin-sbp-put.json', function( data ) {
           window.requestUI(
             data,
             "api",
-            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeId}",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}",
             "put",
             ['RequestBody', '200', '4xx', '5xx']
           )
@@ -1114,7 +1004,7 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
-PUT /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8 HTTP/1.1
+PUT /partner/payin/v1/sites/test-01/sbp/qrCodes/Test12 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -1122,49 +1012,44 @@ Host: api.qiwi.com
 
 {
   "amount": {
-    "value": 100.00,
+    "value": 1.00,
     "currency": "RUB"
   },
   "qrCode": {
     "type": "DYNAMIC",
-    "ttl": 999,
+    "ttl": 60,
     "image": {
       "mediaType": "image/png",
-      "width": "300",
-      "height": "300"
+      "width": 300,
+      "height": 300
     }
   },
   "paymentPurpose": "Flower for my girlfriend",
-  "redirectUrl": "http://someurl.com"
+  "redirectUrl": "http://example.com"
 }
 ~~~
 
 <!-- 200 -->
 ~~~json
 {
-  "qrCodeUid": "adghj17d1g8",
+  "qrCodeUid": "Test12",
   "amount": {
-    "value": 100.00,
-    "currency": "RUB"
+    "currency": "RUB",
+    "value": "1.00"
   },
-  "paymentPurpose": "Flower for my girlfriend",
-  "redirectUrl": "http://someurl.com",
   "qrCode": {
     "type": "DYNAMIC",
-    "ttl": 999,
-    "status": "CREATED",
-    "payload": "",
+    "ttl": 60,
     "image": {
-      "content": "Base64 string",
-      "mediaType": "image/png",
-      "width": "300",
-      "height": "300",
-    }
+        "mediaType": "image/png",
+        "width": 300,
+        "height": 300,
+        "content": "iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAA"
+    },
+    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQDtype=02bank=100000000009&sum=200&cur=RUB&crc=C63A",
+    "status": "CREATED"
   },
-  "payment": {
-    "paymentUid": "12s1s21",
-    "paymentStatus": "WAITING",
-  }
+  "createdOn": "2022-08-11T20:10:32+03:00"
 }
 ~~~
 
@@ -1219,51 +1104,46 @@ Content-type: application/json
 Host: api.qiwi.com
 
 {
-  "qrCodeUid": "adghj17d1g8",
+  "qrCodeUid": "Test12",
   "amount": {
-    "value": 100.00,
+    "value": 1.00,
     "currency": "RUB"
   },
   "qrCode": {
     "type": "DYNAMIC",
-    "ttl": 999,
+    "ttl": 60,
     "image": {
       "mediaType": "image/png",
-      "width": "300",
-      "height": "300"
+      "width": 300,
+      "height": 300
     }
   },
   "paymentPurpose": "Flower for my girlfriend",
-  "redirectUrl": "http://someurl.com"
+  "redirectUrl": "http://example.com"
 }
 ~~~
 
 <!-- 200 -->
 ~~~json
 {
-  "qrCodeUid": "adghj17d1g8",
+  "qrCodeUid": "Test12",
   "amount": {
-    "value": 100.00,
-    "currency": "RUB"
+    "currency": "RUB",
+    "value": "1.00"
   },
-  "paymentPurpose": "Flower for my girlfriend",
-  "redirectUrl": "http://someurl.com",
   "qrCode": {
     "type": "DYNAMIC",
-    "ttl": 999,
-    "status": "CREATED",
-    "payload": "",
+    "ttl": 60,
     "image": {
-      "content": "Base64 string",
       "mediaType": "image/png",
-      "width": "300",
-      "height": "300",
-    }
+      "width": 300,
+      "height": 300,
+      "content": "iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAA"
+    },
+    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQD?type=02&bank=100000000009&sum=200&cur=RUB&crc=C63A",
+    "status": "CREATED"
   },
-  "payment": {
-    "paymentUid": "12s1s21",
-    "paymentStatus": "WAITING",
-  }
+  "createdOn": "2022-08-11T20:10:32+03:00"
 }
 ~~~
 
@@ -1293,14 +1173,14 @@ Host: api.qiwi.com
 
 ## Статус QR-кода СБП {#qr-code-sbp-get}
 
-<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeId__get_api">
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__get_api">
   <script>
     $(document).ready(function(){
         $.getJSON('../../rui_jsons/payin-sbp-get.json', function( data ) {
           window.requestUI(
             data,
             "api",
-            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeId}",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}",
             "get",
             ['RequestBody', '200', '4xx', '5xx']
           )
@@ -1311,7 +1191,7 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
-GET /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8 HTTP/1.1
+GET /partner/payin/v1/sites/test-01/sbp/qrCodes/Test HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -1321,29 +1201,22 @@ Host: api.qiwi.com
 <!-- 200 -->
 ~~~json
 {
-  "qrCodeUid": "adghj17d1g8",
+  "qrCodeUid": "Test",
   "amount": {
-    "value": 100.00,
-    "currency": "RUB"
+    "currency": "RUB",
+    "value": "1.00"
   },
-  "paymentPurpose": "Flower for my girlfriend",
-  "redirectUrl": "http://someurl.com",
   "qrCode": {
     "type": "DYNAMIC",
-    "ttl": 999,
-    "status": "CREATED",
-    "payload": "",
-    "image": {
-      "content": "Base64 string",
-      "mediaType": "image/png",
-      "width": "300",
-      "height": "300",
-    }
+    "ttl": 60,
+    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQDtype=02bank=100000000009&sum=200&cur=RUB&crc=C63A",
+    "status": "PAYED"
   },
   "payment": {
-    "paymentUid": "12s1s21",
-    "paymentStatus": "WAITING",
-  }
+    "paymentUid": "A22231710446971300200933E625FCB3",
+    "paymentStatus": "COMPLETED"
+  },
+  "createdOn": "2022-08-11T20:10:32+03:00"
 }
 ~~~
 
@@ -1373,14 +1246,18 @@ Host: api.qiwi.com
 
 ## Платеж токеном СБП {#payment-sbp-token}
 
-<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeId__payments__paymentId__put_api">
+<aside class="warning">
+Метод находится в разработке.
+</aside>
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__payments__paymentId__put_api">
   <script>
     $(document).ready(function(){
         $.getJSON('../../rui_jsons/payin-sbp-token-put.json', function( data ) {
           window.requestUI(
             data,
             "api",
-            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeId}/payments/{paymentId}",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}/payments/{paymentId}",
             "put",
             ['RequestBody', '200', '4xx', '5xx']
           )
@@ -1421,8 +1298,8 @@ Host: api.qiwi.com
     "image": {
       "content": "Base64 string",
       "mediaType": "image/png",
-      "width": "300",
-      "height": "300",
+      "width": 300,
+      "height": 300
     }
   },
   "payment": {
@@ -1663,18 +1540,76 @@ Host: api.qiwi.com
 }
 ~~~
 
+## Отмена возврата {#decline-refund-api}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__refunds__refundId__decline_post_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-refund-decline.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/payments/{paymentId}/refunds/{refundId}/decline",
+            "post",
+            ['RequestBody', '200', '4xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+POST /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132/decline HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+{
+  "refundId": "tcwv3132",
+  "createdDatetime": "2018-11-20T16:32:55.547+03:00",
+  "amount": {
+    "currency": "RUB",
+    "value": 2.34
+  },
+  "status": {
+    "value": "COMPLETED",
+    "changedDateTime": "2018-11-20T16:32:55.55+03:00"
+  },
+  "flags": [
+    "REVERSAL"
+  ]
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
 ## Операция возврата по платежу СБП {#refund-sbp-api}
 
 ### Метод PUT {#refund-sbp-put}
 
-<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeId__refunds__refundId__put_api">
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__refunds__refundId__put_api">
   <script>
     $(document).ready(function(){
       $.getJSON('../../rui_jsons/payin-sbp-refund-put.json', function( data ) {
         window.requestUI(
             data,
             "api",
-            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeId}/refunds/{refundId}",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}/refunds/{refundId}",
             "put",
             ['RequestBody', '200', '4xx', '5xx']
           )
@@ -1707,8 +1642,6 @@ Host: api.qiwi.com
     "value": 100.00,
     "currency": "RUB"
   },
-  "paymentPurpose": "Flower for my girlfriend",
-  "redirectUrl": "http://someurl.com",
   "tokenizationPurpose": "",
   "flags": ["CREATE_TOKEN"],
   "qr": {
@@ -1737,7 +1670,8 @@ Host: api.qiwi.com
       "refundUid": "dqw2dx2",
       "refundStatus": "WAITING"
     }
-  ]
+  ],
+  "createdOn": "2022-04-11T20:10:32+03:00"
 }
 ~~~
 
@@ -1767,14 +1701,14 @@ Host: api.qiwi.com
 
 ### Метод POST {#refund-sbp-post}
 
-<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeId__refunds_post_api">
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__refunds_post_api">
   <script>
     $(document).ready(function(){
       $.getJSON('../../rui_jsons/payin-sbp-refund-post.json', function( data ) {
         window.requestUI(
             data,
             "api",
-            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeId}/refunds",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}/refunds",
             "post",
             ['RequestBody', '200', '4xx', '5xx']
           )
@@ -1838,7 +1772,8 @@ Host: api.qiwi.com
       "refundUid": "dqw2dx2",
       "refundStatus": "WAITING"
     }
-  ]
+  ],
+  "createdOn": "2022-04-11T20:10:32+03:00"
 }
 ~~~
 

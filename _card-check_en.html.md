@@ -7,10 +7,10 @@ If card verification is passed successfully, [payment token](#merchant-token-pay
 <aside class="warning">
 The payment token is linked with the site ID and the customer ID that you have specified in the starting request. The customer will be able to make payment by payment token only on this site.
 
-To make the payment token valid on other sites of the same merchant, send a request to Support.
+To make the payment token valid on other sites of the same merchant, send a request to <a href="mailto:payin@qiwi.com">QIWI Support</a>.
 </aside>
 
-By default, access to the verification service is disabled. Contact your Support manager to enable that.
+By default, access to the verification service is disabled. Contact your manager in QIWI Support to enable that.
 
 ## How to use service with QIWI Payment Form {#how-to-check-card-qiwi-payform}
 
@@ -87,12 +87,11 @@ Host: api.qiwi.com
 }
 ~~~
 
-1. Send [invoice request](#invoice_put) with additional parameter `"flags":["CHECK_CARD", "BIND_PAYMENT_TOKEN"]`. For payment tokent generation, set `customer.account` parameter with unique customer identifier in the mechant's system. Do not specify invoice amount in the request. Extract `billId` parameter from the response — it is used on step 4.
-3. [Redirect customer to the Payment Form](#qiwi-redirect) — reference URL taken from `payUrl` field of the response.
-4. On the Payment Form, customer provides card details and submits it for verification. On the form, 3-D Secure authentification performs for customer.
+1. Send [invoice request](#invoice_put) with additional parameter `"flags":["CHECK_CARD", "BIND_PAYMENT_TOKEN"]`. For payment token generation, set `customer.account` parameter with unique customer identifier in the merchant's system. Do not specify invoice amount in the request. Extract `billId` parameter from the response — it is used on step 4.
+2. [Redirect customer to the Payment Form](#qiwi-redirect) — reference URL taken from `payUrl` field of the response.
+3. On the Payment Form, customer provides card details and submits it for verification. On the form, 3-D Secure authentication performs for customer.
     ![check card](/images/check-card-payin.png)
-    
-5. When card verification finishes, you get [CHECK_CARD notification](#checkcard-callback) with the result, or you can [request current status of the verification](#card-check-info) — put there `billId` identifier from step 2 as a unique identifier of the card verification. Result includes:
+4. When card verification finishes, you get [CHECK_CARD notification](#checkcard-callback) with the result, or you can [request current status of the verification](#card-check-info) — put there `billId` identifier from step 2 as a unique identifier of the card verification. Result includes:
 
    * information about whether card is accessible for purchases in `isValidCard` field (`true` — card number is valid and card can be purchased);
    * payment token data in `createdToken` field.
@@ -146,7 +145,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-> Response with 3DS authentification
+> Response with 3DS authentication
 
 ~~~json
 {
@@ -207,14 +206,21 @@ Host: api.qiwi.com
 }
 ~~~
 
-1. Send ["Check card" API request](#card-check-api). Put unique verification identifier in `requestUid` field. For payment token generation, set `tokenizationData.account` parameter to unique customer's identifier in the merchant's system.
+1. Send ["Check card" API request](#card-check-api). Put in the request:
+   * Unique verification identifier (`requestUid` field in the request URL). 
+   * Card data (`cardData` in the request body). Required parameters — PAN, card expiration date, and CVV2.
+
+   <aside class="notice">If necessary, card CVV may be configured as an optional parameter. Contact your manager in QIWI Support.
+   </aside>
+
+   For payment token generation, set `tokenizationData.account` parameter to unique customer's identifier in the merchant's system.
 2. In the response, card verification result returns in `isValidCard` field (`true` means card is valid for purchases). Payment token data return in `createdToken` JSON object.
 
-To make sure that the cardholder themselves entered card number, you can use 3-D Secure additional authentification in the card verification service. Request enabling or disabling 3-D Secure (3DS) procedure by QIWI support. If 3DS is enabled, you receive `"requirements"` objject with ACS URL for customer redirect (in this case, `status` field has `"WAITING_3DS"` value). 
+To make sure that the cardholder themselves entered card number, you can use 3-D Secure additional authentication in the card verification service. Contact [QIWI Support](mailto:payin@qiwi.com) to enable or disable 3-D Secure (3DS) procedure. If 3DS is enabled, you receive `"requirements"` object with ACS URL for customer redirect (in this case, `status` field has `"WAITING_3DS"` value).
 
 Verification scenario is similar to [payment operation](#merchant-threeds):
 
-1. [Redirect customer to authentification page](#merchant-threeds).
+1. [Redirect customer to authentication page](#merchant-threeds).
 2. Finish 3-D Secure by ["Complete 3DS on card verification" request](#card-check-complete). Specify the same `requestUid` from the initial card verification request.
 3. If 3-D Secure check is finished successfully, `isValidCard` field contains information about card validity (`true` means card is valid for purchases). Payment token data return in `createdToken` JSON object.
 

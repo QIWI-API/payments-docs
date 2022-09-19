@@ -2,7 +2,7 @@
 
 To work on 54-FZ Rule, the Payment Protocol provides a tool to interact with your online cash register. Information to form a fiscal check is passed on to the JSON-object `cheque` of [invoice](#invoice_put) and [payment](#payments) operation API requests.
 
-To activate the fiscal check service, contact your Support manager with the TIN number with which your organization is registered in the online cash rental service.
+To activate the fiscal check service, contact your manager in QIWI Support with the TIN number with which your organization is registered in the online cash rental service.
 
 For ATOL service, provide the following data also:
 
@@ -42,7 +42,7 @@ For ATOL service, provide the following data also:
 Parameter|Req.|Type|Description
 --------|-------|----------|--------
 sellerId|Y|Number|Organization's TIN
-chequeType|Y|Number|Cash operation (1054 fiscal tag):<br> `COLLECT` – Incoming cash <br> `COLLECT_RETURN` - Cash return <br> `CONSUME` - Outcoming cash <br> `CONSUME_RETURN` - Outcoming cash return
+chequeType|Y|Number|Cash operation (1054 fiscal tag):<br> `COLLECT` – Incoming cash <br> `COLLECT_RETURN` - Cash return <br> `CONSUME` - Outgoing cash <br> `CONSUME_RETURN` - Outgoing cash return
 customerContact|Y|String(64)|Customer's phone or e-mail  (fiscal tag 1008)
 taxSystem|Y|Number|Tax system (fiscal tag 1055):<br> `OSN` - General, "ОСН" <br>`USN` – Simplified income, "УСН доход" <br>`USN_MINUS_CONSUM`  – Simplified income minus expense, "УСН доход - расход" <br>`ENVD` – United tax to conditional income, "ЕНВД" <br>`ESN` - United agriculture tax, "ЕСН" <br>`PATENT` – Patent tax system, "Патент"
 positions|Y|array|Commodities list

@@ -16,3 +16,7 @@ To make a refund on the paid invoice, use the API request [Refund](#refund-api).
 A refund on the payment is only possible for a successful payment. The refund can be both partial and complete. In the first case, the entire amount of the accepted payment is refunded. In the second case, only a part of the amount of payment is refunded. Before you request a refund for the payment, check that the payment has been successfully completed and is in `SUCCESS` status.
 
 To make a refund on a payment, use the API request [Refund](#refund-api).
+
+<aside class="notice">
+There is a possibility to decline (remove) incorrect refunds on card payments (see <a href="#refund_decline">the corresponding API request</a>). Contact your account manager and request transfer to postponed refunds scheme.
+</aside>

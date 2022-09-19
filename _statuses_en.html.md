@@ -14,7 +14,7 @@ Error Code | Meaning
 406 | Not Acceptable — Your request' data format isn't JSON.
 410 | Gone — The resource requested has been removed from our servers.
 429 | Too Many Requests — You are sending requests too frequently.
-500 | Internal Server Error — We had a problem with our server. Try again later. If response body is empty, repeat the request with the same parameters. If the body is non-empty, make [payment status request](#payment_status)/[invoice status request](#invoice_get).
+500 | Internal Server Error — We had a problem with our server. Try again later. If response body is empty, repeat the request with the same parameters. If the body is non-empty, make [payment status request](#payment_status)/[invoice status request](#invoice-details).
 502 | Bad Gateway — No connection to service
 503 | Service Unavailable — We're temporarily offline for maintenance. Please try again later.
 
@@ -44,6 +44,7 @@ WAITING | PAYMENT | Awaiting for 3DS authentication| API responses
 DECLINED | PAYMENT | Request for authorization is rejected | Notifications, API responses
 DECLINE | REFUND | Request for refund is rejected| Notifications, API responses
 DECLINE | CAPTURE | Request for payment confirmation is rejected| Notifications, API responses
+DECLINED | CAPTURE | Request for payment confirmation is rejected| [API response to the status request](#capture_status)
 SUCCESS | PAYMENT | Request for authorization is successfully processed| Notifications
 COMPLETED | PAYMENT |Request for authorization is successfully processed|API responses
 SUCCESS | REFUND | Request for refund is successfully processed|Notifications
