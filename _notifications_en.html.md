@@ -266,10 +266,6 @@ cf2 | Extra field with some information to operation data | String(256)|Always
 cf3 | Extra field with some information to operation data | String(256)|Always
 cf4 | Extra field with some information to operation data | String(256)|Always
 cf5 | Extra field with some information to operation data | String(256)|Always
-`FROM_MERCHANT_CONTRACT_ID`| Contract ID between the merchant and the customer |String(256)|Always
-`FROM_MERCHANT_BOOKING_NUMBER` | Booking number for the customer  |String(256)|Always
-`FROM_MERCHANT_PHONE` | Phone number of the customer | String(256)|Always
-`FROM_MERCHANT_FULL_NAME` | Full name of the customer |String(256)|Always
 ----|------|-------|--------
 flags| Additional API commands| Array of Strings. Possible elements — `SALE` / `REVERSAL`|Always
 tokenData | [Payment token data](#token_issue) | Object|When payment token issue was requested
@@ -354,10 +350,6 @@ cf2 | Extra field with some information to operation data | String(256)
 cf3 | Extra field with some information to operation data | String(256)
 cf4 | Extra field with some information to operation data | String(256)
 cf5 | Extra field with some information to operation data | String(256)
-`FROM_MERCHANT_CONTRACT_ID`| Contract ID between the merchant and the customer |String(256)
-`FROM_MERCHANT_BOOKING_NUMBER` | Booking number for the customer  |String(256)
-`FROM_MERCHANT_PHONE` | Phone number of the customer | String(256)
-`FROM_MERCHANT_FULL_NAME` | Full name of the customer |String(256)
 ----|------|-------
 flags| Additional API commands| Array of Strings. Possible elements — `SALE` / `REVERSAL`
 type | Notification type (`CAPTURE`)|String(200)
@@ -418,10 +410,6 @@ cf2 | Extra field with some information to operation data | String(256)|Always
 cf3 | Extra field with some information to operation data | String(256)|Always
 cf4 | Extra field with some information to operation data | String(256)|Always
 cf5 | Extra field with some information to operation data | String(256)|Always
-`FROM_MERCHANT_CONTRACT_ID`| Contract ID between the merchant and the customer |String(256)|Always
-`FROM_MERCHANT_BOOKING_NUMBER` | Booking number for the customer  |String(256)|Always
-`FROM_MERCHANT_PHONE` | Phone number of the customer | String(256)|Always
-`FROM_MERCHANT_FULL_NAME` | Full name of the customer |String(256)|Always
 ----|------|-------|--------
 flags| Additional API commands| Array of Strings. Possible elements — `SALE` / `REVERSAL`|Always
 refundSplits | Refund of split payments description | Array(Objects) | For [refund split payments](#split-refund)

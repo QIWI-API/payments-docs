@@ -41,8 +41,7 @@ Host: api.qiwi.com
    "expirationDateTime": "2022-04-13T14:30:00+03:00",
    "customer": {},
    "customFields": {
-     "cf1": "Some data",
-     "FROM_MERCHANT_CONTRACT_ID": "1234"
+     "cf1": "Some data"
    }
 }
 ~~~
@@ -63,8 +62,7 @@ Host: api.qiwi.com
     },
     "comment": "Text comment",
     "customFields": {
-      "cf1": "Some data",
-      "FROM_MERCHANT_CONTRACT_ID": "1234"
+      "cf1": "Some data"
     },
     "creationDateTime": "2022-03-05T11:27:41",
     "expirationDateTime": "2022-04-13T14:30:00",
@@ -125,8 +123,7 @@ Host: api.qiwi.com
   },
   "comment": "Text comment",
   "customFields": {
-    "cf1": "Some data",
-    "FROM_MERCHANT_CONTRACT_ID": "1234"
+    "cf1": "Some data"
   },
   "expirationDateTime": "2022-04-13T14:30:00",
   "payUrl": "https://oplata.qiwi.com/form/invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77",
@@ -190,9 +187,7 @@ Host: api.qiwi.com
         },
         "paymentMethod": {
             "type": "CARD",
-            "maskedPan": "427638******1410",
-            "rrn": "008692274763",
-            "authCode": "242847"
+            "maskedPan": "427638******1410"
         },
         "customer": {
             "account": "1",
@@ -307,10 +302,6 @@ Host: api.qiwi.com
         "cf4": "4",
         "cf5": "5",
         "BIND_PAYMENT_TOKEN": "true",
-        "FROM_MERCHANT_CONTRACT_ID": "contract_id",
-        "FROM_MERCHANT_FULL_NAME": "full_name",
-        "FROM_MERCHANT_PHONE": "phone",
-        "FROM_MERCHANT_BOOKING_NUMBER": "booking_number",
         "themeCode": "customization_OK",
     },
     "paymentCardInfo": {
@@ -397,8 +388,7 @@ Host: api.qiwi.com
     "userAgent": "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion"
   },
   "customFields": {
-    "cf1": "Some data",
-    "FROM_MERCHANT_CONTRACT_ID": "1234"
+    "cf1": "Some data"
   },
   "flags": [
     "SALE"
@@ -447,8 +437,7 @@ Host: api.qiwi.com
     "paymentSystemProduct": "P|Visa Gold"
   },
   "customFields" : {
-    "cf1": "Some data",
-    "FROM_MERCHANT_CONTRACT_ID": "1234"
+    "cf1": "Some data"
   },
   "flags" : [ ]
 }
@@ -457,12 +446,17 @@ Host: api.qiwi.com
 <!-- 4xx-->
 ~~~json
 {
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
+  "serviceName":"payin-core",
+  "errorCode":"validation.error",
+  "description":"Validation error",
+  "userMessage":"Validation error",
+  "dateTime":"2022-11-13T16:49:59.166+03:00",
+  "traceId":"fd0e2a08c63ace83",
+  "cause":{
+    "paymentToken": [
+      "Exchange token error. Token disabled, please create new one"
+    ]
+  }
 }
 ~~~
 
@@ -548,12 +542,17 @@ Host: api.qiwi.com
 <!-- 4xx -->
 ~~~json
 {
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
+  "serviceName":"payin-core",
+  "errorCode":"validation.error",
+  "description":"Validation error",
+  "userMessage":"Validation error",
+  "dateTime":"2022-11-13T16:49:59.166+03:00",
+  "traceId":"fd0e2a08c63ace83",
+  "cause":{
+    "paymentToken": [
+      "Exchange token error. Token disabled, please create new one"
+    ]
+  }
 }
 ~~~
 
@@ -1290,7 +1289,7 @@ Host: api.qiwi.com
   },
   "paymentPurpose": "Flower for my girlfriend",
   "redirectUrl": "http://someurl.com",
-  "qr": {
+  "qrCode": {
     "type": "DYNAMIC",
     "ttl": 999,
     "status": "CREATED",
@@ -1595,209 +1594,6 @@ Host: api.qiwi.com
   "userMessage" : "Validation error",
   "dateTime" : "2018-11-13T16:49:59.166+03:00",
   "traceId" : "fd0e2a08c63ace83"
-}
-~~~
-
-## Операция возврата по платежу СБП {#refund-sbp-api}
-
-### Метод PUT {#refund-sbp-put}
-
-<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__refunds__refundId__put_api">
-  <script>
-    $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-sbp-refund-put.json', function( data ) {
-        window.requestUI(
-            data,
-            "api",
-            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}/refunds/{refundId}",
-            "put",
-            ['RequestBody', '200', '4xx', '5xx']
-          )
-      })
-    });
-  </script>
-</div>
-
-<!-- Request body -->
-~~~http
-PUT /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8/refunds/asdvas7dvasd6va HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
-{
-  "amount": {
-    "value": 100.00,
-    "currency": "RUB"
-  }
-}
-~~~
-
-<!-- 200 -->
-~~~json
-{
-  "qrCodeUid": "adghj17d1g8",
-  "amount": {
-    "value": 100.00,
-    "currency": "RUB"
-  },
-  "tokenizationPurpose": "",
-  "flags": ["CREATE_TOKEN"],
-  "qr": {
-    "type": "DYNAMIC",
-    "ttl": 999,
-    "status": "CREATED",
-    "payload": "",
-    "image": {
-      "content": "Base64 string",
-      "mediaType": "image/png",
-      "width": "300",
-      "height": "300",
-    }
-  },
-  "token": {
-    "status": "CREATED",
-    "value": "f9ac0f47-1111-2222-b947-33339cdacbc9",
-    "expiredDate": "2022-05-03T14:30:00+03:00",
-  },
-  "payment": {
-    "paymentUid": "12s1s21",
-    "paymentStatus": "COMPLETED"
-  },
-  "refunds": [
-    {
-      "refundUid": "dqw2dx2",
-      "refundStatus": "WAITING"
-    }
-  ],
-  "createdOn": "2022-04-11T20:10:32+03:00"
-}
-~~~
-
-<!-- 4xx -->
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
-}
-~~~
-
-<!-- 5xx -->
-~~~json
-{
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
-}
-~~~
-
-### Метод POST {#refund-sbp-post}
-
-<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__refunds_post_api">
-  <script>
-    $(document).ready(function(){
-      $.getJSON('../../rui_jsons/payin-sbp-refund-post.json', function( data ) {
-        window.requestUI(
-            data,
-            "api",
-            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}/refunds",
-            "post",
-            ['RequestBody', '200', '4xx', '5xx']
-          )
-      })
-    });
-  </script>
-</div>
-
-<!-- Request body -->
-~~~http
-POST /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8/refunds HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
-{
-  "refundUid": "asdvas7dvasd6va",
-  "amount": {
-    "value": 100.00,
-    "currency": "RUB"
-  }
-}
-~~~
-
-<!-- 200 -->
-~~~json
-{
-  "qrCodeUid": "adghj17d1g8",
-  "amount": {
-    "value": 100.00,
-    "currency": "RUB"
-  },
-  "paymentPurpose": "Flower for my girlfriend",
-  "redirectUrl": "http://someurl.com",
-  "tokenizationPurpose": "",
-  "flags": ["CREATE_TOKEN"],
-  "qr": {
-    "type": "DYNAMIC",
-    "ttl": 999,
-    "status": "CREATED",
-    "payload": "",
-    "image": {
-      "content": "Base64 string",
-      "mediaType": "image/png",
-      "width": "300",
-      "height": "300",
-    }
-  },
-  "token": {
-    "status": "CREATED",
-    "value": "f9ac0f47-1111-2222-b947-33339cdacbc9",
-    "expiredDate": "2022-05-03T14:30:00+03:00",
-  },
-  "payment": {
-    "paymentUid": "12s1s21",
-    "paymentStatus": "COMPLETED"
-  },
-  "refunds": [
-    {
-      "refundUid": "dqw2dx2",
-      "refundStatus": "WAITING"
-    }
-  ],
-  "createdOn": "2022-04-11T20:10:32+03:00"
-}
-~~~
-
-<!-- 4xx -->
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
-}
-~~~
-
-<!-- 5xx -->
-~~~json
-{
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
 }
 ~~~
 

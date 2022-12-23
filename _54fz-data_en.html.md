@@ -1,10 +1,14 @@
 # Electronic Receipt Transfer (by Fed.Rule 54) {#cheque}
 
-To work on 54-FZ Rule, the Payment Protocol provides a tool to interact with your online cash register. Information to form a fiscal check is passed on to the JSON-object `cheque` of [invoice](#invoice_put) and [payment](#payments) operation API requests.
+To work on 54-FZ Rule, the Payment Protocol provides a tool to interact with your online cash register. Information to form a fiscal receipt is passed on to the JSON-object `cheque` of [invoice](#invoice_put) and [payment](#payments) operation API requests.
 
-To activate the fiscal check service, contact your manager in QIWI Support with the TIN number with which your organization is registered in the online cash rental service.
+<aside class="notice">
+Fiscal receipt generation is available for <b>Bank card</b> payment method only.
+</aside>
 
-For ATOL service, provide the following data also:
+To activate the fiscal receipt service, contact your manager in QIWI Support with the TIN number with which your organization is registered in the online cash rental service.
+
+For the ATOL service, provide the following data also:
 
 * RSP's email for receipt printing
 * Full title of the organization

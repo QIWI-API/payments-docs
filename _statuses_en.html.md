@@ -86,6 +86,7 @@ ACQUIRING_INSUFFICIENT_FUNDS| Issuer error. Not enough funds
 ACQUIRING_UNKNOWN| Unknown error
 BILL_ALREADY_PAID| Invoice is already paid
 PAYIN_PROCESSING_ERROR| Payment processing error
+PAYMENT_EXPIRED_3DS | 3-D Secure authentication not passed
 QW_LIMIT_ERROR | Exceeded limits for QIWI Wallet (monthly, daily, etc)
 QW_IDENTIFICATION_ERROR | QIWI Wallet identification required or identification level is not enough for the customer
 QW_AUTH_ERROR | The current authentication level does not match the required

@@ -34,8 +34,8 @@ includes:
 search: true
 ---
 
- *[API Key]: String for merchant authentication in API according to OAuth 2.0 standard, RFC 6749, RFC 6750.
- *[Payment token]: String linked to the card data for payments without entering card details.
+*[API Key]: String for merchant authentication in API according to OAuth 2.0 standard, RFC 6749, RFC 6750.
+*[Payment token]: String linked to the card data for payments without entering card details.
 *[3DS]: 3-D Secure — a protection protocol used to authenticate card holder while making a payment transaction over the Internet.
 *[RSP]: Retail Service Provider.
 *[Merchant]: Retail Service Provider.
@@ -47,7 +47,7 @@ search: true
 
 # Overview {#get-started}
 
-###### Last update: 2022-08-08 | [Doc version 1.14](/en/payments-release-notes/index.html) | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/)
+###### Last update: 2022-12-08 | [Doc version 1.18](/en/payments-release-notes/index.html) | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/)
 
 The Payments protocol provides a payment processing solutions that helps you accept payments in fast and secure way. The protocol gives your customers flexibility to pay the way they want, including:
 

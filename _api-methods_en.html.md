@@ -35,8 +35,7 @@
    "expirationDateTime": "2018-04-13T14:30:00+03:00",
    "customer": {},
    "customFields": {
-    "cf1": "Some data",
-    "FROM_MERCHANT_CONTRACT_ID": "1234"
+    "cf1": "Some data"
    }
 }
 ~~~
@@ -57,8 +56,7 @@
     },
     "comment": "Text comment",
     "customFields": {
-      "cf1": "Some data",
-      "FROM_MERCHANT_CONTRACT_ID": "1234"
+      "cf1": "Some data"
     },
     "creationDateTime": "2018-03-05T11:27:41",
     "expirationDateTime": "2018-04-13T14:30:00",
@@ -87,6 +85,148 @@
   "description" : "Resource not found",
   "traceId" : "c3564ba25e221fe3",
   "dateTime" : "2018-11-13T16:30:52.464+03:00"
+}
+~~~
+
+## Invoice status {#invoice-details}
+
+<div id="payin_v1_sites__siteId__bills__billId__details_get_checkout">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../eui_jsons/payin-checkout-payment-details-get.json', function( data ) {
+        window.requestUI(
+            data,
+            "checkout",
+            "payin/v1/sites/{siteId}/bills/{billId}/details",
+            "get",
+            ['RequestBody', '200', '4xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+GET /partner/payin/v1/sites/site-01/bills/d35cf63943e54f50badc75f49a5aac7c/details HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+{
+  "billId": "d35cf63943e54f50badc75f49a5aac7c",
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  },
+  "status": {
+    "value": "PAID",
+    "changedDateTime": "2022-03-05T11:27:41"
+  },
+  "comment": "Text comment",
+  "customFields": {
+    "cf1": "Some data"
+  },
+  "expirationDateTime": "2022-04-13T14:30:00",
+  "payUrl": "https://oplata.qiwi.com/form/invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77",
+  "payments": [
+    {
+        "siteId": "site-01",
+        "billId": "d35cf63943e54f50badc75f49a5aac7c",
+        "createdDateTime": "2022-03-05T11:23:22+03:00",
+        "amount": {
+            "currency": "RUB",
+            "value": 100.00
+        },
+        "capturedAmount": {
+            "currency": "RUB",
+            "value": 100.00
+        },
+        "refundedAmount": {
+            "currency": "RUB",
+            "value": 0.00
+        },
+        "paymentMethod": {
+            "type": "CARD",
+            "maskedPan": "427638******1410"
+        },
+        "customer": {
+            "account": "1",
+            "phone": "0",
+            "address": {}
+        },
+        "requirements": {
+            "threeDS": {
+                "pareq": "eJxVUWFvgjAQ52lBUtjD3M9++qFgCxl0i/OtJv2WT/tv8LXqG0vw==",
+                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
+            }
+        },
+        "status": {
+            "value": "DECLINED",
+            "changedDateTime": "2022-03-05T11:23:54+03:00",
+            "reason": "ACQUIRING_NOT_PERMITTED"
+        },
+        "customFields": {
+            "cf1": "1",
+            "cf2": "0"
+        }
+    },
+    {
+        "siteId": "site-01",
+        "billId": "d35cf63943e54f50badc75f49a5aac7c",
+        "createdDateTime": "2022-03-05T11:26:21+03:00",
+        "amount": {
+            "currency": "RUB",
+            "value": 100.00
+        },
+        "capturedAmount": {
+            "currency": "RUB",
+            "value": 100.00
+        },
+        "refundedAmount": {
+            "currency": "RUB",
+            "value": 0.00
+        },
+        "paymentMethod": {
+            "type": "CARD",
+            "maskedPan": "427638******1410"
+        },
+        "customer": {
+            "account": "1",
+            "phone": "0",
+            "address": {}
+        },
+        "requirements": {
+            "threeDS": {
+                "pareq": "eJxVUdtuwjAM7b6t/1fcku04w==",
+                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
+            }
+        },
+        "status": {
+            "value": "COMPLETED",
+            "changedDateTime": "2022-03-05T11:34:43+03:00"
+        },
+        "customFields": {
+            "customer_account": "1",
+            "customer_phone": "0"
+        }
+    }
+]
+~~~
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2022-03-05T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
 }
 ~~~
 
@@ -168,10 +308,6 @@ Host: api.qiwi.com
         "cf4": "4",
         "cf5": "5",
         "BIND_PAYMENT_TOKEN": "true",
-        "FROM_MERCHANT_CONTRACT_ID": "contract_id",
-        "FROM_MERCHANT_FULL_NAME": "full_name",
-        "FROM_MERCHANT_PHONE": "phone",
-        "FROM_MERCHANT_BOOKING_NUMBER": "booking_number",
         "themeCode": "customization_OK",
     },
     "paymentCardInfo": {
@@ -270,8 +406,7 @@ Host: api.qiwi.com
   "callbackUrl": "https://example.com/callbacks",
   "comment": "Example payment",
   "customFields": {
-    "cf1": "Some data",
-    "FROM_MERCHANT_CONTRACT_ID": "1234"
+    "cf1": "Some data"
   },
   "flags": [
     "SALE"
@@ -369,8 +504,7 @@ Host: api.qiwi.com
     "paymentSystemProduct": "P|Visa Gold"
   },
   "customFields" : {
-    "cf1": "Some data",
-    "FROM_MERCHANT_CONTRACT_ID": "1234"
+    "cf1": "Some data"
   },
   "flags" : [ ]
 }
@@ -379,12 +513,17 @@ Host: api.qiwi.com
 <!-- 4xx -->
 ~~~json
 {
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
+  "serviceName":"payin-core",
+  "errorCode":"validation.error",
+  "description":"Validation error",
+  "userMessage":"Validation error",
+  "dateTime":"2022-11-13T16:49:59.166+03:00",
+  "traceId":"fd0e2a08c63ace83",
+  "cause":{
+    "paymentToken": [
+      "Exchange token error. Token disabled, please create new one"
+    ]
+  }
 }
 ~~~
 
@@ -469,12 +608,17 @@ Host: api.qiwi.com
 <!-- 4xx -->
 ~~~json
 {
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
+  "serviceName":"payin-core",
+  "errorCode":"validation.error",
+  "description":"Validation error",
+  "userMessage":"Validation error",
+  "dateTime":"2022-11-13T16:49:59.166+03:00",
+  "traceId":"fd0e2a08c63ace83",
+  "cause":{
+    "paymentToken": [
+      "Exchange token error. Token disabled, please create new one"
+    ]
+  }
 }
 ~~~
 
@@ -767,6 +911,268 @@ Host: api.qiwi.com
   "description" : "Resource not found",
   "traceId" : "c3564ba25e221fe3",
   "dateTime" : "2018-11-13T16:30:52.464+03:00"
+}
+~~~
+
+## Faster Payment System QR Code {#qr-code-sbp}
+
+### PUT Method {#qr-code-sbp-put}
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__put_api">
+  <script>
+    $(document).ready(function(){
+        $.getJSON('../../eui_jsons/payin-sbp-put.json', function( data ) {
+          window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+PUT /partner/payin/v1/sites/test-01/sbp/qrCodes/Test12 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+  "amount": {
+    "value": 1.00,
+    "currency": "RUB"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 60,
+    "image": {
+      "mediaType": "image/png",
+      "width": 300,
+      "height": 300
+    }
+  },
+  "paymentPurpose": "Flower for my girlfriend",
+  "redirectUrl": "http://example.com"
+}
+~~~
+
+<!-- 200 -->
+~~~json
+{
+  "qrCodeUid": "Test12",
+  "amount": {
+    "currency": "RUB",
+    "value": "1.00"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 60,
+    "image": {
+        "mediaType": "image/png",
+        "width": 300,
+        "height": 300,
+        "content": "iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAA"
+    },
+    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQDtype=02bank=100000000009&sum=200&cur=RUB&crc=C63A",
+    "status": "CREATED"
+  },
+  "createdOn": "2022-08-11T20:10:32+03:00"
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+### POST Methods {#qr-code-sbp-post}
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes_post_api">
+  <script>
+    $(document).ready(function(){
+        $.getJSON('../../eui_jsons/payin-sbp-post.json', function( data ) {
+          window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/sbp/qrCodes",
+            "post",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+POST /partner/payin/v1/sites/test-01/sbp/qrCodes HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+  "qrCodeUid": "Test12",
+  "amount": {
+    "value": 1.00,
+    "currency": "RUB"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 60,
+    "image": {
+      "mediaType": "image/png",
+      "width": 300,
+      "height": 300
+    }
+  },
+  "paymentPurpose": "Flower for my girlfriend",
+  "redirectUrl": "http://example.com"
+}
+~~~
+
+<!-- 200 -->
+~~~json
+{
+  "qrCodeUid": "Test12",
+  "amount": {
+    "currency": "RUB",
+    "value": "1.00"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 60,
+    "image": {
+      "mediaType": "image/png",
+      "width": 300,
+      "height": 300,
+      "content": "iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAA"
+    },
+    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQD?type=02&bank=100000000009&sum=200&cur=RUB&crc=C63A",
+    "status": "CREATED"
+  },
+  "createdOn": "2022-08-11T20:10:32+03:00"
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Faster Payment System QR Code Status {#qr-code-sbp-get}
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__get_api">
+  <script>
+    $(document).ready(function(){
+        $.getJSON('../../eui_jsons/payin-sbp-get.json', function( data ) {
+          window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}",
+            "get",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+GET /partner/payin/v1/sites/test-01/sbp/qrCodes/Test HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+{
+  "qrCodeUid": "Test",
+  "amount": {
+    "currency": "RUB",
+    "value": "1.00"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 60,
+    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQDtype=02bank=100000000009&sum=200&cur=RUB&crc=C63A",
+    "status": "PAYED"
+  },
+  "payment": {
+    "paymentUid": "A22231710446971300200933E625FCB3",
+    "paymentStatus": "COMPLETED"
+  },
+  "createdOn": "2022-08-11T20:10:32+03:00"
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
 }
 ~~~
 

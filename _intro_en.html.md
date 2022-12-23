@@ -91,7 +91,7 @@ customer->>store:Payment start
 store->>qb:Payment operation
 qb->>ips:Payment authorization
 ips->>ipscust:Payment authorization
-rect rgb(237, 243, 255)
+rect rgb(255, 238, 223)
 Note over ipsstore, ipscust:Settlements
 ipscust->>ips:₽₽₽
 ips->>qb:₽₽₽
@@ -152,7 +152,7 @@ The API access key, linked to a certain <code>siteId</code>, works for all payme
 
 ## Card payment in test mode {#test_data_card}
 
-To make tests for payment operations, you may use any card number complied with Luhn algorithm.
+To make tests for payment operations, you may use any card number complied with [Luhn algorithm](https://en.wikipedia.org/wiki/Luhn_algorithm).
 
 <h4>Test card numbers</h4>
 <h4 id="visa">
@@ -180,5 +180,5 @@ To process 3DS operation, use `unknown name` as card holder name. 3DS in test mo
 
 To test various payment methods and responses, use different payment amounts (`amount` field):
 
-* `200` — operation is successful with some delay. On the first [payment status request](#payment_get) you will receive `"WAITING"` payment status, on the second request you will get `"SUCCESS"` payment status.
+* `200` — operation is successful with some delay. On the first [payment status request](#payment_status) you will receive `"WAITING"` payment status, on the second request you will get `"SUCCESS"` payment status.
 * For any other amounts the payment would be unsuccessful.
