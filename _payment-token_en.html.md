@@ -6,9 +6,9 @@ In **Payment protocol** card and QIWI Wallet payment tokens generation is suppor
 
 By default, the issue of payment tokens is disabled. Contact your manager in QIWI Support to enable that.
 
-<aside class="warning">Card payment token is issued only after the successful payment  authorization by the issuer bank.</aside>
-
+<aside class="warning">
 If merchant's service uses QIWI Payment Form, contact your manager in QIWI Support to enable displaying list of cards linked to the payment tokens. Otherwise a customer may not use linked cards on the Form. A list of cards is displayed for payments from the same site for which the tokens are issued.
+</aside>
 
 ## Card payment token issue {#merchant-form-token-issue}
 
@@ -85,7 +85,9 @@ Host: api.qiwi.com
 
 To issue a payment token, you may use one of the following methods:
 
-1. Without payment (preferred method). Use API request [Card verification](#how-to-check-card) or [Invoice issuing](#how-to-check-card-qiwi-payform). Include the following extra parameters:
+1. Without payment (preferred method).
+
+   Use API request [Card verification](#how-to-check-card) or [Invoice issuing](#how-to-check-card-qiwi-payform). Include the following extra parameters:
    * `account` field with a unique customer ID in the RSP system:
      * either in `tokenizationData` object, in case of [Card verification](#how-to-check-card) request;
      * or in `customer` object, in case of [Invoice issuing](#how-to-check-card-qiwi-payform) request.
@@ -95,14 +97,18 @@ To issue a payment token, you may use one of the following methods:
 
    You will receive the card payment token details after [complete card verification](#how-to-check-card):
 
-   * In the  `createdToken` field of the final response.
+   * In the `createdToken` field of the final response.
    * In the [CHECK_CARD notification](#check-card-callback).
 
    You can always request a [card verification status](#card-check-info) — in the response you will receive a `createdToken` object with payment token details.
 
    See [Customer Card Verification](#check-card) section for details.
 
-2. During payment process. Include additional options in the API request [Payment](#payments) or [Invoice](#invoice_put), depending on which API you use:
+2. During payment process.
+
+   <aside class="warning">Card payment token is created only after the successful payment authorization by the issuer bank.</aside>
+
+   Include additional options in the API request [Payment](#payments) or [Invoice](#invoice_put), depending on which API you use:
    * `"flags": ["BIND_PAYMENT_TOKEN"]` is a flag for issuing a payment token.
    * `customer.account` is a unique customer ID in the RSP system.
 
@@ -110,7 +116,7 @@ To issue a payment token, you may use one of the following methods:
 
    You will receive the card payment token details:
 
-   * In the synchronous response to the payment request in the `createdToken` field.
+   * In the synchronous API response to the [payment request](#payments) or [payment authorization completion](#payment_complete) request in the `createdToken` field.
    * In the [PAYMENT notification](#payment-callback) after payment is completed successfully, in the `tokenData` field.
 
 <aside class="warning">

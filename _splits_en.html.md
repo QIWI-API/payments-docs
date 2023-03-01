@@ -8,17 +8,19 @@ To connect to split payments, contact your manager in QIWI Support and request a
 
 To send split payments, send in API request [Invoice](#invoice_put) a JSON-array<br/>`splits` with merchants data.
 
-### Data format
+### Data format {#form-split-json}
 
 > Example of invoice request with split payments
 
 ~~~shell
-curl --location --request PUT 'https://api.qiwi.com/partner/payin/v1/sites/Obuc-02/bills/eqwptt' \
---header 'Content-Type: application/json' \
---header 'Authorization: Bearer token \
---data-raw '{
+curl --location \
+  --request PUT \
+  'https://api.qiwi.com/partner/payin/v1/sites/Obuc-02/bills/eqwptt' \
+  --header 'Content-Type: application/json' \
+  --header 'Authorization: Bearer <token>' \
+  --data-raw '{
     "amount": {
-        "value": 3.00,
+        "value": "3.00",
         "currency": "RUB"
     },
     "expirationDateTime": "2021-12-31T23:59:59+03:00",
@@ -45,8 +47,7 @@ curl --location --request PUT 'https://api.qiwi.com/partner/payin/v1/sites/Obuc-
             "comment": "Some purchase 2"
         }
     ]
-}
-'
+}'
 ~~~
 
 > Response example with invoice and split payments
@@ -104,7 +105,7 @@ type | String | Data type. Always `MERCHANT_DETAILS` (merchant details)
 siteUid | String | [Registered merchant ID](#split-boarding)
 splitAmount | Object | Merchant reimbursement data
 ----|----|-----
-value | Number | Amount of reimbursement
+value | Number | Amount of reimbursement rounded down to two decimals
 currency | String(3) | Text code of reimbursement currency, by ISO. Only `RUB` value
 -----|-----|-----
 orderId | String | Order number (optional)
@@ -112,7 +113,7 @@ comment | String | Comment for the order (optional)
 
 <aside class="warning">The amount of reimbursements to merchants should be equal to the amount charged from the customer's card.</aside>
 
-In JSON-object `splits` of the response the data on split payments and commissions are present:
+In JSON-object `splits` of the response the data on split payments are present:
 
 Response field | Type | Description
 ----|------|-------
@@ -132,7 +133,7 @@ comment | String | Comment for the order
 
 To send split payment, send in API request [Payment](#payments) a JSON-array<br/> `paymentSplits` with merchants data.
 
-### Data format
+### Data format {#pay-split-json}
 
 ~~~json
 {
@@ -164,7 +165,7 @@ To send split payment, send in API request [Payment](#payments) a JSON-array<br/
 }
 ~~~
 
-> Пример ответа
+> Response with split payments
 
 ~~~json
 {
@@ -191,15 +192,15 @@ To send split payment, send in API request [Payment](#payments) a JSON-array<br/
           "type": "MERCHANT_DETAILS",
           "siteUid": "shop_mst-01",
           "splitAmount": {
-          "currency": "RUB",
-          "value": "30.00"
-       },
+            "currency": "RUB",
+            "value": "30.00"
+          },
           "splitCommissions": {
-          "merchantCms": {
-          "currency": "RUB",
-          "value": "10.00"
-       }
-       },
+            "merchantCms": {
+              "currency": "RUB",
+              "value": "10.00"
+            }
+          },
           "orderId": "313fh1f23j13k1k",
           "comment": "Some goods"
        },
@@ -211,10 +212,10 @@ To send split payment, send in API request [Payment](#payments) a JSON-array<br/
              "value": "20.00"
            },
           "splitCommissions": {
-               "merchantCms": {
-                   "currency": "RUB",
-                   "value": "10.00"
-                }
+              "merchantCms": {
+                "currency": "RUB",
+                "value": "10.00"
+              }
             },
           "orderId": "sdadada887sdDDDDd",
           "comment": "Watermelon"
@@ -249,7 +250,7 @@ type | String | Data type. Always `MERCHANT_DETAILS` (merchant details)
 siteUid | String | [Registered merchant ID](#split-boarding)
 splitAmount | Object | Merchant reimbursement data
 ----|----|-----
-value | Number | Amount of reimbursement
+value | Number | Amount of reimbursement rounded down to two decimals
 currency | String(3) | Text code of reimbursement currency, by ISO. Only `RUB` value
 -----|-----|-----
 orderId | String | Order number (optional)

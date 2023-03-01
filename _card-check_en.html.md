@@ -39,7 +39,7 @@ Host: api.qiwi.com
     "siteId": "site-01",
     "billId": "892323232111",
     "amount": {
-      "value": 0.00,
+      "value": "0.00",
       "currency": "RUB"
     },
     "status": {
@@ -87,8 +87,8 @@ Host: api.qiwi.com
 }
 ~~~
 
-1. Send [invoice request](#invoice_put) with additional parameter `"flags":["CHECK_CARD", "BIND_PAYMENT_TOKEN"]`. For payment token generation, set `customer.account` parameter with unique customer identifier in the merchant's system. Do not specify invoice amount in the request. Extract `billId` parameter from the response — it is used on step 4.
-2. [Redirect customer to the Payment Form](#qiwi-redirect) — reference URL taken from `payUrl` field of the response.
+1. Send [invoice request](#invoice_put) with additional parameter `"flags":["CHECK_CARD", "BIND_PAYMENT_TOKEN"]`. For payment token generation, set `customer.account` parameter with unique customer identifier in the merchant's system. **Do not specify invoice amount in the request (`amount` parameter)**.
+2. Extract `billId` parameter from the response — it is used on step 4. [Redirect customer to the Payment Form](#qiwi-redirect) — reference URL taken from `payUrl` field of the response.
 3. On the Payment Form, customer provides card details and submits it for verification. On the form, 3-D Secure authentication performs for customer.
     ![check card](/images/check-card-payin.png)
 4. When card verification finishes, you get [CHECK_CARD notification](#checkcard-callback) with the result, or you can [request current status of the verification](#card-check-info) — put there `billId` identifier from step 2 as a unique identifier of the card verification. Result includes:
@@ -225,3 +225,12 @@ Verification scenario is similar to [payment operation](#merchant-threeds):
 3. If 3-D Secure check is finished successfully, `isValidCard` field contains information about card validity (`true` means card is valid for purchases). Payment token data return in `createdToken` JSON object.
 
 When verification finishes, you get [CHECK_CARD notification](#checkcard-callback) with the result, or you can always [get current card verification status by API request](#card-check-info).
+
+## Card verification statuses {#card-check-statuses}
+
+| Status      | Description                                                          |
+|-------------|----------------------------------------------------------------------|
+| INIT        | Reference URL to card verification form awaiting for customer action |
+| SUCCESS     | Card verification is successful                                      |
+| ERROR       | Card erification error                                               |
+| WAITING_3DS | Awaiting 3-D Secure authentication completion                        |

@@ -22,6 +22,8 @@
 
 <!-- Request body -->
 ~~~http
+Пример запроса на создание счета
+
 PUT /partner/payin/v1/sites/site-01/bills/893794793973 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -48,12 +50,14 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос создания счета
+
 {
     "siteId": "23044",
     "billId": "893794793973",
     "invoiceUid": "d875277b-6f0f-445d-8a83-f62c7c07be77",
     "amount": {
-      "value": 100.00,
+      "value": "100.00",
       "currency": "RUB"
     },
     "status": {
@@ -72,6 +76,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос создания счета
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -102,6 +108,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса статуса счета
+
 GET /partner/payin/v1/sites/site-01/bills/d35cf63943e54f50badc75f49a5aac7c/details HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -111,10 +119,12 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос статуса счета
+
 {
   "billId": "d35cf63943e54f50badc75f49a5aac7c",
   "amount": {
-    "value": 100.00,
+    "value": "100.00",
     "currency": "RUB"
   },
   "status": {
@@ -134,15 +144,15 @@ Host: api.qiwi.com
         "createdDateTime": "2022-03-05T11:23:22+03:00",
         "amount": {
             "currency": "RUB",
-            "value": 100.00
+            "value": "100.00"
         },
         "capturedAmount": {
             "currency": "RUB",
-            "value": 100.00
+            "value": "100.00"
         },
         "refundedAmount": {
             "currency": "RUB",
-            "value": 0.00
+            "value": "0.00"
         },
         "paymentMethod": {
             "type": "CARD",
@@ -175,15 +185,15 @@ Host: api.qiwi.com
         "createdDateTime": "2022-03-05T11:26:21+03:00",
         "amount": {
             "currency": "RUB",
-            "value": 100.00
+            "value": "100.00"
         },
         "capturedAmount": {
             "currency": "RUB",
-            "value": 100.00
+            "value": "100.00"
         },
         "refundedAmount": {
             "currency": "RUB",
-            "value": 0.00
+            "value": "0.00"
         },
         "paymentMethod": {
             "type": "CARD",
@@ -209,11 +219,14 @@ Host: api.qiwi.com
             "customer_phone": "0"
         }
     }
-]
+  ]
+}
 ~~~
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос статуса счета
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -244,6 +257,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса на получение списка платежей по счету
+
 GET /partner/payin/v1/sites/site-01/bills/893794793973 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -253,6 +268,8 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос списка платежей по счету
+
 [
   {
     "paymentId": "824c7744-1650-4836-abaa-842ca7ca8a74",
@@ -317,6 +334,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос получения списка платежей по счету
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -347,6 +366,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса на платеж
+
 PUT /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -398,20 +419,22 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос платежа
+
 {
   "paymentId" : "223E",
-  "createdDatetime" : "2018-11-01T17:10:31.284+03:00",
+  "createdDateTime" : "2018-11-01T17:10:31.284+03:00",
   "amount" : {
     "currency" : "RUB",
-    "value" : 200.00
+    "value" : "200.00"
   },
   "capturedAmount" : {
     "currency" : "RUB",
-    "value" : 0.00
+    "value" : "0.00"
   },
   "refundedAmount" : {
     "currency" : "RUB",
-    "value" : 0.00
+    "value" : "0.00"
   },
   "paymentMethod" : {
     "type" : "CARD",
@@ -445,6 +468,8 @@ Host: api.qiwi.com
 
 <!-- 4xx-->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос платежа
+
 {
   "serviceName":"payin-core",
   "errorCode":"validation.error",
@@ -462,6 +487,8 @@ Host: api.qiwi.com
 
 <!-- 5xx -->
 ~~~json
+Пример ответа с ошибкой 5xx на запрос платежа
+
 {
   "serviceName":"payin-core",
   "errorCode":"internal.error",
@@ -492,6 +519,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса статуса платежа
+
 GET /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -501,20 +530,22 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос статуса платежа
+
 {
   "paymentId" : "223E",
-  "createdDatetime" : "2018-11-01T17:10:31.284+03:00",
+  "createdDateTime" : "2018-11-01T17:10:31.284+03:00",
   "amount" : {
     "currency" : "RUB",
-    "value" : 200.00
+    "value" : "200.00"
   },
   "capturedAmount" : {
     "currency" : "RUB",
-    "value" : 0.00
+    "value" : "0.00"
   },
   "refundedAmount" : {
     "currency" : "RUB",
-    "value" : 0.00
+    "value" : "0.00"
   },
   "paymentMethod" : {
     "type" : "CARD",
@@ -541,6 +572,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос статуса платежа
+
 {
   "serviceName":"payin-core",
   "errorCode":"validation.error",
@@ -558,6 +591,8 @@ Host: api.qiwi.com
 
 <!-- 5xx -->
 ~~~json
+Пример ответа с ошибкой 5xx на запрос статуса платежа
+
 {
   "serviceName":"payin-core",
   "errorCode":"internal.error",
@@ -568,7 +603,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-## Завершение аутентификации клиента {#payment_complete}
+## Завершение аутентификации покупателя {#payment_complete}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__complete_post_api">
   <script>
@@ -588,6 +623,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса завершения аутентификации покупателя
+
 POST /partner/payin/v1/sites/test-01/payments/1811/complete HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -603,20 +640,22 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос завершения аутентификации покупателя
+
 {
   "paymentId" : "223E",
-  "createdDatetime" : "2018-11-01T17:10:31.284+03:00",
+  "createdDateTime" : "2018-11-01T17:10:31.284+03:00",
   "amount" : {
     "currency" : "RUB",
-    "value" : 200.00
+    "value" : "200.00"
   },
   "capturedAmount" : {
     "currency" : "RUB",
-    "value" : 0.00
+    "value" : "0.00"
   },
   "refundedAmount" : {
     "currency" : "RUB",
-    "value" : 0.00
+    "value" : "0.00"
   },
   "paymentMethod" : {
     "type" : "CARD",
@@ -641,6 +680,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос завершения аутентификации покупателя
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -653,6 +694,8 @@ Host: api.qiwi.com
 
 <!-- 5xx -->
 ~~~json
+Пример ответа с ошибкой 5xx на запрос завершения аутентификации покупателя
+
 {
   "serviceName":"payin-core",
   "errorCode":"internal.error",
@@ -663,53 +706,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-<!--
-~~~shell
-user@server:~$ curl -X POST "https://api.qiwi.com/partner/pay/v1/sites/112/payments/332121DS/complete"
-  --header "Accept: application/json"
-  --header "Content-Type: application/json"
-  --header "Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9"
-  -d '{
-  "threeDS": {
-    "pares": "eJxVUmtvgjAUuG79oClYe51uDcsi2B...."
-  }
-}'
-~~~ -->
-
-<!-- ~~~http
-POST /payin-core/v1/sites/112/payments/332121DS/complete HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: edge.qiwi.com
-
-{
-  "threeDS": {
-    "pares": "eJzVWFevo9iyfu9fMZrzaM0QjWHk3tIiGptgooE3cgabYMKvv3jvTurTc3XOfbkaJMuL...."
-  }
-}
-~~~
--->
-
 ## Подтверждение платежа {#capture}
-
-<!--
-~~~shell
-user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/payments/332121DS/captures/C332121DS"
-  --header "Accept: application/json"
-  --header "Content-Type: application/json"
-  --header "Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9"
-  -d '{
-{
-  "callbackUrl": "https://example.com/callbacks/capture",
-  "comment": "Example capture",
-  "amount": {
-    "currency": "RUB",
-    "value": 200
-  }
-}'
-~~~
--->
 
 <div id="payin_v1_sites__siteId__payments__paymentId__captures__captureId__put_api">
   <script>
@@ -729,6 +726,8 @@ user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/paymen
 
 <!-- Request body -->
 ~~~http
+Пример запроса подтверждения платежа
+
 PUT /partner/payin/v1/sites/test-01/payments/1811/captures/bxwd8096 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -743,12 +742,14 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос подтверждения платежа
+
 {
   "captureId": "bxwd8096",
-  "createdDatetime": "2018-11-20T16:29:58.96+03:00",
+  "createdDateTime": "2018-11-20T16:29:58.96+03:00",
   "amount": {
     "currency": "RUB",
-    "value": 6.77
+    "value": "6.77"
   },
   "status": {
     "value": "COMPLETED",
@@ -759,6 +760,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос подтверждения платежа
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -771,6 +774,8 @@ Host: api.qiwi.com
 
 <!-- 5xx -->
 ~~~json
+Пример ответа с ошибкой 5xx на запрос подтверждения платежа
+
 {
   "serviceName":"payin-core",
   "errorCode":"internal.error",
@@ -801,6 +806,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса статуса подтверждения
+
 GET /partner/payin/v1/sites/test-01/payments/1811/captures/bxwd8096 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -810,12 +817,14 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос статуса подтверждения
+
 {
   "captureId": "bxwd8096",
-  "createdDatetime": "2018-11-20T16:29:58.96+03:00",
+  "createdDateTime": "2018-11-20T16:29:58.96+03:00",
   "amount": {
     "currency": "RUB",
-    "value": 6.77
+    "value": "6.77"
   },
   "status": {
     "value": "COMPLETED",
@@ -826,6 +835,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос статуса подтверждения
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -838,6 +849,8 @@ Host: api.qiwi.com
 
 <!-- 5xx -->
 ~~~json
+Пример ответа с ошибкой 5xx на запрос статуса подтверждения
+
 {
   "serviceName":"payin-core",
   "errorCode":"internal.error",
@@ -847,139 +860,6 @@ Host: api.qiwi.com
   "dateTime":"2020-02-12T21:28:01.813+03:00"
 }
 ~~~
-
-<!--
-### Статус подтверждений
-
-<div id="v1_sites__siteUid__payments__paymentId__captures_get">
-  <script>
-    $(document).ready(function(){
-        $.getJSON('../../rui_jsons/payin-captures-get.json', function( data ) {
-          window.requestUI(
-              data,
-              "v1/sites/{siteUid}/payments/{paymentId}/captures",
-              "get",
-              [200, 400, 401, 403, 404, 500, 501, 503]
-              )
-          })
-    });
-  </script>
-</div>
--->
-
-<!-- 200 -->
-<!--
-~~~json
-{
-  "captureId": "bxwd8096",
-  "createdDatetime": "2018-11-20T16:29:58.96+03:00",
-  "amount": {
-    "currency": "RUB",
-    "value": "6.77"
-  },
-  "status": {
-    "value": "COMPLETED",
-    "changedDateTime": "2018-11-20T16:29:58.963+03:00"
-  }
-}
-~~~
--->
-<!-- 400 -->
-<!--
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83",
-  "cause" : {
-    "amount" : [ "Invalid format. Amount value must be greater then zero" ]
-  }
-}
-~~~
--->
-<!-- 401 -->
-<!--
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "payin.resource.not.found",
-  "userMessage" : "Resource not found",
-  "description" : "Resource not found",
-  "traceId" : "c3564ba25e221fe3",
-  "dateTime" : "2018-11-13T16:30:52.464+03:00"
-}
-~~~
--->
-<!-- 403 -->
-<!--
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "payin.resource.not.found",
-  "userMessage" : "Resource not found",
-  "description" : "Resource not found",
-  "traceId" : "c3564ba25e221fe3",
-  "dateTime" : "2018-11-13T16:30:52.464+03:00"
-}
-~~~
--->
-<!-- 404 -->
-<!--
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "payin.resource.not.found",
-  "userMessage" : "Resource not found",
-  "description" : "Resource not found",
-  "traceId" : "c3564ba25e221fe3",
-  "dateTime" : "2018-11-13T16:30:52.464+03:00"
-}
-~~~
--->
-
-<!-- 500 -->
-<!--
-~~~json
-{
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
-
-}
-~~~
--->
-<!-- 501 -->
-<!--
-~~~json
-{
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
- }
-~~~
--->
-<!-- 503 -->
-<!--
-~~~json
-{
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
- }
-~~~
--->
 
 ## Получение QR-кода СБП {#qr-code-sbp}
 
@@ -1003,6 +883,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса получения QR-кода СБП
+
 PUT /partner/payin/v1/sites/test-01/sbp/qrCodes/Test12 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -1030,6 +912,8 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос получения QR-кода СБП
+
 {
   "qrCodeUid": "Test12",
   "amount": {
@@ -1054,6 +938,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос получения QR-кода СБП
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -1066,6 +952,8 @@ Host: api.qiwi.com
 
 <!-- 5xx -->
 ~~~json
+Пример ответа с ошибкой 5xx на запрос получения QR-кода СБП
+
 {
   "serviceName":"payin-core",
   "errorCode":"internal.error",
@@ -1096,6 +984,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса получения QR-кода СБП
+
 POST /partner/payin/v1/sites/test-01/sbp/qrCodes HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -1124,6 +1014,8 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос получения QR-кода СБП
+
 {
   "qrCodeUid": "Test12",
   "amount": {
@@ -1148,6 +1040,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос получения QR-кода СБП
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -1160,6 +1054,8 @@ Host: api.qiwi.com
 
 <!-- 5xx -->
 ~~~json
+Пример ответа с ошибкой 5xx на запрос получения QR-кода СБП
+
 {
   "serviceName":"payin-core",
   "errorCode":"internal.error",
@@ -1190,6 +1086,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса статуса QR-кода СБП
+
 GET /partner/payin/v1/sites/test-01/sbp/qrCodes/Test HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -1199,6 +1097,8 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос статуса QR-кода СБП
+
 {
   "qrCodeUid": "Test",
   "amount": {
@@ -1221,6 +1121,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос статуса QR-кода СБП
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -1233,6 +1135,8 @@ Host: api.qiwi.com
 
 <!-- 5xx -->
 ~~~json
+Пример ответа с ошибкой 5xx на запрос статуса QR-кода СБП
+
 {
   "serviceName":"payin-core",
   "errorCode":"internal.error",
@@ -1244,10 +1148,6 @@ Host: api.qiwi.com
 ~~~
 
 ## Платеж токеном СБП {#payment-sbp-token}
-
-<aside class="warning">
-Метод находится в разработке.
-</aside>
 
 <div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__payments__paymentId__put_api">
   <script>
@@ -1267,6 +1167,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса платежа токеном СБП
+
 PUT /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8/payments/11212334csd HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -1281,10 +1183,12 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос платежа токеном СБП
+
 {
   "qrCodeUid": "adghj17d1g8",
   "amount": {
-    "value": 100.00,
+    "value": "100.00",
     "currency": "RUB"
   },
   "paymentPurpose": "Flower for my girlfriend",
@@ -1310,6 +1214,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос платежа токеном СБП
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -1322,6 +1228,8 @@ Host: api.qiwi.com
 
 <!-- 5xx -->
 ~~~json
+Пример ответа с ошибкой 5xx на запрос платежа токеном СБП
+
 {
   "serviceName":"payin-core",
   "errorCode":"internal.error",
@@ -1352,6 +1260,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса возврата по платежу
+
 PUT /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -1368,12 +1278,14 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос возврата по платежу
+
 {
   "refundId": "tcwv3132",
-  "createdDatetime": "2018-11-20T16:32:55.547+03:00",
+  "createdDateTime": "2018-11-20T16:32:55.547+03:00",
   "amount": {
     "currency": "RUB",
-    "value": 2.34
+    "value": "2.34"
   },
   "status": {
     "value": "COMPLETED",
@@ -1387,6 +1299,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос возврата
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -1399,6 +1313,8 @@ Host: api.qiwi.com
 
 <!-- 5xx -->
 ~~~json
+Пример ответа с ошибкой 5xx на запрос возврата
+
 {
   "serviceName":"payin-core",
   "errorCode":"internal.error",
@@ -1429,6 +1345,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса статуса возврата
+
 GET /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -1438,12 +1356,14 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос статуса возврата по платежу
+
 {
   "refundId": "tcwv3132",
-  "createdDatetime": "2018-11-20T16:32:55.547+03:00",
+  "createdDateTime": "2018-11-20T16:32:55.547+03:00",
   "amount": {
     "currency": "RUB",
-    "value": 2.34
+    "value": "2.34"
   },
   "status": {
     "value": "COMPLETED",
@@ -1457,6 +1377,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос статуса возврата
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -1487,6 +1409,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса статуса всех возвратов по платежу
+
 GET /partner/payin/v1/sites/test-01/payments/1811/refunds HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -1496,13 +1420,15 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос статуса всех возвратов по платежу
+
 [
  {
   "refundId": "tcwv3132",
-  "createdDatetime": "2018-11-20T16:32:55.547+03:00",
+  "createdDateTime": "2018-11-20T16:32:55.547+03:00",
   "amount": {
     "currency": "RUB",
-    "value": 2.34
+    "value": "2.34"
   },
   "status": {
     "value": "COMPLETED",
@@ -1517,6 +1443,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос статуса всех возвратов по платежу
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -1529,6 +1457,8 @@ Host: api.qiwi.com
 
 <!-- 5xx -->
 ~~~json
+Пример ответа с ошибкой 5xx на запрос статуса всех возвратов по платежу
+
 {
   "serviceName":"payin-core",
   "errorCode":"internal.error",
@@ -1559,6 +1489,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса отмены возврата по платежу
+
 POST /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132/decline HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -1568,12 +1500,14 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос отмены возврата по платежу
+
 {
   "refundId": "tcwv3132",
-  "createdDatetime": "2018-11-20T16:32:55.547+03:00",
+  "createdDateTime": "2018-11-20T16:32:55.547+03:00",
   "amount": {
     "currency": "RUB",
-    "value": 2.34
+    "value": "2.34"
   },
   "status": {
     "value": "COMPLETED",
@@ -1587,6 +1521,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос отмены возврата по платежу
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -1617,6 +1553,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса проверки карты
+
 GET /partner/payin/v1/sites/test-01/validation/card/requests/acd7bf20-22e2-4cbf-a218-38d90e9f29b9 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -1638,6 +1576,8 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос проверки карты
+
 {
     "requestUid": "acd7bf20-22e2-4cbf-a218-38d90e9f29b9",
     "status": "SUCCESS",
@@ -1662,6 +1602,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос проверки карты
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -1674,6 +1616,8 @@ Host: api.qiwi.com
 
 <!-- 5xx -->
 ~~~json
+Пример ответа с ошибкой 5xx на запрос проверки карты
+
 {
   "serviceName":"payin-core",
   "errorCode":"internal.error",
@@ -1704,6 +1648,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса статуса проверки карты
+
 GET /partner/payin/v1/sites/test-01/validation/card/requests/acd7bf20-22e2-4cbf-a218-38d90e9f29b9 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -1713,6 +1659,8 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос статуса проверки карты
+
 {
     "requestUid": "acd7bf20-22e2-4cbf-a218-38d90e9f29b9",
     "status": "SUCCESS",
@@ -1737,6 +1685,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос статуса проверки карты
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -1749,6 +1699,7 @@ Host: api.qiwi.com
 
 <!-- 5xx -->
 ~~~json
+Пример ответа с ошибкой 5xx на запрос статуса проверки карты
 {
   "serviceName":"payin-core",
   "errorCode":"internal.error",
@@ -1779,6 +1730,8 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
+Пример запроса завершения аутентификации при проверке карты
+
 POST /partner/payin/v1/sites/test-01/validation/card/requests/acd7bf20-22e2-4cbf-a218-38d90e9f29b9/complete HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
@@ -1792,6 +1745,8 @@ Host: api.qiwi.com
 
 <!-- 200 -->
 ~~~json
+Пример успешного ответа на запрос завершения аутентификации при проверке карты
+
 {
     "requestUid": "acd7bf20-22e2-4cbf-a218-38d90e9f29b9",
     "status": "SUCCESS",
@@ -1816,6 +1771,8 @@ Host: api.qiwi.com
 
 <!-- 4xx -->
 ~~~json
+Пример ответа с ошибкой 4xx на запрос завершения аутентификации при проверке карты
+
 {
   "serviceName" : "payin-core",
   "errorCode" : "validation.error",
@@ -1828,6 +1785,200 @@ Host: api.qiwi.com
 
 <!-- 5xx -->
 ~~~json
+Пример ответа с ошибкой 5xx на запрос завершения аутентификации при проверке карты
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Выплата {#payout}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__payouts__payoutId__put_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-payout-put.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/payments/{paymentId}/payouts/{payoutId}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример запроса на выплату
+
+PUT /partner/payin/v1/sites/test-01/payments/1811/payouts/bxwd8096 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+X-Digital-Sign: BXXBmVDBZwwRW....XjU1ZSIfHCGw==
+
+{
+  "amount" : {
+    "value" : "40.00",
+    "currency" : "RUB"
+  },
+  "receiverData" : {
+    "type" : "CARD",
+    "pan" : "86003300000000000",
+    "receiverFirstName" : "Ivan",
+    "receiverLastName" : "Ivanov"
+  },
+  "comment" : "some comment for payout operation",
+  "callbackUrl" : "http://test.com/"
+}
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос выплаты
+
+{
+  "createdDateTime": "2022-12-21T16:04:29+03:00",
+  "status": {
+    "value": "COMPLETED",
+    "changedDateTime": "2022-12-21T16:14:12+03:00"
+  },
+  "amount": {
+    "currency": "RUB",
+    "value": "40.00"
+  },
+  "receiverData": {
+    "type": "CARD",
+    "maskedPan": "860033*******0000",
+    "receiverFirstName" : "Ivan",
+    "receiverLastName" : "Ivanov"
+  },
+  "comment": "some comment for payout operation",
+  "callbackUrl" : "http://test.com/",
+  "flags": [
+    "TEST"
+  ]
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос выплаты
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "userMessage" : "Validation error",
+  "description" : "Validation error",
+  "traceId" : "4e8fc84f4706e422",
+  "dateTime" : "2022-12-22T10:17:36.887215+03:00",
+  "cause" : {
+    "amount" : [ "Incorrect payout amount" ]
+  }
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос выплаты
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Статус выплаты {#payout-status}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__payouts__payoutId__get_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-payout-get.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/payments/{paymentId}/payouts/{payoutId}",
+            "get",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример запроса статуса выплаты
+
+GET /partner/payin/v1/sites/test-01/payments/1811/payouts/bxwd8096 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос статуса выплаты
+
+{
+  "createdDateTime": "2022-12-21T16:04:29+03:00",
+  "status": {
+    "value": "COMPLETED",
+    "changedDateTime": "2022-12-21T16:14:12+03:00"
+  },
+  "amount": {
+    "currency": "RUB",
+    "value": "40.00"
+  },
+  "receiverData": {
+    "type": "CARD",
+    "maskedPan": "860033*******0000",
+    "receiverFirstName" : "Ivan",
+    "receiverLastName" : "Ivanov"
+  },
+  "comment": "some comment for payout operation",
+  "callbackUrl" : "http://test.com/",
+  "flags": [
+    "TEST"
+  ]
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос статуса выплаты
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "userMessage" : "Validation error",
+  "description" : "Validation error",
+  "traceId" : "4e8fc84f4706e422",
+  "dateTime" : "2022-12-22T10:17:36.887215+03:00",
+  "cause" : {
+    "amount" : [ "Incorrect payout amount" ]
+  }
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос статуса выплаты
+
 {
   "serviceName":"payin-core",
   "errorCode":"internal.error",

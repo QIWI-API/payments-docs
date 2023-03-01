@@ -27,7 +27,7 @@ activate qb
 qb->>store:Operation status, 3DS data or<br/>QR code for Faster Payment System
 rect rgb(255, 238, 223)
 Note over customer, ips:3-D Secure
-store->>customer:Redirecting customer to acsUrl or to the bank app
+store->>customer:Redirecting customer to acsUrl<br/>or to the bank app (Fast Payments System)
 activate ips
 ips->>customer:Customer authentication:<br/>3DS — cards,<br/>Faster Payment System — confirming the operation in the card issuer app
 customer->>ips:Authentication
@@ -130,7 +130,7 @@ For the two-step payment, the [reimbursement](#reimburse) is formed only after t
 By default, when holding funds, the service expects <a href="#merchant-capture">confirmation of the payment</a> within 72 hours. At the end of the term, the payment is self-confirmed. To increase or reduce the waiting period, or to set up a payment auto-reversal, contact <a href="mailto:payin@qiwi.com">QIWI Support</a>. The waiting period may not last more than 5 days.
 </aside>
 
-For payment without the customer's authentication (one-step payment), include in the API request [Invoice](#invoice_put) the `"flags":["SALE"]` parameter. If you do not pass this parameter, the unconditional holding of funds for the payment will be made.
+For payment without the customer's authentication (one-step payment), include the `"flags":["SALE"]` parameter in the API request [Invoice](#invoice_put). If you do not pass this parameter, the funds holding for the payment is made.
 
 ### Awaiting the customer authentication (3-D Secure) {#merchant-threeds}
 
@@ -199,12 +199,12 @@ Host: api.qiwi.com
 }
 ~~~
 
-If bank requires 3DS authentication of the customer, proceed with additional authentication from the issuer. In this case, the payment request adds `requirements.threeDS` JSON-object with fields:
+If bank requires 3-D Secure authentication of the customer, the payment response contains the `requirements.threeDS` JSON-object with fields:
 
 - `acsUrl` — 3-D Secure authentication server URL to redirect to the issuer's confirmation page;
 - `pareq` — an encrypted 3-D Secure authentication request.
 
-To get the `PaReS` result of authentication, make a POST query to the 3-D Secure authentication server URL with parameters:
+To proceed with additional authentication from the issuer, send a POST form to the 3-D Secure authentication server URL with parameters:
 
 - `TermUrl` — customer redirection URL after successful 3-D Secure authentication;
 - `MD` — a unique transaction identifier;
@@ -331,13 +331,13 @@ Customer won't have to enter its card data and proceed with 3-D Secure authentic
 
 ## Faster Payments System {#merchant-form-sbp}
 
-**Payment protocol** supports charging funds from the customer by [Faster Payments System](https://sbp.nspk.ru/) (SBP). With SBP, payment can be made to commercial organizations, including QR coded ones.
+**Payment protocol** supports charging funds from the customer by [Faster Payments System](https://sbp.nspk.ru/) (FPS). With FPS, payment can be made to commercial organizations, including QR coded ones.
 
-By default, SBP payment method is turned off. To use this method, contact your manager in QIWI Support.
+By default, FPS payment method is turned off. To use this method, contact your manager in QIWI Support.
 
 ### Receiving QR code {#qr-sbp}
 
-> Example of request for SBP payment
+> Example of request for FPS payment
 
 ~~~json
 {
@@ -360,7 +360,6 @@ By default, SBP payment method is turned off. To use this method, contact your m
 ~~~
 
 > Example of response with QR code
-
 
 ~~~json
 {
@@ -403,13 +402,13 @@ In the response, the JSON object `qrCode` contains the data of the QR code:
 * `image.content` — base64-encoded QR code. After decryption, you get an image to show to the customer.
 * `payload` — URL-based QR for customer redirection to its bank app.
 
-### SBP payment status {#sbp-status}
+### FPS payment status {#sbp-status}
 
 When payment status becomes final, the [notification](#payment-callback) will be sent with the corresponding QR code API request identifier in `qrCodeUid` field. Payment status can be determined with `paymentId` identifier from the same notification by the [API request](#payment_status).
 
 ### QR code status {#qr-code-status}
 
-> Example of response for SBP QR code status request
+> Example of response for FPS QR code status request
 
 ~~~json
 {
@@ -433,6 +432,10 @@ When payment status becomes final, the [notification](#payment-callback) will be
 ~~~
 
 To get QR code information you can use the [Faster Payment System QR Code Status](#qr-code-sbp-get) API request. Response contains QR code details including its current status so you can check if it is still a valid one.
+
+### Testing operations {#test-fps}
+
+See information in [this section](#test_data_sbp).
 
 ## Payment from mobile phone account {#merchant-form-phone-account}
 

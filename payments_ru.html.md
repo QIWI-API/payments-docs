@@ -25,10 +25,12 @@ includes:
   - payments/splits_ru
   - payments/payment-token_ru
   - payments/card-check_ru
+  - payments/safe-deal_ru
   - payments/reports_ru
   - payments/reimburse_ru
   - payments/statuses_ru
   - payments/api-methods_ru
+  - payments/models_ru
   - payments/54fz-data_ru
 
 search: true
@@ -48,7 +50,7 @@ search: true
 
 # Обзор протокола {#get-started}
 
-###### Последнее обновление: 06-12-2022 | [Версия 1.17](/ru/payments-release-notes/index.html) | [Редактировать на GitHub](https://github.com/QIWI-API/payments-docs/)
+###### Последнее обновление: 30-01-2023 | [Версия 1.20](/ru/payments-release-notes/index.html) | [Редактировать на GitHub](https://github.com/QIWI-API/payments-docs/)
 
 Протокол приема платежей предоставляет быстрые и безопасные решения для приема и отправки платежей в интернете. Протокол дает вашим покупателям возможность использовать разнообразные методы платежей, включая:
 

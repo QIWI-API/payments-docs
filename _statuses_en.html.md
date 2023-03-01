@@ -32,27 +32,41 @@ REFUND | Operation of the refund. There can be field `flag: [ "REVERSAL" ]` in t
 
 Operation status reflects its current state.
 
+### API responses {#api-statuses}
+
 API returns synchronous status of the operation in the field `status.value` of the response. 
 
 Status in notifications is in the field `{operation}.status.value`.
 
 In the following table all possible statuses and corresponding [operation types](#operation-types), where each status is used.
 
-Operation status | Operation type | Status description | Where it is returned
----|----|-----|------
-WAITING | PAYMENT | Awaiting for 3DS authentication| API responses
-DECLINED | PAYMENT | Request for authorization is rejected | Notifications, API responses
-DECLINE | REFUND | Request for refund is rejected| Notifications, API responses
-DECLINE | CAPTURE | Request for payment confirmation is rejected| Notifications, API responses
-DECLINED | CAPTURE | Request for payment confirmation is rejected| [API response to the status request](#capture_status)
-SUCCESS | PAYMENT | Request for authorization is successfully processed| Notifications
-COMPLETED | PAYMENT |Request for authorization is successfully processed|API responses
-SUCCESS | REFUND | Request for refund is successfully processed|Notifications
-COMPLETED | REFUND | Request for refund is successfully processed|API responses
-SUCCESS | CAPTURE | Request for payment confirmation is successfully processed|Notifications
-COMPLETED | CAPTURE | Request for payment confirmation is successfully processed|API responses
+ Operation status |Operation type | Status description
+------------------|---------------|----------------------------------------------------------------------------------------------------------------
+ PAYMENT          |WAITING        | Awaiting for 3DS authentication
+ PAYMENT          |DECLINED       | Request for authorization is rejected
+ REFUND           |DECLINE        | Request for refund is rejected
+ CAPTURE          |DECLINE        | Request for payment confirmation is rejected
+ CAPTURE          |DECLINED       | Request for payment confirmation is rejected. Returned in [API response to the status request](#capture_status)
+ PAYMENT          |COMPLETED      | Request for authorization is successfully processed
+ REFUND           |COMPLETED      | Request for refund is successfully processed
+ CAPTURE          |COMPLETED      | Request for payment confirmation is successfully processed
 
-<aside class="notice">For invoices only one status is used: <code>CREATED</code>.</aside>
+<aside class="notice">For invoice operations only one status is used: <code>CREATED</code>.</aside>
+
+### Notifications {#notification-statuses}
+
+Status in notifications is in the field `{operation}.status.value`.
+
+In the following table all possible statuses and corresponding [operation types](#operation-types), where each status is used.
+
+ Operation type |Operation status | Status description
+----------------|-----------------|-----------------------------------------------------------
+ PAYMENT        |DECLINED         | Request for authorization is rejected
+ REFUND         |DECLINE          | Request for refund is rejected
+ CAPTURE        |DECLINE          | Request for payment confirmation is rejected
+ PAYMENT        |SUCCESS          | Request for authorization is successfully processed
+ REFUND         |SUCCESS          | Request for refund is successfully processed
+ CAPTURE        |SUCCESS          | Request for payment confirmation is successfully processed
 
 ## API errors reference {#reason-codes}
 
@@ -100,3 +114,4 @@ QW_CURRENCY_ERROR | Currency error in QIWI Wallet (currency not found, wallet wi
 QW_PAYMENT_ERROR | QIWI Wallet payment error
 QW_PROVIDER_ERROR | QIWI Wallet provider is blocked
 QW_SMS_CONFIRM_EXPIRED | SMS code is expired in QIWI Wallet
+TRY_AGAIN_LATER | Repeat the request later

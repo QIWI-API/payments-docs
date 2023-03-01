@@ -118,8 +118,9 @@ API always responds in JSON format.
 > Request with authorization
 
 ~~~shell
-curl -X PUT https://api.qiwi.com/partner/v1/sites/{site_id}/payments/{payment_id} \
-     --oauth2-bearer <API Key>
+curl -X PUT \
+  https://api.qiwi.com/partner/v1/sites/{site_id}/payments/{payment_id} \
+  --oauth2-bearer <API Key>
 ~~~
 
 > Authorization header
@@ -140,9 +141,9 @@ For testing purposes, the same [protocol URLs](api-format) are used.
 
 **Test mode is not supported for QIWI Wallet balance payments.**
 
-When integration on your side is completed, we turn your ID to production mode. In the production mode cards are debited.
+When integration on your side is completed, we turn your ID to production mode. In the production mode, real debits of funds from cards are performed.
 
-**You don't need to re-release the API access key when you go into production mode**.
+**You don't need to re-release the API access key when you go into the production mode**.
 
 If necessary, change the permanent URL for notifications from a test notification (such as `https://your-shop-test.ru/callbacks`) to a production one (such as `https://your-shop-prod.ru/callbacks`) in your [Account Profile](https://kassa.qiwi.com/service/core/merchants?).
 
@@ -167,18 +168,29 @@ CVV in testing mode may be arbitrary (any 3 digits).
 
 To test various payment methods and responses, use different expiry dates:
 
-* If month of expiry date is `02`, then operation is treated as unsuccessful.
-* If month of expiry date is `03`, then operation will process successfully with 3 seconds timeout.
-* If month of expiry date is `04`, then operation will process unsuccessfully with 3 seconds timeout.
-* In all other cases, operation is treated as successful.
+Month of card expiry date | Result
+----|------
+`02`| Operation is treated as unsuccessful
+`03`| Operation is processed successfully with 3 seconds timeout
+`04`| Operation is processed unsuccessfully with 3 seconds timeout
+All other values | Operation is treated as successful
 
-Test environment has restrictions on the total amount and number of operations. By default, maximum amount of a test transaction is 10 rubles. Maximum number of test transactions is 100 rubles per day (MSK time zone). Only test transactions within allowed amount are taken into account.
+Test environment has restrictions on the amount and number of operations:
 
-To process 3DS operation, use `unknown name` as card holder name. 3DS in test mode may be properly tested on real card number only.
+* Maximum allowed amount of a single transaction is 10 rubles.
+* Maximum number of transactions is 100 per day. All transactions within the current day (by Moscow timezone) with each transaction' amount not more than 10 rubles are taken into account.
+
+To process 3DS operation, use `unknown name` as card holder name. 3-D Secure in test mode may be properly tested on real card number only.
 
 ## Payment through Faster Payments System in test mode {#test_data_sbp}
 
-To test various payment methods and responses, use different payment amounts (`amount` field):
+In test mode, you can use only [QR-code issue](#qr-code-sbp) and its [status request](#qr-code-sbp-get). To test various responses, use different payment amounts (`amount.value` field):
 
-* `200` — operation is successful with some delay. On the first [payment status request](#payment_status) you will receive `"WAITING"` payment status, on the second request you will get `"SUCCESS"` payment status.
-* For any other amounts the payment would be unsuccessful.
+* `200` — QR-code is successfully created.
+* For any other amounts the payment would be unsuccessful with `DECLINED` status.
+
+When requesting [FPS payment status](#qr-code-sbp-get) in the test mode the following statuses are returned:
+
+* `CREATED` — Payment created.
+* `DECLINED` — Payment declined.
+* `EXPIRED` — Payment QR-code lifetime is expired.

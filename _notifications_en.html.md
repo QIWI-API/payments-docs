@@ -221,7 +221,7 @@ currency | Operation currency (Code: Alpha-3 ISO 4217) | String(3)|Always
 ----|------|-------|--------
 status | Operation status data | Object|Always
 ----|------|-------|--------
-value |[Operation status value](#operation-statuses) | String|Always
+value |[Operation status value](#notification-statuses) | String|Always
 changedDatetime|Date of operation status update| URL-encoded string<br>`YYYY-MM-DDThh:mm:ssZ`|Always
 reasonCode| [Rejection reason code](#reason-codes)| String(200)|In case of operation rejection
 reasonMessage| Rejection reason description| String(200)|In case of operation rejection
@@ -273,6 +273,7 @@ tokenData | [Payment token data](#token_issue) | Object|When payment token issue
 paymentToken | Card payment token | String|When payment token issue was requested
 expiredDate | Payment token expiration date. ISO-8601 Date format:<br/> `YYYY-MM-DDThh:mm:ss±hh:mm` | String|When payment token issue was requested
 ----|------|-------|--------
+chequeData | Fiscal receipt description |[ChequeData](#receipt-data) | When [data for a fiscal receipt](#cheque) were sent in the operation payload
 paymentSplits | Split payments description | Array(Objects) | For [split payments](#payments_split)
 -----|------|------|-----
 type | Data type. Always `MERCHANT_DETAILS` | String|For [split payments](#payments_split)
@@ -322,7 +323,7 @@ currency | Operation currency (Code: Alpha-3 ISO 4217) | String(3)
 billId| Corresponding invoice ID for the operation| String(200)
 status | Operation status data | Object
 ----|------|-------
-value |[Operation status value](#operation-statuses) | String
+value |[Operation status value](#notification-statuses) | String
 changedDatetime|Date of operation status update| URL-encoded string<br>`YYYY-MM-DDThh:mm:ssZ`
 reasonCode| [Rejection reason code](#reason-codes)| String(200)
 reasonMessage| Rejection reason description| String(200)
@@ -382,7 +383,7 @@ currency | Operation currency (Code: Alpha-3 ISO 4217) | String(3)|Always
 billId| Corresponding invoice ID for the operation| String(200)|Always
 status | Operation status data | Object|Always
 ----|------|-------|--------
-value |[Operation status value](#operation-statuses) | String|Always
+value |[Operation status value](#notification-statuses) | String|Always
 changedDatetime|Date of operation status update| URL-encoded string<br>`YYYY-MM-DDThh:mm:ssZ`|Always
 reasonCode| [Rejection reason code](#reason-codes)| String(200)|In case of operation rejection
 reasonMessage| Rejection reason description| String(200)|In case of operation rejection
@@ -412,6 +413,7 @@ cf4 | Extra field with some information to operation data | String(256)|Always
 cf5 | Extra field with some information to operation data | String(256)|Always
 ----|------|-------|--------
 flags| Additional API commands| Array of Strings. Possible elements — `SALE` / `REVERSAL`|Always
+chequeData | Fiscal receipt description |[ChequeData](#receipt-data) | When [data for a fiscal receipt](#cheque) were sent in the operation payload
 refundSplits | Refund of split payments description | Array(Objects) | For [refund split payments](#split-refund)
 -----|------|------|-----
 type | Data type. Always `MERCHANT_DETAILS` | String|For [refund split payments](#split-refund)
@@ -452,7 +454,7 @@ checkPaymentMethod | Card verification result | Object
 ----|------|-------
 checkOperationDate| System date of the operation | URL-encoded string<br>`YYYY-MM-DDThh:mm:ssZ`
 requestUid|Card verification [operation unique identifier](#how-to-check-card)|String(200)|PAYMENT
-status | Card verification status | String
+status | [Card verification status](#card-check-statuses) | String
 isValidCard |Logical flag means card is valid for purchases | Bool
 threeDsStatus|Information on customer authentication status. Possible values — `PASSED` (3-D Secure passed), `NOT_PASSED` (3-D Secure not passed), `WITHOUT` (3-D Secure not required)
 ----|------|-------

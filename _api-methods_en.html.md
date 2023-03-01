@@ -47,7 +47,7 @@
     "billId": "893794793973",
     "invoiceUid": "d875277b-6f0f-445d-8a83-f62c7c07be77",
     "amount": {
-      "value": 100.00,
+      "value": "100.00",
       "currency": "RUB"
     },
     "status": {
@@ -120,7 +120,7 @@ Host: api.qiwi.com
 {
   "billId": "d35cf63943e54f50badc75f49a5aac7c",
   "amount": {
-    "value": 100.00,
+    "value": "100.00",
     "currency": "RUB"
   },
   "status": {
@@ -140,15 +140,15 @@ Host: api.qiwi.com
         "createdDateTime": "2022-03-05T11:23:22+03:00",
         "amount": {
             "currency": "RUB",
-            "value": 100.00
+            "value": "100.00"
         },
         "capturedAmount": {
             "currency": "RUB",
-            "value": 100.00
+            "value": "100.00"
         },
         "refundedAmount": {
             "currency": "RUB",
-            "value": 0.00
+            "value": "0.00"
         },
         "paymentMethod": {
             "type": "CARD",
@@ -181,15 +181,15 @@ Host: api.qiwi.com
         "createdDateTime": "2022-03-05T11:26:21+03:00",
         "amount": {
             "currency": "RUB",
-            "value": 100.00
+            "value": "100.00"
         },
         "capturedAmount": {
             "currency": "RUB",
-            "value": 100.00
+            "value": "100.00"
         },
         "refundedAmount": {
             "currency": "RUB",
-            "value": 0.00
+            "value": "0.00"
         },
         "paymentMethod": {
             "type": "CARD",
@@ -414,71 +414,22 @@ Host: api.qiwi.com
 }
 ~~~
 
-<!--
-~~~shell
-  user@server:~$ curl "https://api.qiwi.com/partner/pay/v1/sites/112/payments/223E"
-    -X PUT --header "Accept: application/json"
-    --header "Authorization: Bearer ***"
-    --header "Content-type: application/json"
-    -d "{
-  "callbackUrl": "https://example.com/callbacks",
-  "comment": "Example payment",
-  "paymentId": "223E",
-  "billId": "string",
-  "amount": {
-    "currency": "RUB",
-    "value": 200
-  },
-  "paymentMethod" : {
-    "type" : "CARD",
-    "pan" : "4444443616621049",
-    "expiryDate" : "12/19",
-    "cvv2" : "123",
-    "holderName" : "CARDHOLDER NAME"
-  },
-  "customer": {
-    "account": "string",
-    "address": {
-      "city": "Moscow",
-      "country": "Russian Federation",
-      "details": "Severnoe chertanovo microdistrict 1a 1",
-      "region": "Moscow city"
-    },
-    "email": "customer@example.com",
-    "phone": "+79991234567"
-  },
-  "deviceData": {
-    "datetime": "2017-09-03T14:30:00+03:00",
-    "fingerprint": "TW96aWxsYS81LjAgKHBsYXRmb3JtOyBydjpnZWNrb3ZlcnNpb24p",
-    "ip": "127.0.0.1",
-    "screenResolution": "1280x1024",
-    "timeOnPage": 1440,
-    "userAgent": "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion"
-  },
-  "customFields": {},
-  "flags": [
-    "SAVE_CARD"
-  ]
-} "
-~~~
--->
-
 <!-- 200 -->
 ~~~json
 {
   "paymentId" : "223E",
-  "createdDatetime" : "2018-11-01T17:10:31.284+03:00",
+  "createdDateTime" : "2018-11-01T17:10:31.284+03:00",
   "amount" : {
     "currency" : "RUB",
-    "value" : 200.00
+    "value" : "200.00"
   },
   "capturedAmount" : {
     "currency" : "RUB",
-    "value" : 0.00
+    "value" : "0.00"
   },
   "refundedAmount" : {
     "currency" : "RUB",
-    "value" : 0.00
+    "value" : "0.00"
   },
   "paymentMethod" : {
     "type" : "CARD",
@@ -571,15 +522,15 @@ Host: api.qiwi.com
 {
   "amount" : {
     "currency" : "RUB",
-    "value" : 200.00
+    "value" : "200.00"
   },
   "capturedAmount" : {
     "currency" : "RUB",
-    "value" : 0.00
+    "value" : "0.00"
   },
   "refundedAmount" : {
     "currency" : "RUB",
-    "value" : 0.00
+    "value" : "0.00"
   },
   "paymentMethod" : {
     "type" : "CARD",
@@ -587,7 +538,7 @@ Host: api.qiwi.com
     "rrn": "124",
     "authCode": "182817",
   },
-  "createdDatetime" : "2018-11-01T17:10:31.284+03:00",
+  "createdDateTime" : "2018-11-01T17:10:31.284+03:00",
   "customer" : { },
   "deviceData" : { },
   "requirements" : {
@@ -671,18 +622,18 @@ Host: api.qiwi.com
 ~~~json
 {
   "paymentId" : "223E",
-  "createdDatetime" : "2018-11-01T17:10:31.284+03:00",
+  "createdDateTime" : "2018-11-01T17:10:31.284+03:00",
   "amount" : {
     "currency" : "RUB",
-    "value" : 200.00
+    "value" : "200.00"
   },
   "capturedAmount" : {
     "currency" : "RUB",
-    "value" : 0.00
+    "value" : "0.00"
   },
   "refundedAmount" : {
     "currency" : "RUB",
-    "value" : 0.00
+    "value" : "0.00"
   },
   "paymentMethod" : {
     "type" : "CARD",
@@ -729,53 +680,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-<!--
-~~~shell
-user@server:~$ curl -X POST "https://api.qiwi.com/partner/pay/v1/sites/112/payments/332121DS/complete"
-  --header "Accept: application/json"
-  --header "Content-Type: application/json"
-  --header "Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9"
-  -d '{
-  "threeDS": {
-    "pares": "eJxVUmtvgjAUuG79oClYe51uDcsi2B...."
-  }
-}'
-~~~ -->
-
-<!-- ~~~http
-POST /payin-core/v1/sites/112/payments/332121DS/complete HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: edge.qiwi.com
-
-{
-  "threeDS": {
-    "pares": "eJzVWFevo9iyfu9fMZrzaM0QjWHk3tIiGptgooE3cgabYMKvv3jvTurTc3XOfbkaJMuL...."
-  }
-}
-~~~
--->
-
 ## Payment confirmation {#capture}
-
-<!--
-~~~shell
-user@server:~$ curl -X PUT "https://api.qiwi.com/partner/pay/v1/sites/112/payments/332121DS/captures/C332121DS"
-  --header "Accept: application/json"
-  --header "Content-Type: application/json"
-  --header "Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9"
-  -d '{
-{
-  "callbackUrl": "https://example.com/callbacks/capture",
-  "comment": "Example capture",
-  "amount": {
-    "currency": "RUB",
-    "value": 200
-  }
-}'
-~~~
--->
 
 <div id="payin_v1_sites__siteId__payments__paymentId__captures__captureId__put_api">
   <script>
@@ -811,10 +716,10 @@ Host: api.qiwi.com
 ~~~json
 {
   "captureId": "bxwd8096",
-  "createdDatetime": "2018-11-20T16:29:58.96+03:00",
+  "createdDateTime": "2018-11-20T16:29:58.96+03:00",
   "amount": {
     "currency": "RUB",
-    "value": 6.77
+    "value": "6.77"
   },
   "status": {
     "value": "COMPLETED",
@@ -878,10 +783,10 @@ Host: api.qiwi.com
 ~~~json
 {
   "captureId": "bxwd8096",
-  "createdDatetime": "2018-11-20T16:29:58.96+03:00",
+  "createdDateTime": "2018-11-20T16:29:58.96+03:00",
   "amount": {
     "currency": "RUB",
-    "value": 6.77
+    "value": "6.77"
   },
   "status": {
     "value": "COMPLETED",
@@ -944,7 +849,7 @@ Host: api.qiwi.com
 
 {
   "amount": {
-    "value": 1.00,
+    "value": "1.00",
     "currency": "RUB"
   },
   "qrCode": {
@@ -1038,7 +943,7 @@ Host: api.qiwi.com
 {
   "qrCodeUid": "Test12",
   "amount": {
-    "value": 1.00,
+    "value": "1.00",
     "currency": "RUB"
   },
   "qrCode": {
@@ -1194,7 +1099,6 @@ Host: api.qiwi.com
   </script>
 </div>
 
-
 <!-- Request body -->
 ~~~http
 PUT /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132 HTTP/1.1
@@ -1211,16 +1115,14 @@ Host: api.qiwi.com
 }
 ~~~
 
-
-
 <!-- 200 -->
 ~~~json
 {
   "refundId": "tcwv3132",
-  "createdDatetime": "2018-11-20T16:32:55.547+03:00",
+  "createdDateTime": "2018-11-20T16:32:55.547+03:00",
   "amount": {
     "currency": "RUB",
-    "value": 2.34
+    "value": "2.34"
   },
   "status": {
     "value": "COMPLETED",
@@ -1256,80 +1158,6 @@ Host: api.qiwi.com
 }
 ~~~
 
-<!--
-## Refund for QIWI Wallet payment {#refund_qw}
-
-<div id="bill_v1_bills__billId__refunds__refundId__put_checkout">
-  <script>
-    $(document).ready(function(){
-      $.getJSON('../../eui_jsons/payin-checkout-refund-put.json', function( data ) {
-        window.requestUI(
-            data,
-            "checkout",
-            "bill/v1/bills/{billId}/refunds/{refundId}",
-            "put",
-            ['RequestBody', '200', '4xx', '5xx']
-          )
-      })
-    });
-  </script>
-</div>
--->
-<!-- Request body -->
-<!--
-~~~json
-{
-  "amount": {
-    "value": 2.34,
-    "currency": "RUB"
-  }
-}
-~~~
-
--->
-
-<!-- 200 -->
-<!--
-~~~json
-{
-    "amount": {
-      "value": 50.50,
-      "currency": "RUB"
-    },
-    "datetime": "2018-03-01T16:06:57+03",
-    "refundId": "1",
-    "status": "PARTIAL"
-}
-~~~
--->
-<!-- 4xx -->
-<!--
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
-}
-~~~
-
--->
-<!-- 5xx -->
-<!--
-~~~json
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "payin.resource.not.found",
-  "userMessage" : "Resource not found",
-  "description" : "Resource not found",
-  "traceId" : "c3564ba25e221fe3",
-  "dateTime" : "2018-11-13T16:30:52.464+03:00"
-}
-~~~
--->
-
 ## Refund status {#refund_status}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__refunds__refundId__get_api">
@@ -1361,10 +1189,10 @@ Host: api.qiwi.com
 ~~~json
 {
   "refundId": "tcwv3132",
-  "createdDatetime": "2018-11-20T16:32:55.547+03:00",
+  "createdDateTime": "2018-11-20T16:32:55.547+03:00",
   "amount": {
     "currency": "RUB",
-    "value": 2.34
+    "value": "2.34"
   },
   "status": {
     "value": "COMPLETED",
@@ -1432,10 +1260,10 @@ Host: api.qiwi.com
 [
  {
   "refundId": "tcwv3132",
-  "createdDatetime": "2018-11-20T16:32:55.547+03:00",
+  "createdDateTime": "2018-11-20T16:32:55.547+03:00",
   "amount": {
     "currency": "RUB",
-    "value": 2.34
+    "value": "2.34"
   },
   "status": {
     "value": "COMPLETED",
@@ -1503,10 +1331,10 @@ Host: api.qiwi.com
 ~~~json
 {
   "refundId": "tcwv3132",
-  "createdDatetime": "2018-11-20T16:32:55.547+03:00",
+  "createdDateTime": "2018-11-20T16:32:55.547+03:00",
   "amount": {
     "currency": "RUB",
-    "value": 2.34
+    "value": "2.34"
   },
   "status": {
     "value": "COMPLETED",

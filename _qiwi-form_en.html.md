@@ -322,7 +322,7 @@ See details of the issue of a payment token [in this section](#payment-token-iss
 <aside class="warning">
 Customer will be able to make payment by payment token only on the site where payment token was issued.
 
-To make the payment token valid on other sites, send a request to [QIWI Support](mailto:payin@qiwi.com).
+To make the payment token valid on other sites, send a request to <a href="mailto:payin@qiwi.com">QIWI Support</a>.
 </aside>
 
 To create an invoice payable with payment token, send in API request [Invoice](#invoice_put) the following data:
@@ -338,6 +338,10 @@ Then [redirect the customer to QIWI Payment form](#qiwi-redirect) using URL from
 ![qiwi-form-tokens](/images/qiwi-form-token.png)
 
 To use the payment token, the customer chooses a card from the drop-down list. Card data or 3-D Secure authentication is not required.
+
+<aside class="warning">
+Contact your manager in QIWI Support to enable displaying list of cards linked to the payment tokens. Otherwise a customer may not use linked cards on the Form. A list of cards is displayed for payments from the same site for which the tokens are issued.
+</aside>
 
 To charge funds on a payment token without the customer's participation, use the API method [Payment](#payment). See details in section [Using payment token](#merchant-token-pay) for the merchant's payment form.
 

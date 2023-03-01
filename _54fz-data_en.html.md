@@ -1,6 +1,6 @@
 # Electronic Receipt Transfer (by Fed.Rule 54) {#cheque}
 
-To work on 54-FZ Rule, the Payment Protocol provides a tool to interact with your online cash register. Information to form a fiscal receipt is passed on to the JSON-object `cheque` of [invoice](#invoice_put) and [payment](#payments) operation API requests.
+To work on 54-FZ Rule, the Payment Protocol provides a tool to interact with your online cash register. Information to form a fiscal receipt is passed on to the JSON-object `cheque` of [invoice](#invoice_put), [payment](#payments), and [refund](#refund) API methods.
 
 <aside class="notice">
 Fiscal receipt generation is available for <b>Bank card</b> payment method only.
@@ -16,7 +16,9 @@ For the ATOL service, provide the following data also:
 * Login / password for security token generation
 * Commodity group code
 
-## JSON-object description
+Fiscal receipt for the successful operation is provided in `chequeData` object in the synchronous response to the operation, and in the [operation notification](#callback).
+
+## JSON-object description {#cheque-model}
 
 ~~~ json
 {
