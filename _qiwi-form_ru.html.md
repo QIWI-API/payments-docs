@@ -331,7 +331,7 @@ Host: api.qiwi.com
 2. [Перенаправьте покупателя на Платежную форму](#qiwi-redirect) по ссылке из параметра `payUrl` ответа, или используйте [библиотеку Popup](#popup), чтобы [открыть форму во всплывающем окне](#openpopup).
 3. Если для покупателя был выпущен один или несколько платежных токенов, то на Платежной форме отобразится список его привязанных карт.
 
-   ![qiwi-form-tokens](/images/qiwi-form-token.png)
+   ![qiwi-form-tokens](/images/payin/qiwi-form-token.png)
 
    Для оплаты покупателю достаточно выбрать карту из списка. Указывать карточные данные и проходить проверку 3-D Secure не требуется.
 
@@ -563,4 +563,4 @@ Host: api.qiwi.com
 
 Пример применения настройки к Платежной форме:
 
-![Customer form](/images/Custom.png)
+![Customer form](/images/payin/qiwi-form-custom.png)

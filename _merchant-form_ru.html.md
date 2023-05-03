@@ -10,6 +10,7 @@ PCI DSS — стандарт информационной безопасност
 
 * [Платежные токены карт и QIWI Кошелька](#merchant-token-pay).
 * [Yandex Pay](#merchant-form-yandexpay).
+* [Mir Pay](#merchant-form-mirpay).
 * [Система Быстрых Платежей (СБП)](#merchant-form-sbp).
 * [Баланс мобильного телефона](#merchant-form-phone-account)
 
@@ -420,6 +421,42 @@ customer.account|String|Уникальный идентификатор Поку
      * PAN в поле `"pan"`;
      * срок действия в формате `MM/YY` в поле `"expiryDate"`;
      * объект `external3dSec` с полем `type`, всегда равным `YANDEX_PAY`.
+
+## Mir Pay {#merchant-form-mirpay}
+
+Оплата покупок с Mir Pay происходит без ввода данных карты. Мерчант должен получить JWE-токен с криптограммой платежа от мобильного приложения Mir Pay (например, с помощью Mir Pay SDK) и отправить его в [платёжном запросе к API](#payments).
+
+Для включения способа оплаты Mir Pay обратитесь к вашему сопровождающему менеджеру.
+
+### Как отправлять платеж {#merchant-form-mirpay-payment}
+
+> Пример платежа с криптограммой платежного токена MIR Pay (метод MIR_TOKEN)
+
+~~~json
+{
+  "paymentMethod": {
+    "type" : "MIR_PAY_TOKEN",
+    "cryptogram" : "eyJhbGciOiJSUzI1NiIsImN0eSI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNjAzMzc2MDExfQ.Ce16subvpzUm-xKTdInJ4Nxr75mzpDG2sFrjmdi02vvVmPhcYRju7ulVaZ0wLZqnjnM6XeXR6FZ473-cVMPAJ_O2wTr-EP6O2FnYUCzrrhQWCv5_4-Xk6QNSFD5bsHB8xTPYSsWilPvZuD5rhp80HpztJ0y95bZau8RQsJTVRPE"
+  },
+  "amount": {
+    "value": 3300.00,
+    "currency": "RUB"
+  },
+  "flags": [
+    "SALE"
+  ],
+  "customer": {
+    "account": "79111111111",
+    "email": "test@qiwi.com",
+    "phone": "79111111111"
+  }
+}
+~~~
+
+При отправке платежа формат платежных данных в объекте `paymentMethod` выглядит следующим образом:
+
+* `type` — всегда `MIR_PAY_TOKEN`;
+* `cryptogram` — [JWE-токен](https://www.rfc-editor.org/rfc/rfc7516), полученный мерчантом от приложения MirPay.
 
 ## Оплата через СБП {#merchant-form-sbp}
 

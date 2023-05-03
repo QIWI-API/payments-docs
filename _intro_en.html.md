@@ -101,17 +101,17 @@ end
 
 ## Interaction format {#api-format}
 
-API of the Payment protocol implements REST principles.
+The Payment protocol API is built on the [REST architecture](https://restfulapi.net/), where data and methods are considered as resources accessed via calling Uniform Resource Identifiers (URIs).
 
-API uses HTTPS-requests for main application protocol.
-
-API endpoint:
+API uses HTTPS-requests for calling its methods. API endpoint has URL:
 
 `https://api.qiwi.com/partner/`
 
-API requests' parameters are transferred in the request body JSON data. Parameters in HTTP GET-requests are placed in URL.
+API requests' parameters are transferred as the request body JSON data. Parameters in HTTP GET-requests are placed in URL query.
 
-API always responds in JSON format.
+It is necessary to put `Accept: application/json` header into the request headers as API always responds in JSON format.
+
+The API methods provide logical idempotence, i. e. repeating a method multiple times is equivalent to doing it once. However, the response may change (for example, the state of an invoice may change between requests).
 
 ### Authorization {#api-auth}
 
@@ -133,7 +133,7 @@ For the requests authorization OAuth 2.0 standard is used in accordance with [RF
 
 `Bearer <API Key>`
 
-# Test and Production Modes {#test_mode}
+# How to Test Operations {#test_mode}
 
 During [integration](#start), your `siteId` identifier is in test mode. You can proceed operations without debiting credit card. You can also request a switch to test mode for any of your `siteId`, or add a new `siteId` to test mode through your manager in QIWI Support.
 
@@ -141,7 +141,9 @@ For testing purposes, the same [protocol URLs](api-format) are used.
 
 **Test mode is not supported for QIWI Wallet balance payments.**
 
+<aside class="notice">
 When integration on your side is completed, we turn your ID to production mode. In the production mode, real debits of funds from cards are performed.
+</aside>
 
 **You don't need to re-release the API access key when you go into the production mode**.
 
@@ -151,7 +153,7 @@ If necessary, change the permanent URL for notifications from a test notificatio
 The API access key, linked to a certain <code>siteId</code>, works for all payment methods enabled for this ID.
 </aside>
 
-## Card payment in test mode {#test_data_card}
+## Card payment {#test_data_card}
 
 To make tests for payment operations, you may use any card number complied with [Luhn algorithm](https://en.wikipedia.org/wiki/Luhn_algorithm).
 
@@ -182,7 +184,9 @@ Test environment has restrictions on the amount and number of operations:
 
 To process 3DS operation, use `unknown name` as card holder name. 3-D Secure in test mode may be properly tested on real card number only.
 
-## Payment through Faster Payments System in test mode {#test_data_sbp}
+You can also check payment token issue. Issue scheme in the test mode is the same as in production mode. It is described in [Card payment token issue](#merchant-form-token-issue) section.
+
+## Payment through Faster Payments System {#test_data_sbp}
 
 In test mode, you can use only [QR-code issue](#qr-code-sbp) and its [status request](#qr-code-sbp-get). To test various responses, use different payment amounts (`amount.value` field):
 

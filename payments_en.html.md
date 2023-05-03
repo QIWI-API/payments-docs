@@ -47,7 +47,7 @@ search: true
 
 # Overview {#get-started}
 
-###### Last update: 2022-12-08 | [Doc version 1.18](/en/payments-release-notes/index.html) | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/)
+###### [Doc version 1.18](/en/payments-release-notes/index.html) | [Edit on GitHub](https://github.com/QIWI-API/payments-docs/)
 
 The Payments protocol provides a payment processing solutions that helps you accept payments in fast and secure way. The protocol gives your customers flexibility to pay the way they want, including:
 

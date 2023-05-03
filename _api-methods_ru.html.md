@@ -22,7 +22,7 @@
 
 <!-- Request body -->
 ~~~http
-Пример запроса на создание счета
+Пример создания счета
 
 PUT /partner/payin/v1/sites/site-01/bills/893794793973 HTTP/1.1
 Accept: application/json
@@ -53,7 +53,6 @@ Host: api.qiwi.com
 Пример успешного ответа на запрос создания счета
 
 {
-    "siteId": "23044",
     "billId": "893794793973",
     "invoiceUid": "d875277b-6f0f-445d-8a83-f62c7c07be77",
     "amount": {
@@ -71,6 +70,27 @@ Host: api.qiwi.com
     "creationDateTime": "2022-03-05T11:27:41",
     "expirationDateTime": "2022-04-13T14:30:00",
     "payUrl": "https://oplata.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
+}
+
+Пример ответа если счет уже существует и у него истек срок оплаты
+
+{
+ "billId": "12345",
+ "invoiceUid": "3b39ad6d-f111-401d-8108-ed11af920a65",
+ "amount": {
+   "currency": "RUB",
+   "value": "1.00"
+ },
+ "expirationDateTime": "2023-03-21T13:02:00+03:00",
+ "status": {
+   "value": "EXPIRED",
+   "changedDateTime": "2023-03-21T13:02:00+03:00"
+ },
+ "comment": "Text comment",
+ "flags": [
+   "TEST"
+ ],
+ "payUrl": "https://oplata.qiwi.com/form?invoiceUid=3b39ad6d-f211-401d-8008-ed11af920a65"
 }
 ~~~
 
@@ -139,7 +159,7 @@ Host: api.qiwi.com
   "payUrl": "https://oplata.qiwi.com/form/invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77",
   "payments": [
     {
-        "siteId": "site-01",
+        "paymentId": "b214d34a-aa97-4d53-9c8a-0ecc07d6c634",
         "billId": "d35cf63943e54f50badc75f49a5aac7c",
         "createdDateTime": "2022-03-05T11:23:22+03:00",
         "amount": {
@@ -180,7 +200,7 @@ Host: api.qiwi.com
         }
     },
     {
-        "siteId": "site-01",
+        "paymentId": "d2ae2fcd-9f97-4c3c-8cf3-9fedeaa59c33",
         "billId": "d35cf63943e54f50badc75f49a5aac7c",
         "createdDateTime": "2022-03-05T11:26:21+03:00",
         "amount": {
@@ -366,7 +386,7 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
-Пример запроса на платеж
+Пример платежа
 
 PUT /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
 Accept: application/json
@@ -623,7 +643,7 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
-Пример запроса завершения аутентификации покупателя
+Пример завершения аутентификации покупателя
 
 POST /partner/payin/v1/sites/test-01/payments/1811/complete HTTP/1.1
 Accept: application/json
@@ -726,7 +746,7 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
-Пример запроса подтверждения платежа
+Пример подтверждения платежа
 
 PUT /partner/payin/v1/sites/test-01/payments/1811/captures/bxwd8096 HTTP/1.1
 Accept: application/json
@@ -863,107 +883,6 @@ Host: api.qiwi.com
 
 ## Получение QR-кода СБП {#qr-code-sbp}
 
-### Метод PUT {#qr-code-sbp-put}
-
-<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__put_api">
-  <script>
-    $(document).ready(function(){
-        $.getJSON('../../rui_jsons/payin-sbp-put.json', function( data ) {
-          window.requestUI(
-            data,
-            "api",
-            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}",
-            "put",
-            ['RequestBody', '200', '4xx', '5xx']
-          )
-      })
-    });
-  </script>
-</div>
-
-<!-- Request body -->
-~~~http
-Пример запроса получения QR-кода СБП
-
-PUT /partner/payin/v1/sites/test-01/sbp/qrCodes/Test12 HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
-{
-  "amount": {
-    "value": 1.00,
-    "currency": "RUB"
-  },
-  "qrCode": {
-    "type": "DYNAMIC",
-    "ttl": 60,
-    "image": {
-      "mediaType": "image/png",
-      "width": 300,
-      "height": 300
-    }
-  },
-  "paymentPurpose": "Flower for my girlfriend",
-  "redirectUrl": "http://example.com"
-}
-~~~
-
-<!-- 200 -->
-~~~json
-Пример успешного ответа на запрос получения QR-кода СБП
-
-{
-  "qrCodeUid": "Test12",
-  "amount": {
-    "currency": "RUB",
-    "value": "1.00"
-  },
-  "qrCode": {
-    "type": "DYNAMIC",
-    "ttl": 60,
-    "image": {
-        "mediaType": "image/png",
-        "width": 300,
-        "height": 300,
-        "content": "iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAA"
-    },
-    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQDtype=02bank=100000000009&sum=200&cur=RUB&crc=C63A",
-    "status": "CREATED"
-  },
-  "createdOn": "2022-08-11T20:10:32+03:00"
-}
-~~~
-
-<!-- 4xx -->
-~~~json
-Пример ответа с ошибкой 4xx на запрос получения QR-кода СБП
-
-{
-  "serviceName" : "payin-core",
-  "errorCode" : "validation.error",
-  "description" : "Validation error",
-  "userMessage" : "Validation error",
-  "dateTime" : "2018-11-13T16:49:59.166+03:00",
-  "traceId" : "fd0e2a08c63ace83"
-}
-~~~
-
-<!-- 5xx -->
-~~~json
-Пример ответа с ошибкой 5xx на запрос получения QR-кода СБП
-
-{
-  "serviceName":"payin-core",
-  "errorCode":"internal.error",
-  "userMessage":"Internal error",
-  "description":"Internal error",
-  "traceId":"3fb3420ee1795dcf",
-  "dateTime":"2020-02-12T21:28:01.813+03:00"
-}
-~~~
-
 ### Метод POST {#qr-code-sbp-post}
 
 <div id="payin_v1_sites__siteId__sbp_qrCodes_post_api">
@@ -984,7 +903,7 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
-Пример запроса получения QR-кода СБП
+Пример получения QR-кода СБП (метод POST)
 
 POST /partner/payin/v1/sites/test-01/sbp/qrCodes HTTP/1.1
 Accept: application/json
@@ -1032,6 +951,107 @@ Host: api.qiwi.com
       "content": "iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAA"
     },
     "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQD?type=02&bank=100000000009&sum=200&cur=RUB&crc=C63A",
+    "status": "CREATED"
+  },
+  "createdOn": "2022-08-11T20:10:32+03:00"
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос получения QR-кода СБП
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2018-11-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос получения QR-кода СБП
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+### Метод PUT {#qr-code-sbp-put}
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__put_api">
+  <script>
+    $(document).ready(function(){
+        $.getJSON('../../rui_jsons/payin-sbp-put.json', function( data ) {
+          window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример получения QR-кода СБП (метод PUT)
+
+PUT /partner/payin/v1/sites/test-01/sbp/qrCodes/Test12 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: api.qiwi.com
+
+{
+  "amount": {
+    "value": 1.00,
+    "currency": "RUB"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 60,
+    "image": {
+      "mediaType": "image/png",
+      "width": 300,
+      "height": 300
+    }
+  },
+  "paymentPurpose": "Flower for my girlfriend",
+  "redirectUrl": "http://example.com"
+}
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос получения QR-кода СБП
+
+{
+  "qrCodeUid": "Test12",
+  "amount": {
+    "currency": "RUB",
+    "value": "1.00"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 60,
+    "image": {
+        "mediaType": "image/png",
+        "width": 300,
+        "height": 300,
+        "content": "iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAA"
+    },
+    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQDtype=02bank=100000000009&sum=200&cur=RUB&crc=C63A",
     "status": "CREATED"
   },
   "createdOn": "2022-08-11T20:10:32+03:00"
@@ -1149,15 +1169,15 @@ Host: api.qiwi.com
 
 ## Платеж токеном СБП {#payment-sbp-token}
 
-<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__payments__paymentId__put_api">
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__payments__paymentId__post_api">
   <script>
     $(document).ready(function(){
-        $.getJSON('../../rui_jsons/payin-sbp-token-put.json', function( data ) {
+        $.getJSON('../../rui_jsons/payin-sbp-token-post.json', function( data ) {
           window.requestUI(
             data,
             "api",
             "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}/payments/{paymentId}",
-            "put",
+            "post",
             ['RequestBody', '200', '4xx', '5xx']
           )
       })
@@ -1167,9 +1187,9 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
-Пример запроса платежа токеном СБП
+Пример платежа токеном СБП
 
-PUT /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8/payments/11212334csd HTTP/1.1
+POST /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8/payments/11212334csd HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -1260,7 +1280,7 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
-Пример запроса возврата по платежу
+Пример возврата по платежу
 
 PUT /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132 HTTP/1.1
 Accept: application/json
@@ -1489,7 +1509,7 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
-Пример запроса отмены возврата по платежу
+Пример отмены возврата по платежу
 
 POST /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132/decline HTTP/1.1
 Accept: application/json
@@ -1553,7 +1573,7 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
-Пример запроса проверки карты
+Пример проверки карты
 
 GET /partner/payin/v1/sites/test-01/validation/card/requests/acd7bf20-22e2-4cbf-a218-38d90e9f29b9 HTTP/1.1
 Accept: application/json
@@ -1730,7 +1750,7 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
-Пример запроса завершения аутентификации при проверке карты
+Пример завершения аутентификации при проверке карты
 
 POST /partner/payin/v1/sites/test-01/validation/card/requests/acd7bf20-22e2-4cbf-a218-38d90e9f29b9/complete HTTP/1.1
 Accept: application/json
@@ -1817,7 +1837,7 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
-Пример запроса на выплату
+Пример выплаты
 
 PUT /partner/payin/v1/sites/test-01/payments/1811/payouts/bxwd8096 HTTP/1.1
 Accept: application/json

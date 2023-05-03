@@ -177,7 +177,7 @@ Host: api.qiwi.com
     },
     "paymentCardInfo": {
         "issuingCountry": "643",
-        "issuingBank": "Тинькофф банк",
+        "issuingBank": "Tinkoff Bank",
         "paymentSystem": "MASTERCARD",
         "fundingSource": "UNKNOWN",
         "paymentSystemProduct": "TNW|TNW|Mastercard® New World—Immediate Debit|TNW|Mastercard New World-Immediate Debit"
@@ -335,7 +335,7 @@ To create an invoice payable with payment token, send in API request [Invoice](#
 
 Then [redirect the customer to QIWI Payment form](#qiwi-redirect) using URL from `payUrl` parameter of the API response, or use [Popup JavaScript library](#popup) to [open the form in a popup window](#openpopup). If one or more payment tokens have been issued for the customer, the Payment form would display their linked cards.
 
-![qiwi-form-tokens](/images/qiwi-form-token.png)
+![qiwi-form-tokens](/images/payin/qiwi-form-token-en.png)
 
 To use the payment token, the customer chooses a card from the drop-down list. Card data or 3-D Secure authentication is not required.
 
@@ -417,7 +417,7 @@ By default, 3-D Secure is required on the QIWI Form.
 
 When opening URL of the QIWI Form in `<iframe>`, use additional parameter `allow`:
 
-`<iframe allow="payment" src="<ссылка payUrl> ..." />`
+`<iframe allow="payment" src="<payUrl link> ..." />`
 
 You can use `postMessage` [method](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) to listen events in the Form.
 
@@ -570,4 +570,4 @@ To use your Custom Payment form:
 
 Example of the customized Payment form:
 
-![Customer form](/images/Custom.png)
+![Customer form](/images/payin/qiwi-form-custom-en.png)

@@ -43,10 +43,11 @@ In the following table all possible statuses and corresponding [operation types]
  Operation status |Operation type | Status description
 ------------------|---------------|----------------------------------------------------------------------------------------------------------------
  PAYMENT          |WAITING        | Awaiting for 3DS authentication
- PAYMENT          |DECLINED       | Request for authorization is rejected
+ PAYMENT          |DECLINED       | Request for authorization is rejected (in synchronous responses)
+ PAYMENT          |DECLINE        | Request for authorization is rejected (in asynchronous responses)
  REFUND           |DECLINE        | Request for refund is rejected
  CAPTURE          |DECLINE        | Request for payment confirmation is rejected
- CAPTURE          |DECLINED       | Request for payment confirmation is rejected. Returned in [API response to the status request](#capture_status)
+ CAPTURE          |DECLINED       | Request for payment confirmation is rejected (in [API response to the status request](#capture_status))
  PAYMENT          |COMPLETED      | Request for authorization is successfully processed
  REFUND           |COMPLETED      | Request for refund is successfully processed
  CAPTURE          |COMPLETED      | Request for payment confirmation is successfully processed
@@ -61,7 +62,7 @@ In the following table all possible statuses and corresponding [operation types]
 
  Operation type |Operation status | Status description
 ----------------|-----------------|-----------------------------------------------------------
- PAYMENT        |DECLINED         | Request for authorization is rejected
+ PAYMENT        |DECLINE          | Request for authorization is rejected
  REFUND         |DECLINE          | Request for refund is rejected
  CAPTURE        |DECLINE          | Request for payment confirmation is rejected
  PAYMENT        |SUCCESS          | Request for authorization is successfully processed
@@ -82,7 +83,8 @@ INVALID_AMOUNT| Incorrect payment amount
 INVALID_RECEIVER_DATA | Error on transmitting receiver data
 DECLINED_BY_MPI | Rejected by MPI
 DECLINED_BY_FRAUD| Rejected by fraud monitoring
-REATTEMPT_NOT_PERMITTED| Repeated authorization request forbidden due to obtained response from a Payment system
+REATTEMPT_NOT_PERMITTED| Re-attempting authorization request is forbidden due to Payment system rules
+REATTEMPT_NOT_PERMITTED_BY_PS| Operation rejected by Payment system. Re-attempting the operation is not possible for the card
 GATEWAY_INTEGRATION_ERROR| Acquirer integration error
 GATEWAY_TECHNICAL_ERROR| Technical error on acquirer side
 ACQUIRING_MPI_TECH_ERROR| Technical error on 3DS authentication

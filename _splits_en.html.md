@@ -24,7 +24,7 @@ curl --location \
         "currency": "RUB"
     },
     "expirationDateTime": "2021-12-31T23:59:59+03:00",
-    "comment": "My сomment",
+    "comment": "My comment",
     "splits": [
         {
             "type": "MERCHANT_DETAILS",
@@ -65,7 +65,7 @@ curl --location \
         "value": "CREATED",
         "changedDateTime": "2021-02-05T10:21:17+03:00"
     },
-    "comment": "My сomment",
+    "comment": "My comment",
     "flags": [
         "TEST"
     ],
@@ -454,7 +454,7 @@ comment | String | Comment for the order
     "payment": {
         "paymentId": "134d707d-fec4-4a84-93f3-781b4f8c24ac",
         "customFields": {
-            "comment": "My сomment"
+            "comment": "My comment"
         },
         "paymentCardInfo": {
             "issuingCountry": "643",

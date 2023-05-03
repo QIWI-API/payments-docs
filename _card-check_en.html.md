@@ -90,11 +90,11 @@ Host: api.qiwi.com
 1. Send [invoice request](#invoice_put) with additional parameter `"flags":["CHECK_CARD", "BIND_PAYMENT_TOKEN"]`. For payment token generation, set `customer.account` parameter with unique customer identifier in the merchant's system. **Do not specify invoice amount in the request (`amount` parameter)**.
 2. Extract `billId` parameter from the response — it is used on step 4. [Redirect customer to the Payment Form](#qiwi-redirect) — reference URL taken from `payUrl` field of the response.
 3. On the Payment Form, customer provides card details and submits it for verification. On the form, 3-D Secure authentication performs for customer.
-    ![check card](/images/check-card-payin.png)
+    ![check card](/images/payin/check-card-payin-en.png)
 4. When card verification finishes, you get [CHECK_CARD notification](#checkcard-callback) with the result, or you can [request current status of the verification](#card-check-info) — put there `billId` identifier from step 2 as a unique identifier of the card verification. Result includes:
 
-   * information about whether card is accessible for purchases in `isValidCard` field (`true` — card number is valid and card can be purchased);
-   * payment token data in `createdToken` field.
+   * information about whether card is accessible for purchases in `isValidCard` field (`true` — card can be charged);
+   * payment token data in `createdToken` field: returned when payment token issue requested in step 1 and `isValidCard=true`.
 
 ## How to use service with API {#how-to-check-card}
 
@@ -206,7 +206,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-1. Send ["Check card" API request](#card-check-api). Put in the request:
+1. Send ["Card verification" API request](#card-check-api). Put in the request:
    * Unique verification identifier (`requestUid` field in the request URL). 
    * Card data (`cardData` in the request body). Required parameters — PAN, card expiration date, and CVV2.
 
@@ -214,7 +214,7 @@ Host: api.qiwi.com
    </aside>
 
    For payment token generation, set `tokenizationData.account` parameter to unique customer's identifier in the merchant's system.
-2. In the response, card verification result returns in `isValidCard` field (`true` means card is valid for purchases). Payment token data return in `createdToken` JSON object.
+2. In the response, card verification result returns in `isValidCard` field (`true` means card can be charged). When `isValidCard=true` and payment token issue requested in step 1 JSON object `createdToken` is returned with payment token data.
 
 To make sure that the cardholder themselves entered card number, you can use 3-D Secure additional authentication in the card verification service. Contact [QIWI Support](mailto:payin@qiwi.com) to enable or disable 3-D Secure (3DS) procedure. If 3DS is enabled, you receive `"requirements"` object with ACS URL for customer redirect (in this case, `status` field has `"WAITING_3DS"` value).
 
@@ -222,7 +222,7 @@ Verification scenario is similar to [payment operation](#merchant-threeds):
 
 1. [Redirect customer to authentication page](#merchant-threeds).
 2. Finish 3-D Secure by ["Complete 3DS on card verification" request](#card-check-complete). Specify the same `requestUid` from the initial card verification request.
-3. If 3-D Secure check is finished successfully, `isValidCard` field contains information about card validity (`true` means card is valid for purchases). Payment token data return in `createdToken` JSON object.
+3. If 3-D Secure check is finished successfully, `isValidCard` field contains information about card validity (`true` means card can be charged). When `isValidCard=true` and payment token issue requested in the original "Card verification" request JSON object `createdToken` is returned with payment token data.
 
 When verification finishes, you get [CHECK_CARD notification](#checkcard-callback) with the result, or you can always [get current card verification status by API request](#card-check-info).
 
