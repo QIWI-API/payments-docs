@@ -64,14 +64,14 @@ URL для уведомлений должен начинаться с https, т
 
    где `{*}` – значение параметра уведомления. Все значения предварительно приводятся к строковому представлению (UTF-8).
 
-   Подпись считается для следующих полей уведомления:
+   Набор полей уведомления для проверки подписи зависит от типа уведомления:
 
-     * тип `PAYMENT`: `payment.paymentId|payment.createdDateTime|payment.amount.value`
-     * тип `REFUND`: `refund.refundId|refund.createdDateTime|refund.amount.value`
-     * тип `CAPTURE`: `capture.captureId|capture.createdDateTime|capture.amount.value`
-     * тип `CHECK_CARD`: `checkPaymentMethod.requestUid|checkPaymentMethod.checkOperationDate`
-     * тип `TOKEN`: `token.merchantSiteUid|token.account|token.status.value|token.status.changedDateTime`
-     * тип `PAYOUT`: `payout.payoutId|payout.createdDateTime|payout.amount.value`
+    * тип `PAYMENT`: `payment.paymentId|payment.createdDateTime|payment.amount.value`
+    * тип `REFUND`: `refund.refundId|refund.createdDateTime|refund.amount.value`
+    * тип `CAPTURE`: `capture.captureId|capture.createdDateTime|capture.amount.value`
+    * тип `CHECK_CARD`: `checkPaymentMethod.requestUid|checkPaymentMethod.checkOperationDate`
+    * тип `TOKEN`: `token.merchantSiteUid|token.account|token.status.value|token.status.changedDateTime`
+    * тип `PAYOUT`: `payout.payoutId|payout.createdDateTime|payout.amount.value`
 
 2. Вычислить HMAC-хэш c алгоритмом хэширования SHA256:
 
@@ -176,6 +176,7 @@ payment.<br>status.<br>changedDateTime|Дата обновления стату�
 payment.<br>status.<br>reasonCode| [Код причины отклонения](#reason-codes)| String(200)|В случае отклонения операции
 payment.<br>status.<br>reasonMessage| Описание причины отклонения| String(200)|В случае отклонения операции
 payment.<br>status.<br>errorCode| Код ошибки| Number|В случае ошибки
+payment.<br>status.<br>psErrorCode| [Оригинальный код ошибки, полученный от платежной системы](#ps-error-codes)|String|В случае отклонения операции
 ---|---|---|------
 payment.<br>paymentMethod| Информация о средстве платежа| Object|Всегда
 ---|---|---|------

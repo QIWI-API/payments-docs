@@ -128,7 +128,7 @@ Response when the invoice exists and has been already expired
 
 <!-- Request body -->
 ~~~http
-GET /partner/payin/v1/sites/site-01/bills/d35cf63943e54f50badc75f49a5aac7c/details HTTP/1.1
+GET /partner/payin/v1/sites/site-01/bills/3a3d0286cefe645d2b11/details HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -138,104 +138,95 @@ Host: api.qiwi.com
 <!-- 200 -->
 ~~~json
 {
-  "billId": "d35cf63943e54f50badc75f49a5aac7c",
-  "amount": {
-    "value": "100.00",
-    "currency": "RUB"
-  },
-  "status": {
-    "value": "PAID",
-    "changedDateTime": "2022-03-05T11:27:41"
-  },
-  "comment": "Text comment",
-  "customFields": {
-    "cf1": "Some data"
-  },
-  "expirationDateTime": "2022-04-13T14:30:00",
-  "payUrl": "https://oplata.qiwi.com/form/invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77",
-  "payments": [
-    {
-        "paymentId": "b214d34a-aa97-4d53-9c8a-0ecc07d6c634",
-        "billId": "d35cf63943e54f50badc75f49a5aac7c",
-        "createdDateTime": "2022-03-05T11:23:22+03:00",
-        "amount": {
-            "currency": "RUB",
-            "value": "100.00"
-        },
-        "capturedAmount": {
-            "currency": "RUB",
-            "value": "100.00"
-        },
-        "refundedAmount": {
-            "currency": "RUB",
-            "value": "0.00"
-        },
-        "paymentMethod": {
-            "type": "CARD",
-            "maskedPan": "427638******1410"
-        },
-        "customer": {
-            "account": "1",
-            "phone": "0",
-            "address": {}
-        },
-        "requirements": {
-            "threeDS": {
-                "pareq": "eJxVUWFvgjAQ52lBUtjD3M9++qFgCxl0i/OtJv2WT/tv8LXqG0vw==",
-                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
-            }
-        },
-        "status": {
-            "value": "DECLINED",
-            "changedDateTime": "2022-03-05T11:23:54+03:00",
-            "reason": "ACQUIRING_NOT_PERMITTED"
-        },
-        "customFields": {
-            "customer_account": "1",
-            "customer_phone": "0"
-        }
+    "billId": "3a3d0286cefe645d2b11",
+    "invoiceUid": "235d8d5a-38ed-11fc-9ab6-8b5a65d7e2f8",
+    "amount": {
+        "currency": "RUB",
+        "value": "3000.00"
     },
-    {
-        "paymentId": "d2ae2fcd-9f97-4c3c-8cf3-9fedeaa59c33",
-        "billId": "d35cf63943e54f50badc75f49a5aac7c",
-        "createdDateTime": "2022-03-05T11:26:21+03:00",
-        "amount": {
-            "currency": "RUB",
-            "value": "100.00"
-        },
-        "capturedAmount": {
-            "currency": "RUB",
-            "value": "100.00"
-        },
-        "refundedAmount": {
-            "currency": "RUB",
-            "value": "0.00"
-        },
-        "paymentMethod": {
-            "type": "CARD",
-            "maskedPan": "427638******1410"
-        },
-        "customer": {
-            "account": "1",
-            "phone": "0",
-            "address": {}
-        },
-        "requirements": {
-            "threeDS": {
-                "pareq": "eJxVUdtuwjAM7b6t/1fcku04w==",
-                "acsUrl": "https://ds1.mirconnect.ru:443/vbv/pareq"
+    "expirationDateTime": "2023-05-07T19:25:36+03:00",
+    "status": {
+        "value": "PAID",
+        "changedDateTime": "2023-04-07T19:28:12+03:00"
+    },
+    "comment": "Детская футбольная школа «Тигры»",
+    "flags": [
+        "SALE"
+    ],
+    "payUrl": "https://oplata.qiwi.com/form?invoiceUid=235d8d5a-11ed-46fc-9ab6-8b5a65d7e2f8",
+    "payments": [
+        {
+            "paymentId": "cd4a4ade-011e6-484d-87c8-40a7f48326fa",
+            "billId": "3a3d0286cefe645d2b11",
+            "createdDateTime": "2023-04-07T19:27:52+03:00",
+            "amount": {
+                "currency": "RUB",
+                "value": "3000.00"
+            },
+            "capturedAmount": {
+                "currency": "RUB",
+                "value": "3000.00"
+            },
+            "refundedAmount": {
+                "currency": "RUB",
+                "value": "0.00"
+            },
+            "paymentMethod": {
+                "type": "CARD",
+                "maskedPan": "422264******1232",
+                "rrn": "309711196151",
+                "authCode": "231181"
+            },
+            "status": {
+                "value": "COMPLETED",
+                "changedDateTime": "2023-04-07T19:28:12+03:00"
+            },
+            "comment": "Детская футбольная школа «Тигры»",
+            "customFields": {
+                "auto_capture": "true",
+                "invoice_creation_type": "PUBLIC_KEY"
+            },
+            "paymentCardInfo": {
+                "issuingCountry": "643",
+                "issuingBank": "Сбербанк России",
+                "paymentSystem": "VISA",
+                "fundingSource": "DEBIT",
+                "paymentSystemProduct": "N1|Visa Rewards"
             }
         },
-        "status": {
-            "value": "COMPLETED",
-            "changedDateTime": "2022-03-05T11:34:43+03:00"
-        },
-        "customFields": {
-            "customer_account": "1",
-            "customer_phone": "0"
+        {
+            "paymentId": "A30971626215731E01110841111138B2",
+            "billId": "3a3d0286cefe645d2b11",
+            "createdDateTime": "2023-04-07T19:26:21+03:00",
+            "amount": {
+                "currency": "RUB",
+                "value": "3000.00"
+            },
+            "capturedAmount": {
+                "currency": "RUB",
+                "value": "3000.00"
+            },
+            "refundedAmount": {
+                "currency": "RUB",
+                "value": "0.00"
+            },
+            "paymentMethod": {
+                "type": "SBP",
+                "phone": "0079031232001"
+            },
+            "status": {
+                "value": "DECLINED",
+                "changedDateTime": "2023-04-07T19:26:23+03:00",
+                "reason": "GATEWAY_INTEGRATION_ERROR",
+                "reasonMessage": "I07999 OPKC_TECH_ERROR"
+            },
+            "comment": "Детская футбольная школа «Тигры»",
+            "customFields": {
+                "auto_capture": "true",
+                "invoice_creation_type": "PUBLIC_KEY"
+            }
         }
-    }
-  ]
+    ]
 }
 ~~~
 
@@ -271,7 +262,7 @@ Host: api.qiwi.com
 
 <!-- Request body -->
 ~~~http
-GET /partner/payin/v1/sites/site-01/bills/893794793973 HTTP/1.1
+GET /partner/payin/v1/sites/site-01/bills/3a3d0286cefe645d2b11 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -281,64 +272,77 @@ Host: api.qiwi.com
 <!-- 200 -->
 ~~~json
 [
-  {
-    "paymentId": "824c7744-1650-4836-abaa-842ca7ca8a74",
-    "billId": "191616216126154",
-    "createdDateTime": "2022-07-27T12:43:35+03:00",
-    "amount": {
-        "currency": "RUB",
-        "value": "1.00"
+    {
+        "paymentId": "cd4a4ade-12e6-484d-87c8-40a7f48326fa",
+        "billId": "3a3d0286cefe645d2b11",
+        "createdDateTime": "2023-04-07T19:27:52+03:00",
+        "amount": {
+            "currency": "RUB",
+            "value": "3000.00"
+        },
+        "capturedAmount": {
+            "currency": "RUB",
+            "value": "3000.00"
+        },
+        "refundedAmount": {
+            "currency": "RUB",
+            "value": "0.00"
+        },
+        "paymentMethod": {
+            "type": "CARD",
+            "maskedPan": "422264******1232",
+            "rrn": "309711234151",
+            "authCode": "232481"
+        },
+        "status": {
+            "value": "COMPLETED",
+            "changedDateTime": "2023-04-07T19:28:12+03:00"
+        },
+        "comment": "Детская футбольная школа «Тигры»",
+        "customFields": {
+            "auto_capture": "true",
+            "invoice_creation_type": "PUBLIC_KEY"
+        },
+        "paymentCardInfo": {
+            "issuingCountry": "643",
+            "issuingBank": "Сбербанк России",
+            "paymentSystem": "VISA",
+            "fundingSource": "DEBIT",
+            "paymentSystemProduct": "N1|Visa Rewards"
+        }
     },
-    "capturedAmount": {
-        "currency": "RUB",
-        "value": "0.00"
-    },
-    "refundedAmount": {
-        "currency": "RUB",
-        "value": "0.00"
-    },
-    "paymentMethod": {
-        "type": "CARD",
-        "maskedPan": "561251******6871",
-        "rrn": "002612398011",
-        "authCode": "067842"
-    },
-    "createdToken": {
-        "token": "cc2451a5-2fdd-4685-912e-8671597948a3",
-        "name": "561251******6871",
-        "expiredDate": "2030-03-01T00:00:00+03:00"
-    },
-    "customer": {
-        "account": "11235813",
-        "email": "darta@mail.ru",
-        "phone": "79850223243"
-    },
-    "status": {
-        "value": "COMPLETED",
-        "changedDateTime": "2022-07-27T12:43:47+03:00"
-    },
-    "callbackUrl": "https://qiwi.com",
-    "comment": "test",
-    "customFields": {
-        "customer_email": "darta@mail.ru",
-        "customer_account": "11235813",
-        "customer_phone": "79850223243",
-        "cf1": "1",
-        "cf2": "dva",
-        "cf3": "tri",
-        "cf4": "4",
-        "cf5": "5",
-        "BIND_PAYMENT_TOKEN": "true",
-        "themeCode": "customization_OK",
-    },
-    "paymentCardInfo": {
-        "issuingCountry": "643",
-        "issuingBank": "Tinkoff Bank",
-        "paymentSystem": "MASTERCARD",
-        "fundingSource": "UNKNOWN",
-        "paymentSystemProduct": "TNW|TNW|Mastercard® NewWorld—ImmediateDebit|TNW|Mastercard New World-ImmediateDebit"
+    {
+        "paymentId": "A30971626215731E000008415C2D38B2",
+        "billId": "3a3d0286cefe645d2b00",
+        "createdDateTime": "2023-04-07T19:26:21+03:00",
+        "amount": {
+            "currency": "RUB",
+            "value": "3000.00"
+        },
+        "capturedAmount": {
+            "currency": "RUB",
+            "value": "3000.00"
+        },
+        "refundedAmount": {
+            "currency": "RUB",
+            "value": "0.00"
+        },
+        "paymentMethod": {
+            "type": "SBP",
+            "phone": "0079099922001"
+        },
+        "status": {
+            "value": "DECLINED",
+            "changedDateTime": "2023-04-07T19:26:23+03:00",
+            "reason": "GATEWAY_INTEGRATION_ERROR",
+            "reasonMessage": "I07999 OPKC_TECH_ERROR"
+        },
+        "comment": "Детская футбольная школа «Тигры»",
+        "customFields": {
+            "auto_capture": "true",
+            "invoice_creation_type": "PUBLIC_KEY"
+        }
     }
-  }
 ]
 ~~~
 
