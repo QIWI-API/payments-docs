@@ -66,7 +66,7 @@ The payment protocol supports both a two-step payment with holding funds on the 
 
 ### Payment creation {#merchant-form-hold}
 
->Example of a payment with subsequent hold (two-step)
+>Example of a payment with subsequent funds hold (two-step)
 
 ~~~http
 PUT /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
@@ -90,7 +90,7 @@ Host: api.qiwi.com
 }
 ~~~
 
->Example of a payment with immediate charging without customer authentication (one-step payment)
+>Example of a payment with immediate client charging (one-step payment)
 
 ~~~http
 PUT /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
@@ -115,7 +115,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-To start payment with subsequent hold of funds on the customer card (two-step payment), send the following data in API  request [Payment](#payments):
+To start payment with subsequent hold of funds on the client card (two-step payment), send the following data in API request [Payment](#payments):
 
 * API access key;
 * amount of the payment;
@@ -130,7 +130,7 @@ For the two-step payment, the [reimbursement](#reimburse) is formed only after t
 By default, when holding funds, the service expects <a href="#merchant-capture">confirmation of the payment</a> within 72 hours. At the end of the term, the payment is self-confirmed. To increase or reduce the waiting period, or to set up a payment auto-reversal, contact <a href="mailto:payin@qiwi.com">QIWI Support</a>. The waiting period may not last more than 5 days.
 </aside>
 
-For payment without the customer's authentication (one-step payment), include the `"flags":["SALE"]` parameter in the API request [Invoice](#invoice_put). If you do not pass this parameter, the funds holding for the payment is made.
+To make one-step payment without the funds holding, include the `"flags":["SALE"]` parameter in the API request [Payment](#payments). If you do not pass this parameter, the funds holding for the payment is made and service waits for <a href="#merchant-capture">confirmation of the payment</a>.
 
 ### Awaiting the customer authentication (3-D Secure) {#merchant-threeds}
 

@@ -2,7 +2,7 @@
 
 <aside class="notice">В запросы и ответы могут добавляться новые параметры. Следите за обновлениями на <a href="https://github.com/QIWI-API/payments-docs/blob/master/payments_ru.html.md">Github</a>.</aside>
 
-## Создание счета {#invoice_put}
+## Создание счёта {#invoice_put}
 
 <div id="payin_v1_sites__siteId__bills__billId__put_checkout">
   <script>
@@ -370,7 +370,7 @@ Host: api.qiwi.com
 }
 ~~~
 
-## Платеж {#payments}
+## Платёж {#payments}
 
 <div id="payin_v1_sites__siteId__payments__paymentId__put_api">
   <script>
@@ -1173,14 +1173,14 @@ Host: api.qiwi.com
 
 ## Платеж токеном СБП {#payment-sbp-token}
 
-<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__payments__paymentId__post_api">
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__payments_post_api">
   <script>
     $(document).ready(function(){
         $.getJSON('../../rui_jsons/payin-sbp-token-post.json', function( data ) {
           window.requestUI(
             data,
             "api",
-            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}/payments/{paymentId}",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}/payments",
             "post",
             ['RequestBody', '200', '4xx', '5xx']
           )
@@ -1193,7 +1193,7 @@ Host: api.qiwi.com
 ~~~http
 Пример платежа токеном СБП
 
-POST /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8/payments/11212334csd HTTP/1.1
+POST /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8/payments HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
@@ -1220,18 +1220,8 @@ Host: api.qiwi.com
   "qrCode": {
     "type": "DYNAMIC",
     "ttl": 999,
-    "status": "CREATED",
-    "payload": "",
-    "image": {
-      "content": "Base64 string",
-      "mediaType": "image/png",
-      "width": 300,
-      "height": 300
-    }
-  },
-  "payment": {
-    "paymentUid": "12s1s21",
-    "paymentStatus": "WAITING",
+    "status": "INIT_PAYMENT_BY_TOKEN",
+    "payload": ""
   }
 }
 ~~~
@@ -1862,7 +1852,29 @@ X-Digital-Sign: BXXBmVDBZwwRW....XjU1ZSIfHCGw==
     "receiverLastName" : "Ivanov"
   },
   "comment" : "some comment for payout operation",
-  "callbackUrl" : "http://test.com/"
+  "callbackUrl" : "http://test.com/",
+  "payoutSplits": [
+    {
+      "type": "MERCHANT_DETAILS",
+      "siteUid": "Obuc-00",
+      "splitAmount": {
+        "value": 30.00,
+        "currency": "RUB"
+      },
+      "orderId": "dressesforwhite",
+      "comment": "Платье"
+    },
+    {
+      "type": "MERCHANT_DETAILS",
+      "siteUid": "Obuc-01",
+      "splitAmount": {
+        "value": 10.00,
+        "currency": "RUB"
+      },
+      "orderId": "shoesforvalya",
+      "comment": "Туфли"
+    }
+  ]
 }
 ~~~
 
@@ -1890,6 +1902,40 @@ X-Digital-Sign: BXXBmVDBZwwRW....XjU1ZSIfHCGw==
   "callbackUrl" : "http://test.com/",
   "flags": [
     "TEST"
+  ],
+  "payoutSplits": [
+    {
+      "type": "MERCHANT_DETAILS",
+      "siteUid": "Obuc-00",
+      "splitAmount": {
+        "currency": "RUB",
+        "value": "30.00"
+      },
+      "splitCommissions" : {
+        "merchantCms" : {
+          "value" : "3.00",
+          "currency" : "RUB"
+        }
+      },
+      "orderId": "dressesforwhite",
+      "comment": "Платье"
+    },
+    {
+      "type": "MERCHANT_DETAILS",
+      "siteUid": "Obuc-01",
+      "splitAmount": {
+        "currency": "RUB",
+        "value": "10.00"
+      },
+      "splitCommissions" : {
+        "merchantCms" : {
+          "value" : "1.00",
+          "currency" : "RUB"
+        }
+      },
+      "orderId": "shoesforvalya",
+      "comment": "Туфли"
+    }
   ]
 }
 ~~~
@@ -1978,6 +2024,40 @@ Host: api.qiwi.com
   "callbackUrl" : "http://test.com/",
   "flags": [
     "TEST"
+  ],
+  "payoutSplits": [
+    {
+      "type": "MERCHANT_DETAILS",
+      "siteUid": "Obuc-00",
+      "splitAmount": {
+        "currency": "RUB",
+        "value": "30.00"
+      },
+      "splitCommissions" : {
+        "merchantCms" : {
+          "value" : "3.00",
+          "currency" : "RUB"
+        }
+      },
+      "orderId": "dressesforwhite",
+      "comment": "Платье"
+    },
+    {
+      "type": "MERCHANT_DETAILS",
+      "siteUid": "Obuc-01",
+      "splitAmount": {
+        "currency": "RUB",
+        "value": "10.00"
+      },
+      "splitCommissions" : {
+        "merchantCms" : {
+          "value" : "1.00",
+          "currency" : "RUB"
+        }
+      },
+      "orderId": "shoesforvalya",
+      "comment": "Туфли"
+    }
   ]
 }
 ~~~

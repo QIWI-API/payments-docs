@@ -102,7 +102,7 @@ Name | Type | Description
 splits | Array | Merchants data array
 -----|------|------
 type | String | Data type. Always `MERCHANT_DETAILS` (merchant details)
-siteUid | String | [Registered merchant ID](#split-boarding)
+siteUid | String | Merchant ID
 splitAmount | Object | Merchant reimbursement data
 ----|----|-----
 value | Number | Amount of reimbursement rounded down to two decimals
@@ -120,7 +120,7 @@ Response field | Type | Description
 splits | Array | Array with split payments data
 -----|------|------
 type | String | Data type. Always `MERCHANT_DETAILS`
-siteUid | String | [Registered merchant ID](#split-boarind)
+siteUid | String | Merchant ID
 splitAmount | Object | Merchant reimbursement data
 ----|----|-----
 value | String | Amount of reimbursement
@@ -247,7 +247,7 @@ Name | Type | Description
 paymentSplits | Array | Merchants data array
 -----|------|------
 type | String | Data type. Always `MERCHANT_DETAILS` (merchant details)
-siteUid | String | [Registered merchant ID](#split-boarding)
+siteUid | String | Merchant ID
 splitAmount | Object | Merchant reimbursement data
 ----|----|-----
 value | Number | Amount of reimbursement rounded down to two decimals
@@ -265,7 +265,7 @@ Response field | Type | Description
 paymentSplits | Array | Array with split payments data
 -----|------|------
 type | String | Data type. Always `MERCHANT_DETAILS`
-siteUid | String | [Registered merchant ID](#split-boarind)
+siteUid | String | Merchant ID
 splitAmount | Object | Merchant reimbursement data
 ----|----|-----
 value | String | Amount of reimbursement
@@ -283,7 +283,7 @@ comment | String | Comment for the order
 
 ## Refunds on split payments {#split-refund}
 
-After a successful authorization of the card charging, a refund is available for the split payment transaction.
+After a successful authorization of the card charging, a refund is available for the split payment transaction. Both partial and complete refunds are supported.
 
 > Example of refund request
 
@@ -402,9 +402,9 @@ Host: api.qiwi.com
 }
 ~~~
 
-To send split payments refund, send in API request [Refund](#refund-api) a JSON-array<br/>`refundSplits` with merchants refunds. Put the total amount of the refund and the refund amount for each merchant. Both partial and complete refund are supported. 
+To send split payments refund, send in API request [Refund](#refund-api) a JSON-array<br/>`refundSplits` with refunds information. Put the total amount of the refund and the refund amount for each split.
 
-<aside class="warning">The amount of refunded reimbursements to merchants should be equal to the total amount of the refund.</aside>
+<aside class="warning">The amount of cancelled reimbursements to merchants should be equal to the total amount of the refund.</aside>
 
 JSON-array `refundSplits` format:
 
@@ -413,11 +413,11 @@ Name | Type | Description
 refundSplits | Array | Merchants refunds data array
 -----|------|------
 type | String | Data type. Always `MERCHANT_DETAILS` (merchant details)
-siteUid | String | [Registered merchant ID](#split-boarding)
-splitAmount | Object | Merchant reimbursement refund data
+siteUid | String | Merchant ID
+splitAmount | Object | Merchant cancelled reimbursement data
 ----|----|-----
-value | Number | Amount of reimbursement refund
-currency | String(3) | Text code of reimbursement refund currency, by ISO. Only `RUB` value
+value | Number | Amount of cancelled reimbursement
+currency | String(3) | Text code of cancelled reimbursement currency, by ISO. Only `RUB` value
 -----|-----|-----
 orderId | String | Order number (optional)
 comment | String | Comment for the order (optional)
@@ -430,10 +430,10 @@ refundSplits | Array | Array with refunds data
 -----|------|------
 type | String | Data type. Always `MERCHANT_DETAILS`
 siteUid | String | Registered merchant ID
-splitAmount | Object | Merchant reimbursement refund data
+splitAmount | Object | Merchant cancelled reimbursement data
 ----|----|-----
-value | String | Amount of reimbursement refund
-currency | String(3) | Text code of reimbursement refund currency, by ISO
+value | String | Amount of cancelled reimbursement
+currency | String(3) | Text code of cancelled reimbursement currency, by ISO
 -----|-----|-----
 splitCommissions | Object | Commission data (optional)
 -----|----|-----
@@ -447,179 +447,7 @@ comment | String | Comment for the order
 
 ## Notifications on split payments and refunds {#split-operations-notification}
 
-> Notification for a split payments
-
-~~~json
-{
-    "payment": {
-        "paymentId": "134d707d-fec4-4a84-93f3-781b4f8c24ac",
-        "customFields": {
-            "comment": "My comment"
-        },
-        "paymentCardInfo": {
-            "issuingCountry": "643",
-            "issuingBank": "Unknown",
-            "paymentSystem": "VISA",
-            "fundingSource": "UNKNOWN",
-            "paymentSystemProduct": "Unknown"
-        },
-        "type": "PAYMENT",
-        "createdDateTime": "2021-02-05T11:29:38+03:00",
-        "status": {
-            "value": "SUCCESS",
-            "changedDateTime": "2021-02-05T11:29:39+03:00"
-        },
-        "amount": {
-            "value": 3,
-            "currency": "RUB"
-        },
-        "paymentMethod": {
-            "type": "TOKEN",
-            "paymentToken": "1620161e-d498-431b-b006-c52bb78c6bf2",
-            "maskedPan": "425600******0003",
-            "cardHolder": "CARD HOLDER",
-            "cardExpireDate": "11/2022"
-        },
-        "customer": {
-            "email": "glmgmmxr@qiwi123.com",
-            "account": "sbderxuftsrt",
-            "phone": "13387571067",
-            "country": "yccsnnfjgthu",
-            "city": "sqdvseezbpzo",
-            "region": "shbvyjgspjvu"
-        },
-        "gatewayData": {
-            "type": "ACQUIRING",
-            "authCode": "181218",
-            "rrn": "123"
-        },
-        "billId": "autogenerated-19cf2596-62a8-47f2-8721-b8791e9598d0",
-        "flags": [],
-        "paymentSplits": [
-            {
-                "type": "MERCHANT_DETAILS",
-                "siteUid": "Obuc-00",
-                "splitAmount": {
-                    "value": 2,
-                    "currency": "RUB"
-                },
-                "splitCommissions": {
-                    "merchantCms": {
-                        "value": 0.2,
-                        "currency": "RUB"
-                    },
-                    "userCms": null
-                },
-                "orderId": "dressesforwhite",
-                "comment": "Purchase 1"
-            },
-            {
-                "type": "MERCHANT_DETAILS",
-                "siteUid": "Obuc-01",
-                "splitAmount": {
-                    "value": 1,
-                    "currency": "RUB"
-                },
-                "splitCommissions": {
-                    "merchantCms": {
-                        "value": 0.02,
-                        "currency": "RUB"
-                    },
-                    "userCms": null
-                },
-                "orderId": "shoesforvalya",
-                "comment": "Purchase 2"
-            }
-        ]
-    },
-    "type": "PAYMENT",
-    "version": "1"
-}
-~~~
-
-> Notification for a split payments refund
-
-~~~json
-{
-    "refund": {
-        "refundId": "42f5ca91-965e-4cd0-bb30-3b64d9284048",
-        "type": "REFUND",
-        "createdDateTime": "2021-02-05T11:31:40+03:00",
-        "status": {
-            "value": "SUCCESS",
-            "changedDateTime": "2021-02-05T11:31:40+03:00"
-        },
-        "amount": {
-            "value": 3,
-            "currency": "RUB"
-        },
-        "paymentMethod": {
-            "type": "TOKEN",
-            "paymentToken": "1620161e-d498-431b-b006-c52bb78c6bf2",
-            "maskedPan": null,
-            "cardHolder": null,
-            "cardExpireDate": null
-        },
-        "customer": {
-            "email": "glmgmmxr@qiwi123.com",
-            "account": "sbderxuftsrt",
-            "phone": "13387571067",
-            "country": "yccsnnfjgthu",
-            "city": "sqdvseezbpzo",
-            "region": "shbvyjgspjvu"
-        },
-        "gatewayData": {
-            "type": "ACQUIRING",
-            "authCode": "181218",
-            "rrn": "123"
-        },
-        "billId": "autogenerated-19cf2596-62a8-47f2-8721-b8791e9598d0",
-        "flags": [
-            "REVERSAL"
-        ],
-        "refundSplits": [
-            {
-                "type": "MERCHANT_DETAILS",
-                "siteUid": "Obuc-00",
-                "splitAmount": {
-                    "value": 2,
-                    "currency": "RUB"
-                },
-                "splitCommissions": {
-                    "merchantCms": {
-                        "value": 0,
-                        "currency": "RUB"
-                    },
-                    "userCms": null
-                },
-                "orderId": "dressesforwhite",
-                "comment": "Some purchase"
-            },
-            {
-                "type": "MERCHANT_DETAILS",
-                "siteUid": "Obuc-01",
-                "splitAmount": {
-                    "value": 1,
-                    "currency": "RUB"
-                },
-                "splitCommissions": {
-                    "merchantCms": {
-                        "value": 0.02,
-                        "currency": "RUB"
-                    },
-                    "userCms": null
-                },
-                "orderId": "shoesforvalya",
-                "comment": "Some purchase 2"
-            }
-        ]
-    },
-    "type": "REFUND",
-    "version": "1"
-}
-~~~
-
 Notifications for split payments and split payment refunds are formed similarly to the API requests described above:
 
-* The JSON-array `paymentSplits` is added to the [notification](#payment-callback) body with the `PAYMENT` type, which is used to transmit merchants' payment data. See [the array format](#use-splits-merchant-form). 
-* The JSON-array `refundSplits` is added to the [notification](#refund-callback) body with the `REFUND` type, which is used to transmit refund data to the merchants. See [the format above](#split-refund).
+* The JSON-array `paymentSplits` with merchants' payment data is added to the [PAYMENT type notification](#payment-callback) body.
+* The JSON-array `refundSplits` with refund data is added to the [REFUND type notification](#refund-callback) body.

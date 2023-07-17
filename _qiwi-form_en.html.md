@@ -389,7 +389,7 @@ You can add the following parameter to the URL:
 | Parameter     | Description                                                                                                                                                         | Type                         |
 |---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------|
 | successUrl    | URL for a customer return to the merchant site after the successful payment. Redirect proceeds after the successful 3DS authentication. URL should be UTF-8 encoded.| URL-encoded string           |
-| lang          | Interface language of the QIWI form. By default, `ru`                                                                                                               | `ru`, `eng`                  |
+| lang          | Interface language of the QIWI form. By default, `ru`                                                                                                               | `ru`, `en`                   |
 | paymentMethod | Payment method suggested to the customer on the QIWI form. If the method is not enabled for the merchant, some available method is suggested. By default, `CARD`.   | `CARD`, `SBP`, `QIWI_WALLET` |
 
 > Example of event listener for iframe
