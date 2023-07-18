@@ -50,7 +50,7 @@ search: true
 
 # Обзор протокола {#get-started}
 
-###### [Версия 1.24](/ru/payments-release-notes/index.html) | [Редактировать на GitHub](https://github.com/QIWI-API/payments-docs/)
+###### [Версия 1.25](/ru/payments-release-notes/index.html) | [Редактировать на GitHub](https://github.com/QIWI-API/payments-docs/)
 
 Протокол приема платежей предоставляет быстрые и безопасные решения для приема и отправки платежей в интернете. Протокол дает вашим покупателям возможность использовать разнообразные методы платежей, включая:
 

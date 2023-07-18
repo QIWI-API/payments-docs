@@ -397,18 +397,22 @@ Content-type: application/json
 Host: api.qiwi.com
 
 {
-  "paymentMethod" : {
+  "billId": "testBillId28",
+   "amount": {
+    "currency": "RUB",
+    "value": 200.00
+  },
+ "paymentMethod" : {
     "type" : "CARD",
     "pan" : "4444443616621049",
     "expiryDate" : "12/19",
     "cvv2" : "123",
-    "holderName" : "CARDHOLDER NAME"
+    "holderName" : "CARDHOLDER NAME",
+    "cardTokenPaymentType" : "INSTALLMENT",     
+    "firstTransaction" : {         
+      "paymentId" : "testPaymentId28"     
+    } 
   },
-  "amount": {
-    "currency": "RUB",
-    "value": 200.00
-  },
-  "billId": "string",
   "customer": {
     "account": "string",
     "address": {

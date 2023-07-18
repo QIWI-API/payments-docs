@@ -409,7 +409,11 @@ Host: api.qiwi.com
     "pan" : "4444443616621049",
     "expiryDate" : "12/19",
     "cvv2" : "123",
-    "holderName" : "CARDHOLDER NAME"
+    "holderName" : "CARDHOLDER NAME",
+    "cardTokenPaymentType" : "INSTALLMENT",     
+    "firstTransaction" : {         
+      "paymentId" : "testPaymentId28"     
+    } 
   },
   "callbackUrl": "https://example.com/callbacks",
   "comment": "Example payment",
