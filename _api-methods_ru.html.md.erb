@@ -1,0 +1,2293 @@
+# Справочник методов API {#api-reference}
+
+<aside class="notice">В запросы и ответы могут добавляться новые параметры. Следите за обновлениями на <a href="https://github.com/QIWI-API/payments-docs/blob/master/payments_ru.html.md">Github</a>.</aside>
+
+## Создание счёта {#invoice_put}
+
+<div id="payin_v1_sites__siteId__bills__billId__put_checkout">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-checkout-payment-put.json', function( data ) {
+        window.requestUI(
+            data,
+            "checkout",
+            "payin/v1/sites/{siteId}/bills/{billId}",
+            "put",
+            ['RequestBody', '200', '4xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример создания счета
+
+PUT /partner/payin/v1/sites/site-01/bills/893794793973 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+
+{
+   "amount": {
+     "currency": "RUB",
+     "value": 100.00
+   },
+   "billPaymentMethodsType": [
+      "SBP"
+   ],
+   "comment": "Text comment",
+   "expirationDateTime": "2022-04-13T14:30:00+03:00",
+   "customer": {},
+   "customFields": {
+     "cf1": "Some data"
+   }
+}
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос создания счета
+
+{
+    "billId": "893794793973",
+    "invoiceUid": "d875277b-6f0f-445d-8a83-f62c7c07be77",
+    "amount": {
+      "value": "100.00",
+      "currency": "RUB"
+    },
+    "status": {
+      "value": "CREATED",
+      "changedDateTime": "2022-04-05T11:27:41"
+    },
+    "comment": "Text comment",
+    "customFields": {
+      "cf1": "Some data"
+    },
+    "creationDateTime": "2022-03-05T11:27:41",
+    "expirationDateTime": "2022-04-13T14:30:00",
+    "payUrl": "https://payment.qiwi.com/form/?invoice_uid=d875277b-6f0f-445d-8a83-f62c7c07be77"
+}
+
+Пример ответа если счет уже существует и у него истек срок оплаты
+
+{
+ "billId": "12345",
+ "invoiceUid": "3b39ad6d-f111-401d-8108-ed11af920a65",
+ "amount": {
+   "currency": "RUB",
+   "value": "1.00"
+ },
+ "expirationDateTime": "2023-03-21T13:02:00+03:00",
+ "status": {
+   "value": "EXPIRED",
+   "changedDateTime": "2023-03-21T13:02:00+03:00"
+ },
+ "comment": "Text comment",
+ "flags": [
+   "TEST"
+ ],
+ "payUrl": "https://payment.qiwi.com/form?invoiceUid=3b39ad6d-f211-401d-8008-ed11af920a65"
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос создания счета
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2022-03-05T11:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+## Статус счета {#invoice-details}
+
+<div id="payin_v1_sites__siteId__bills__billId__details_get_checkout">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-checkout-payment-details-get.json', function( data ) {
+        window.requestUI(
+            data,
+            "checkout",
+            "payin/v1/sites/{siteId}/bills/{billId}/details",
+            "get",
+            ['RequestBody', '200', '4xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример запроса статуса счета
+
+GET /partner/payin/v1/sites/site-01/bills/3a3d0286cefe645d2b11/details HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос статуса счета
+
+{
+    "billId": "3a3d0286cefe645d2b11",
+    "invoiceUid": "235d8d5a-38ed-11fc-9ab6-8b5a65d7e2f8",
+    "amount": {
+        "currency": "RUB",
+        "value": "3000.00"
+    },
+    "expirationDateTime": "2023-05-07T19:25:36+03:00",
+    "status": {
+        "value": "PAID",
+        "changedDateTime": "2023-04-07T19:28:12+03:00"
+    },
+    "comment": "Детская футбольная школа «Тигры»",
+    "flags": [
+        "SALE"
+    ],
+    "payUrl": "https://payment.qiwi.com/form?invoiceUid=235d8d5a-11ed-46fc-9ab6-8b5a65d7e2f8",
+    "payments": [
+        {
+            "paymentId": "cd4a4ade-011e6-484d-87c8-40a7f48326fa",
+            "billId": "3a3d0286cefe645d2b11",
+            "createdDateTime": "2023-04-07T19:27:52+03:00",
+            "amount": {
+                "currency": "RUB",
+                "value": "3000.00"
+            },
+            "capturedAmount": {
+                "currency": "RUB",
+                "value": "3000.00"
+            },
+            "refundedAmount": {
+                "currency": "RUB",
+                "value": "0.00"
+            },
+            "paymentMethod": {
+                "type": "CARD",
+                "maskedPan": "422264******1232",
+                "rrn": "309711196151",
+                "authCode": "231181"
+            },
+            "status": {
+                "value": "COMPLETED",
+                "changedDateTime": "2023-04-07T19:28:12+03:00"
+            },
+            "comment": "Детская футбольная школа «Тигры»",
+            "customFields": {
+                "auto_capture": "true",
+                "invoice_creation_type": "PUBLIC_KEY"
+            },
+            "paymentCardInfo": {
+                "issuingCountry": "643",
+                "issuingBank": "Сбербанк России",
+                "paymentSystem": "VISA",
+                "fundingSource": "DEBIT",
+                "paymentSystemProduct": "N1|Visa Rewards"
+            }
+        },
+        {
+            "paymentId": "A30971626215731E01110841111138B2",
+            "billId": "3a3d0286cefe645d2b11",
+            "createdDateTime": "2023-04-07T19:26:21+03:00",
+            "amount": {
+                "currency": "RUB",
+                "value": "3000.00"
+            },
+            "capturedAmount": {
+                "currency": "RUB",
+                "value": "3000.00"
+            },
+            "refundedAmount": {
+                "currency": "RUB",
+                "value": "0.00"
+            },
+            "paymentMethod": {
+                "type": "SBP",
+                "phone": "0079031232001"
+            },
+            "status": {
+                "value": "DECLINED",
+                "changedDateTime": "2023-04-07T19:26:23+03:00",
+                "reason": "GATEWAY_INTEGRATION_ERROR",
+                "reasonMessage": "I07999 OPKC_TECH_ERROR"
+            },
+            "comment": "Детская футбольная школа «Тигры»",
+            "customFields": {
+                "auto_capture": "true",
+                "invoice_creation_type": "PUBLIC_KEY"
+            }
+        }
+    ]
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос статуса счета
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2022-03-05T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+## Получение списка платежей по счету {#invoice-payments}
+
+<div id="payin_v1_sites__siteId__bills__billId__get_checkout">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-checkout-payment-get.json', function( data ) {
+        window.requestUI(
+            data,
+            "checkout",
+            "payin/v1/sites/{siteId}/bills/{billId}",
+            "get",
+            ['RequestBody', '200', '4xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример запроса на получение списка платежей по счету
+
+GET /partner/payin/v1/sites/site-01/bills/3a3d0286cefe645d2b00 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос списка платежей по счету
+
+[
+    {
+        "paymentId": "cd4a4ade-12e6-484d-87c8-40a7f48326fa",
+        "billId": "3a3d0286cefe645d2b11",
+        "createdDateTime": "2023-04-07T19:27:52+03:00",
+        "amount": {
+            "currency": "RUB",
+            "value": "3000.00"
+        },
+        "capturedAmount": {
+            "currency": "RUB",
+            "value": "3000.00"
+        },
+        "refundedAmount": {
+            "currency": "RUB",
+            "value": "0.00"
+        },
+        "paymentMethod": {
+            "type": "CARD",
+            "maskedPan": "422264******1232",
+            "rrn": "309711234151",
+            "authCode": "232481"
+        },
+        "status": {
+            "value": "COMPLETED",
+            "changedDateTime": "2023-04-07T19:28:12+03:00"
+        },
+        "comment": "Детская футбольная школа «Тигры»",
+        "customFields": {
+            "auto_capture": "true",
+            "invoice_creation_type": "PUBLIC_KEY"
+        },
+        "paymentCardInfo": {
+            "issuingCountry": "643",
+            "issuingBank": "Сбербанк России",
+            "paymentSystem": "VISA",
+            "fundingSource": "DEBIT",
+            "paymentSystemProduct": "N1|Visa Rewards"
+        }
+    },
+    {
+        "paymentId": "A30971626215731E000008415C2D38B2",
+        "billId": "3a3d0286cefe645d2b00",
+        "createdDateTime": "2023-04-07T19:26:21+03:00",
+        "amount": {
+            "currency": "RUB",
+            "value": "3000.00"
+        },
+        "capturedAmount": {
+            "currency": "RUB",
+            "value": "3000.00"
+        },
+        "refundedAmount": {
+            "currency": "RUB",
+            "value": "0.00"
+        },
+        "paymentMethod": {
+            "type": "SBP",
+            "phone": "0079099922001"
+        },
+        "status": {
+            "value": "DECLINED",
+            "changedDateTime": "2023-04-07T19:26:23+03:00",
+            "reason": "GATEWAY_INTEGRATION_ERROR",
+            "reasonMessage": "I07999 OPKC_TECH_ERROR"
+        },
+        "comment": "Детская футбольная школа «Тигры»",
+        "customFields": {
+            "auto_capture": "true",
+            "invoice_creation_type": "PUBLIC_KEY"
+        }
+    }
+]
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос получения списка платежей по счету
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+## Платёж {#payments}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__put_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-payment-put.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/payments/{paymentId}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример платежа
+
+PUT /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+
+{
+  "billId": "string",
+  "amount": {
+    "currency": "RUB",
+    "value": 200.00
+  },
+  "paymentMethod" : {
+    "type" : "CARD",
+    "pan" : "4444443616621049",
+    "expiryDate" : "12/19",
+    "cvv2" : "123",
+    "holderName" : "CARDHOLDER NAME",
+    "cardTokenPaymentType" : "INSTALLMENT",     
+    "firstTransaction" : {         
+      "paymentId" : "testPaymentId28"     
+    } 
+  },
+  "callbackUrl": "https://example.com/callbacks",
+  "comment": "Example payment",
+  "customer": {
+    "account": "string",
+    "address": {
+      "city": "Moscow",
+      "country": "Russian Federation",
+      "details": "Severnoe chertanovo microdistrict 1a 1",
+      "region": "Moscow city"
+    },
+    "email": "customer@example.com",
+    "phone": "+79991234567"
+  },
+  "deviceData": {
+    "datetime": "2017-09-03T14:30:00+03:00",
+    "fingerprint": "TW96aWxsYS81LjAgKHBsYXRmb3JtOyBydjpnZWNrb3ZlcnNpb24p",
+    "ip": "127.0.0.1",
+    "screenResolution": "1280x1024",
+    "timeOnPage": 1440,
+    "userAgent": "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion"
+  },
+  "customFields": {
+    "cf1": "Some data"
+  },
+  "flags": [
+    "SALE"
+  ]
+}
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос платежа
+
+{
+  "paymentId" : "223E",
+  "createdDateTime" : "2024-03-01T17:10:31.284+03:00",
+  "amount" : {
+    "currency" : "RUB",
+    "value" : "200.00"
+  },
+  "capturedAmount" : {
+    "currency" : "RUB",
+    "value" : "0.00"
+  },
+  "refundedAmount" : {
+    "currency" : "RUB",
+    "value" : "0.00"
+  },
+  "paymentMethod" : {
+    "type" : "CARD",
+    "maskedPan" : "444444******1049"
+  },
+  "customer" : { },
+  "deviceData" : { },
+  "requirements" : {
+    "threeDS" : {
+      "pareq" : "eJyrrgUAAXUA+Q==",
+      "acsUrl" : "https://test.paymentgate.ru/acs/auth/start.do"
+    }
+  },
+  "status" : {
+    "value" : "WAITING",
+    "changedDateTime" : "2024-03-01T17:10:32.607+03:00"
+  },
+  "paymentCardInfo": {
+    "issuingCountry": "810",
+    "issuingBank": "QiwiBank",
+    "paymentSystem": "VISA",
+    "fundingSource": "CREDIT",
+    "paymentSystemProduct": "P|Visa Gold"
+  },
+  "callbackUrl": "https://example.com/callbacks",
+  "customFields" : {
+    "cf1": "Some data"
+  },
+  "flags" : [ ]
+}
+~~~
+
+<!-- 4xx-->
+~~~json
+Пример ответа с ошибкой 4xx на запрос платежа
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"validation.error",
+  "description":"Validation error",
+  "userMessage":"Validation error",
+  "dateTime":"2022-11-13T16:49:59.166+03:00",
+  "traceId":"fd0e2a08c63ace83",
+  "cause":{
+    "paymentToken": [
+      "Exchange token error. Token disabled, please create new one"
+    ]
+  }
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос платежа
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Статус платежа {#payment_get}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__get_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-payment-get.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/payments/{paymentId}",
+            "get",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример запроса статуса платежа
+
+GET /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос статуса платежа
+
+{
+  "paymentId" : "223E",
+  "createdDateTime" : "2024-03-01T17:10:31.284+03:00",
+  "amount" : {
+    "currency" : "RUB",
+    "value" : "200.00"
+  },
+  "capturedAmount" : {
+    "currency" : "RUB",
+    "value" : "0.00"
+  },
+  "refundedAmount" : {
+    "currency" : "RUB",
+    "value" : "0.00"
+  },
+  "paymentMethod" : {
+    "type" : "CARD",
+    "maskedPan" : "444444******1049",
+    "rrn": "124",
+    "authCode": "182817",
+  },
+  "customer" : { },
+  "deviceData" : { },
+  "requirements" : {
+    "threeDS" : {
+      "pareq" : "eJyrrgUAAXUA+Q==",
+      "acsUrl" : "https://test.paymentgate.ru/acs/auth/start.do"
+    }
+  },
+  "status" : {
+    "value" : "WAITING",
+    "changedDateTime" : "2024-03-01T17:10:32.607+03:00"
+  },
+  "customFields" : { },
+  "flags" : [ ]
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос статуса платежа
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"validation.error",
+  "description":"Validation error",
+  "userMessage":"Validation error",
+  "dateTime":"2022-11-13T16:49:59.166+03:00",
+  "traceId":"fd0e2a08c63ace83",
+  "cause":{
+    "paymentToken": [
+      "Exchange token error. Token disabled, please create new one"
+    ]
+  }
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос статуса платежа
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Завершение аутентификации покупателя {#payment_complete}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__complete_post_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-complete-post.json', function( data ) {
+        window.requestUI(
+          data,
+            "api",
+          "payin/v1/sites/{siteId}/payments/{paymentId}/complete",
+          "post",
+          ['RequestBody', '200', '4xx', '5xx']
+        )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример завершения аутентификации покупателя
+
+POST /partner/payin/v1/sites/test-01/payments/1811/complete HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+
+{
+  "threeDS": {
+    "pares": "eJzVWFevo9iyfu9fMZrzaM0QjWHk3tIiGptgooE3cgabYMKvv3jvTurTc3XOfbkaJMuL...."
+  }
+}
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос завершения аутентификации покупателя
+
+{
+  "paymentId" : "223E",
+  "createdDateTime" : "2024-03-01T17:10:31.284+03:00",
+  "amount" : {
+    "currency" : "RUB",
+    "value" : "200.00"
+  },
+  "capturedAmount" : {
+    "currency" : "RUB",
+    "value" : "0.00"
+  },
+  "refundedAmount" : {
+    "currency" : "RUB",
+    "value" : "0.00"
+  },
+  "paymentMethod" : {
+    "type" : "CARD",
+    "maskedPan" : "444444******1049"
+  },
+  "customer" : { },
+  "deviceData" : { },
+  "requirements" : {
+    "threeDS" : {
+      "pareq" : "eJyrrgUAAXUA+Q==",
+      "acsUrl" : "https://test.paymentgate.ru/acs/auth/start.do"
+    }
+  },
+  "status" : {
+    "value" : "COMPLETED",
+    "changedDateTime" : "2024-03-01T17:10:32.607+03:00"
+  },
+  "customFields" : { },
+  "flags" : [ ]
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос завершения аутентификации покупателя
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос завершения аутентификации покупателя
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Подтверждение платежа {#capture}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__captures__captureId__put_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-capture-put.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/payments/{paymentId}/captures/{captureId}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример подтверждения платежа
+
+PUT /partner/payin/v1/sites/test-01/payments/1811/captures/bxwd8096 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+
+{
+  "callbackUrl": "https://example.com/callbacks",
+  "comment": "Example capture"
+}
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос подтверждения платежа
+
+{
+  "captureId": "bxwd8096",
+  "createdDateTime": "2024-03-20T16:29:58.96+03:00",
+  "amount": {
+    "currency": "RUB",
+    "value": "6.77"
+  },
+  "status": {
+    "value": "COMPLETED",
+    "changedDateTime": "2024-03-20T16:29:58.963+03:00"
+  }
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос подтверждения платежа
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос подтверждения платежа
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Статус подтверждения {#capture_get}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__captures__captureId__get_api">
+  <script>
+    $(document).ready(function(){
+        $.getJSON('../../rui_jsons/payin-capture-get.json', function( data ) {
+          window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/payments/{paymentId}/captures/{captureId}",
+            "get",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример запроса статуса подтверждения
+
+GET /partner/payin/v1/sites/test-01/payments/1811/captures/bxwd8096 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос статуса подтверждения
+
+{
+  "captureId": "bxwd8096",
+  "createdDateTime": "2024-03-20T16:29:58.96+03:00",
+  "amount": {
+    "currency": "RUB",
+    "value": "6.77"
+  },
+  "status": {
+    "value": "COMPLETED",
+    "changedDateTime": "2024-03-20T16:29:58.963+03:00"
+  }
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос статуса подтверждения
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос статуса подтверждения
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Удаление платёжного токена {#delete-token}
+
+<div id="payin_v1_sites__siteId__tokens_delete_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-token-delete.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/tokens",
+            "delete",
+            ['RequestBody', '204', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример удаления платёжного токена
+
+DELETE /partner/payin/v1/sites/test-01/tokens HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+
+{
+  "customerAccountId": "customer123",
+  "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6"
+}
+~~~
+
+<!-- 204 -->
+~~~http
+Пример успешного ответа на запрос удаления токенв
+
+HTTP/1.1 204 No Content
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос удаления токена
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос удаления токена
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Получение QR-кода СБП {#qr-code-sbp}
+
+### Метод POST {#qr-code-sbp-post}
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes_post_api">
+  <script>
+    $(document).ready(function(){
+        $.getJSON('../../rui_jsons/payin-sbp-post.json', function( data ) {
+          window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/sbp/qrCodes",
+            "post",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример получения QR-кода СБП (метод POST)
+
+POST /partner/payin/v1/sites/test-01/sbp/qrCodes HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+
+{
+  "qrCodeUid": "Test12",
+  "amount": {
+    "value": 1.00,
+    "currency": "RUB"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 60,
+    "image": {
+      "mediaType": "image/png",
+      "width": 300,
+      "height": 300
+    }
+  },
+  "paymentPurpose": "Flower for my girlfriend",
+  "redirectUrl": "http://example.com"
+}
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос получения QR-кода СБП
+
+{
+  "qrCodeUid": "Test12",
+  "amount": {
+    "currency": "RUB",
+    "value": "1.00"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 60,
+    "image": {
+      "mediaType": "image/png",
+      "width": 300,
+      "height": 300,
+      "content": "iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAA"
+    },
+    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQD?type=02&bank=100000000009&sum=200&cur=RUB&crc=C63A",
+    "status": "CREATED"
+  },
+  "createdOn": "2022-08-11T20:10:32+03:00"
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос получения QR-кода СБП
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос получения QR-кода СБП
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+### Метод PUT {#qr-code-sbp-put}
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__put_api">
+  <script>
+    $(document).ready(function(){
+        $.getJSON('../../rui_jsons/payin-sbp-put.json', function( data ) {
+          window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример получения QR-кода СБП (метод PUT)
+
+PUT /partner/payin/v1/sites/test-01/sbp/qrCodes/Test12 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+
+{
+  "amount": {
+    "value": 1.00,
+    "currency": "RUB"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 60,
+    "image": {
+      "mediaType": "image/png",
+      "width": 300,
+      "height": 300
+    }
+  },
+  "paymentPurpose": "Flower for my girlfriend",
+  "redirectUrl": "http://example.com"
+}
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос получения QR-кода СБП
+
+{
+  "qrCodeUid": "Test12",
+  "amount": {
+    "currency": "RUB",
+    "value": "1.00"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 60,
+    "image": {
+        "mediaType": "image/png",
+        "width": 300,
+        "height": 300,
+        "content": "iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAA"
+    },
+    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQDtype=02bank=100000000009&sum=200&cur=RUB&crc=C63A",
+    "status": "CREATED"
+  },
+  "createdOn": "2022-08-11T20:10:32+03:00"
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос получения QR-кода СБП
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос получения QR-кода СБП
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Статус QR-кода СБП {#qr-code-sbp-get}
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__get_api">
+  <script>
+    $(document).ready(function(){
+        $.getJSON('../../rui_jsons/payin-sbp-get.json', function( data ) {
+          window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}",
+            "get",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример запроса статуса QR-кода СБП
+
+GET /partner/payin/v1/sites/test-01/sbp/qrCodes/Test HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос статуса QR-кода СБП
+
+{
+  "qrCodeUid": "Test",
+  "amount": {
+    "currency": "RUB",
+    "value": "1.00"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 60,
+    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQDtype=02bank=100000000009&sum=200&cur=RUB&crc=C63A",
+    "status": "PAYED"
+  },
+  "payment": {
+    "paymentUid": "A22231710446971300200933E625FCB3",
+    "paymentStatus": "COMPLETED"
+  },
+  "createdOn": "2022-08-11T20:10:32+03:00"
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос статуса QR-кода СБП
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос статуса QR-кода СБП
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Платеж токеном СБП {#payment-sbp-token}
+
+<div id="payin_v1_sites__siteId__sbp_qrCodes__qrCodeUid__payments_post_api">
+  <script>
+    $(document).ready(function(){
+        $.getJSON('../../rui_jsons/payin-sbp-token-post.json', function( data ) {
+          window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/sbp/qrCodes/{qrCodeUid}/payments",
+            "post",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример платежа токеном СБП
+
+POST /partner/payin/v1/sites/test-01/sbp/qrCodes/adghj17d1g8/payments HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+
+{
+  "tokenizationAccount": "customer123",
+  "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6"
+}
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос платежа токеном СБП
+
+{
+  "qrCodeUid": "adghj17d1g8",
+  "amount": {
+    "value": "100.00",
+    "currency": "RUB"
+  },
+  "paymentPurpose": "Flower for my girlfriend",
+  "redirectUrl": "http://someurl.com",
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 999,
+    "status": "INIT_PAYMENT_BY_TOKEN",
+    "payload": ""
+  }
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос платежа токеном СБП
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос платежа токеном СБП
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Операция возврата {#refund-api}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__refunds__refundId__put_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-refund-put.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/payments/{paymentId}/refunds/{refundId}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример возврата по платежу
+
+PUT /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+
+{
+  "amount": {
+    "value": 2.34,
+    "currency": "RUB"
+  }
+}
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос возврата по платежу
+
+{
+  "refundId": "tcwv3132",
+  "createdDateTime": "2024-03-20T16:32:55.547+03:00",
+  "amount": {
+    "currency": "RUB",
+    "value": "2.34"
+  },
+  "status": {
+    "value": "COMPLETED",
+    "changedDateTime": "2024-03-20T16:32:55.55+03:00"
+  },
+  "flags": [
+    "REVERSAL"
+  ]
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос возврата
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос возврата
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Статус возврата {#refund-api-status}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__refunds__refundId__get_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-refund-get.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/payments/{paymentId}/refunds/{refundId}",
+            "get",
+            ['RequestBody', '200', '4xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример запроса статуса возврата
+
+GET /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос статуса возврата по платежу
+
+{
+  "refundId": "tcwv3132",
+  "createdDateTime": "2024-03-20T16:32:55.547+03:00",
+  "amount": {
+    "currency": "RUB",
+    "value": "2.34"
+  },
+  "status": {
+    "value": "COMPLETED",
+    "changedDateTime": "2024-03-20T16:32:55.55+03:00"
+  },
+  "flags": [
+    "REVERSAL"
+  ]
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос статуса возврата
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+## Статус возвратов {#refunds-api-status}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__refunds_get_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-refunds-get.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/payments/{paymentId}/refunds",
+            "get",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример запроса статуса всех возвратов по платежу
+
+GET /partner/payin/v1/sites/test-01/payments/1811/refunds HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос статуса всех возвратов по платежу
+
+[
+ {
+  "refundId": "tcwv3132",
+  "createdDateTime": "2024-03-20T16:32:55.547+03:00",
+  "amount": {
+    "currency": "RUB",
+    "value": "2.34"
+  },
+  "status": {
+    "value": "COMPLETED",
+    "changedDateTime": "2024-03-20T16:32:55.55+03:00"
+  },
+  "flags": [
+    "REVERSAL"
+  ]
+ }
+]
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос статуса всех возвратов по платежу
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос статуса всех возвратов по платежу
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Отмена возврата {#decline-refund-api}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__refunds__refundId__decline_post_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-refund-decline.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/payments/{paymentId}/refunds/{refundId}/decline",
+            "post",
+            ['RequestBody', '200', '4xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример отмены возврата по платежу
+
+POST /partner/payin/v1/sites/test-01/payments/1811/refunds/tcwv3132/decline HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос отмены возврата по платежу
+
+{
+  "refundId": "tcwv3132",
+  "createdDateTime": "2024-03-20T16:32:55.547+03:00",
+  "amount": {
+    "currency": "RUB",
+    "value": "2.34"
+  },
+  "status": {
+    "value": "COMPLETED",
+    "changedDateTime": "2024-03-20T16:32:55.55+03:00"
+  },
+  "flags": [
+    "REVERSAL"
+  ]
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос отмены возврата по платежу
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<% if config[:payin_show_methods] == "true" %>
+
+## Проверка карты {#card-check-api}
+
+<div id="payin_v1_sites__siteId__validation_card_requests__requestUid__put_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-card-check-put.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/validation/card/requests/{requestUid}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример проверки карты
+
+GET /partner/payin/v1/sites/test-01/validation/card/requests/acd7bf20-22e2-4cbf-a218-38d90e9f29b9 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+
+{
+    "cardData": {
+        "pan": "1111222233334444",
+        "expiryDate": "12/34",
+        "cvv2": "123",
+        "holderName": "Super Man"
+    },
+    "tokenizationData": {
+        "account": "cat_girl"
+    }
+}
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос проверки карты
+
+{
+    "requestUid": "acd7bf20-22e2-4cbf-a218-38d90e9f29b9",
+    "status": "SUCCESS",
+    "isValidCard": true,
+    "threeDsStatus": "WITHOUT",
+    "checkOperationDate": "2021-07-29T16:30:00+03:00",
+    "cardInfo": {
+        "issuingCountry": "RUS",
+        "issuingBank": "VTB",
+        "paymentSystem": "VISA",
+        "fundingSource": "DEBIT",
+        "paymentSystemProduct": "Platinum..."
+    },
+    "createdToken": {
+        "token": "1a77343a-dd8a-11eb-ba80-0242ac130004",
+        "name": "111122******4444",
+        "expiredDate": "2034-12-01T00:00:00+03:00",
+        "account": "cat_girl"
+    }
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос проверки карты
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос проверки карты
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Статус проверки карты {#card-check-info}
+
+<div id="payin_v1_sites__siteId__validation_card_requests__requestUid__get_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-card-check-get.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/validation/card/requests/{requestUid}",
+            "get",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример запроса статуса проверки карты
+
+GET /partner/payin/v1/sites/test-01/validation/card/requests/acd7bf20-22e2-4cbf-a218-38d90e9f29b9 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос статуса проверки карты
+
+{
+    "requestUid": "acd7bf20-22e2-4cbf-a218-38d90e9f29b9",
+    "status": "SUCCESS",
+    "isValidCard": true,
+    "threeDsStatus": "WITHOUT",
+    "checkOperationDate": "2021-07-29T16:30:00+03:00",
+    "cardInfo": {
+        "issuingCountry": "RUS",
+        "issuingBank": "VTB",
+        "paymentSystem": "VISA",
+        "fundingSource": "DEBIT",
+        "paymentSystemProduct": "Platinum..."
+    },
+    "createdToken": {
+        "token": "1a77343a-dd8a-11eb-ba80-0242ac130004",
+        "name": "111122******4444",
+        "expiredDate": "2034-12-01T00:00:00+03:00",
+        "account": "cat_girl"
+    }
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос статуса проверки карты
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос статуса проверки карты
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Завершение аутентификации при проверке карты {#card-check-complete}
+
+<div id="payin_v1_sites__siteId__validation_card_requests__requestUid__complete_post_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-card-check-complete-post.json', function( data ) {
+        window.requestUI(
+          data,
+          "api",
+          "payin/v1/sites/{siteId}/validation/card/requests/{requestUid}/complete",
+          "post",
+          ['RequestBody', '200', '4xx', '5xx']
+        )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример завершения аутентификации при проверке карты
+
+POST /partner/payin/v1/sites/test-01/validation/card/requests/acd7bf20-22e2-4cbf-a218-38d90e9f29b9/complete HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+
+{
+    "pares": "eJzVWFevo9iyfu9fMZrzaM0QjWHk3tIiGptgooE3cgabYMKvv3jvTurTc3XOfbkaJMuL...."
+}
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос завершения аутентификации при проверке карты
+
+{
+    "requestUid": "acd7bf20-22e2-4cbf-a218-38d90e9f29b9",
+    "status": "SUCCESS",
+    "isValidCard": true,
+    "threeDsStatus": "PASSED",
+    "checkOperationDate": "2021-07-29T16:30:00+03:00",
+    "cardInfo": {
+        "issuingCountry": "RUS",
+        "issuingBank": "VTB",
+        "paymentSystem": "VISA",
+        "fundingSource": "DEBIT",
+        "paymentSystemProduct": "Platinum..."
+    },
+    "createdToken": {
+        "token": "1a77343a-dd8a-11eb-ba80-0242ac130004",
+        "name": "111122******4444",
+        "expiredDate": "2034-12-01T00:00:00+03:00",
+        "account": "cat_girl"
+    }
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос завершения аутентификации при проверке карты
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "description" : "Validation error",
+  "userMessage" : "Validation error",
+  "dateTime" : "2024-03-13T16:49:59.166+03:00",
+  "traceId" : "fd0e2a08c63ace83"
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос завершения аутентификации при проверке карты
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Выплата {#payout}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__payouts__payoutId__put_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-payout-put.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/payments/{paymentId}/payouts/{payoutId}",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример выплаты
+
+PUT /partner/payin/v1/sites/test-01/payments/1811/payouts/bxwd8096 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+X-Digital-Sign: BXXBmVDBZwwRW....XjU1ZSIfHCGw==
+
+{
+  "amount" : {
+    "value" : "40.00",
+    "currency" : "RUB"
+  },
+  "receiverData" : {
+    "type" : "CARD",
+    "pan" : "86003300000000000",
+    "receiverFirstName" : "Ivan",
+    "receiverLastName" : "Ivanov"
+  },
+  "comment" : "some comment for payout operation",
+  "callbackUrl" : "http://test.com/",
+  "payoutSplits": [
+    {
+      "type": "MERCHANT_DETAILS",
+      "siteUid": "Obuc-00",
+      "splitAmount": {
+        "value": 30.00,
+        "currency": "RUB"
+      },
+      "orderId": "dressesforwhite",
+      "comment": "Платье"
+    },
+    {
+      "type": "MERCHANT_DETAILS",
+      "siteUid": "Obuc-01",
+      "splitAmount": {
+        "value": 10.00,
+        "currency": "RUB"
+      },
+      "orderId": "shoesforvalya",
+      "comment": "Туфли"
+    }
+  ]
+}
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос выплаты
+
+{
+  "createdDateTime": "2022-12-21T16:04:29+03:00",
+  "status": {
+    "value": "COMPLETED",
+    "changedDateTime": "2022-12-21T16:14:12+03:00"
+  },
+  "amount": {
+    "currency": "RUB",
+    "value": "40.00"
+  },
+  "receiverData": {
+    "type": "CARD",
+    "maskedPan": "860033*******0000",
+    "receiverFirstName" : "Ivan",
+    "receiverLastName" : "Ivanov"
+  },
+  "comment": "some comment for payout operation",
+  "callbackUrl" : "http://test.com/",
+  "flags": [
+    "TEST"
+  ],
+  "payoutSplits": [
+    {
+      "type": "MERCHANT_DETAILS",
+      "siteUid": "Obuc-00",
+      "splitAmount": {
+        "currency": "RUB",
+        "value": "30.00"
+      },
+      "splitCommissions" : {
+        "merchantCms" : {
+          "value" : "3.00",
+          "currency" : "RUB"
+        }
+      },
+      "orderId": "dressesforwhite",
+      "comment": "Платье"
+    },
+    {
+      "type": "MERCHANT_DETAILS",
+      "siteUid": "Obuc-01",
+      "splitAmount": {
+        "currency": "RUB",
+        "value": "10.00"
+      },
+      "splitCommissions" : {
+        "merchantCms" : {
+          "value" : "1.00",
+          "currency" : "RUB"
+        }
+      },
+      "orderId": "shoesforvalya",
+      "comment": "Туфли"
+    }
+  ]
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос выплаты
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "userMessage" : "Validation error",
+  "description" : "Validation error",
+  "traceId" : "4e8fc84f4706e422",
+  "dateTime" : "2022-12-22T10:17:36.887215+03:00",
+  "cause" : {
+    "amount" : [ "Incorrect payout amount" ]
+  }
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос выплаты
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Статус выплаты {#payout-status}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__payouts__payoutId__get_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-payout-get.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/payments/{paymentId}/payouts/{payoutId}",
+            "get",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример запроса статуса выплаты
+
+GET /partner/payin/v1/sites/test-01/payments/1811/payouts/bxwd8096 HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос статуса выплаты
+
+{
+  "createdDateTime": "2022-12-21T16:04:29+03:00",
+  "status": {
+    "value": "COMPLETED",
+    "changedDateTime": "2022-12-21T16:14:12+03:00"
+  },
+  "amount": {
+    "currency": "RUB",
+    "value": "40.00"
+  },
+  "receiverData": {
+    "type": "CARD",
+    "maskedPan": "860033*******0000",
+    "receiverFirstName" : "Ivan",
+    "receiverLastName" : "Ivanov"
+  },
+  "comment": "some comment for payout operation",
+  "callbackUrl" : "http://test.com/",
+  "flags": [
+    "TEST"
+  ],
+  "payoutSplits": [
+    {
+      "type": "MERCHANT_DETAILS",
+      "siteUid": "Obuc-00",
+      "splitAmount": {
+        "currency": "RUB",
+        "value": "30.00"
+      },
+      "splitCommissions" : {
+        "merchantCms" : {
+          "value" : "3.00",
+          "currency" : "RUB"
+        }
+      },
+      "orderId": "dressesforwhite",
+      "comment": "Платье"
+    },
+    {
+      "type": "MERCHANT_DETAILS",
+      "siteUid": "Obuc-01",
+      "splitAmount": {
+        "currency": "RUB",
+        "value": "10.00"
+      },
+      "splitCommissions" : {
+        "merchantCms" : {
+          "value" : "1.00",
+          "currency" : "RUB"
+        }
+      },
+      "orderId": "shoesforvalya",
+      "comment": "Туфли"
+    }
+  ]
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос статуса выплаты
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "userMessage" : "Validation error",
+  "description" : "Validation error",
+  "traceId" : "4e8fc84f4706e422",
+  "dateTime" : "2022-12-22T10:17:36.887215+03:00",
+  "cause" : {
+    "amount" : [ "Incorrect payout amount" ]
+  }
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос статуса выплаты
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+## Завершение выплаты {#payout-complete}
+
+<div id="payin_v1_sites__siteId__payments__paymentId__payouts__payoutId__complete_put_api">
+  <script>
+    $(document).ready(function(){
+      $.getJSON('../../rui_jsons/payin-payout-complete.json', function( data ) {
+        window.requestUI(
+            data,
+            "api",
+            "payin/v1/sites/{siteId}/payments/{paymentId}/payouts/{payoutId}/complete",
+            "put",
+            ['RequestBody', '200', '4xx', '5xx']
+          )
+      })
+    });
+  </script>
+</div>
+
+<!-- Request body -->
+~~~http
+Пример завершения выплаты
+
+PUT /partner/payin/v1/sites/test-01/payments/1811/payouts/bxwd8096/complete HTTP/1.1
+Accept: application/json
+Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
+Content-type: application/json
+Host: b2b-api.qiwi.com
+~~~
+
+<!-- 200 -->
+~~~json
+Пример успешного ответа на запрос завершения выплаты
+
+{
+  "createdDateTime": "2022-12-21T16:04:29+03:00",
+  "status": {
+    "value": "COMPLETED",
+    "changedDateTime": "2022-12-21T16:14:12+03:00"
+  },
+  "amount": {
+    "currency": "RUB",
+    "value": "40.00"
+  },
+  "receiverData": {
+    "type": "CARD",
+    "maskedPan": "860033*******0000",
+    "receiverFirstName" : "Ivan",
+    "receiverLastName" : "Ivanov"
+  },
+  "comment": "some comment for payout operation",
+  "callbackUrl" : "http://test.com/",
+  "flags": [
+    "TEST"
+  ],
+  "payoutSplits": [
+    {
+      "type": "MERCHANT_DETAILS",
+      "siteUid": "Obuc-00",
+      "splitAmount": {
+        "currency": "RUB",
+        "value": "30.00"
+      },
+      "splitCommissions" : {
+        "merchantCms" : {
+          "value" : "3.00",
+          "currency" : "RUB"
+        }
+      },
+      "orderId": "dressesforwhite",
+      "comment": "Платье"
+    },
+    {
+      "type": "MERCHANT_DETAILS",
+      "siteUid": "Obuc-01",
+      "splitAmount": {
+        "currency": "RUB",
+        "value": "10.00"
+      },
+      "splitCommissions" : {
+        "merchantCms" : {
+          "value" : "1.00",
+          "currency" : "RUB"
+        }
+      },
+      "orderId": "shoesforvalya",
+      "comment": "Туфли"
+    }
+  ]
+}
+~~~
+
+<!-- 4xx -->
+~~~json
+Пример ответа с ошибкой 4xx на запрос выплаты
+
+{
+  "serviceName" : "payin-core",
+  "errorCode" : "validation.error",
+  "userMessage" : "Validation error",
+  "description" : "Validation error",
+  "traceId" : "4e8fc84f4706e422",
+  "dateTime" : "2022-12-22T10:17:36.887215+03:00",
+  "cause" : {
+    "amount" : [ "Incorrect payout amount" ]
+  }
+}
+~~~
+
+<!-- 5xx -->
+~~~json
+Пример ответа с ошибкой 5xx на запрос выплаты
+
+{
+  "serviceName":"payin-core",
+  "errorCode":"internal.error",
+  "userMessage":"Internal error",
+  "description":"Internal error",
+  "traceId":"3fb3420ee1795dcf",
+  "dateTime":"2020-02-12T21:28:01.813+03:00"
+}
+~~~
+
+<% end %>

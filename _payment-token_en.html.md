@@ -1,6 +1,6 @@
 # Payment Token {#payment-token-issue}
 
-In **Payment protocol** card and QIWI Wallet payment tokens generation is supported. The tokens can be used for debiting cards or QIWI Wallet without entering card/wallet details. On issuing payment token, card details are stored securely on QIWI side.
+In **Payment protocol** card payment tokens generation is supported. The tokens can be used for debiting cards without entering card details. On issuing payment token, card details are stored securely on QIWI side.
 
 ## Features {#payment-token-special}
 
@@ -19,7 +19,7 @@ PUT /partner/payin/v1/sites/23044/bills/893794793973 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
-Host: api.qiwi.com
+Host: b2b-api.qiwi.com
 
 {
    "amount": {
@@ -42,7 +42,7 @@ PUT /partner/payin/v1/sites/test-01/payments/test-022 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
-Host: api.qiwi.com
+Host: b2b-api.qiwi.com
 
 {
    "amount": {
@@ -83,173 +83,174 @@ Host: api.qiwi.com
 }
 ~~~
 
-To issue a payment token, you may use one of the following methods:
+<aside class="warning">Card payment token is created only after the successful payment authorization by the issuer bank.</aside>
 
-1. Without payment (preferred method).
+Include additional options in the API request [Payment](#payments) or [Invoice](#invoice_put), depending on which API you use:
 
-   Use API request [Card verification](#how-to-check-card) or [Invoice issuing](#how-to-check-card-qiwi-payform). Include the following extra parameters:
-   * `account` field with a unique customer ID in the RSP system:
-     * either in `tokenizationData` object, in case of [Card verification](#how-to-check-card) request;
-     * or in `customer` object, in case of [Invoice issuing](#how-to-check-card-qiwi-payform) request.
-   * `"flags":["CHECK_CARD", "BIND_PAYMENT_TOKEN"]` field, in case of [Invoice issuing](#how-to-check-card-qiwi-payform) request.
+* `"flags": ["BIND_PAYMENT_TOKEN"]` is a flag for issuing a payment token.
+* `customer.account` is a unique customer ID in the RSP system.
 
-   **Put different `account` values for different users to ensure the security of customers' card data.**
+**To secure card data, use different `account` values for different clients.**
 
-   You will receive the card payment token details after [complete card verification](#how-to-check-card):
+You will receive the card payment token details:
 
-   * In the `createdToken` field of the final response.
-   * In the [CHECK_CARD notification](#check-card-callback).
-
-   You can always request a [card verification status](#card-check-info) — in the response you will receive a `createdToken` object with payment token details.
-
-   See [Customer Card Verification](#check-card) section for details.
-
-2. During payment process.
-
-   <aside class="warning">Card payment token is created only after the successful payment authorization by the issuer bank.</aside>
-
-   Include additional options in the API request [Payment](#payments) or [Invoice](#invoice_put), depending on which API you use:
-   * `"flags": ["BIND_PAYMENT_TOKEN"]` is a flag for issuing a payment token.
-   * `customer.account` is a unique customer ID in the RSP system.
-
-   **Put different `account` values for different users to ensure the security of customers' card data.**
-
-   You will receive the card payment token details:
-
-   * In the synchronous API response to the [payment request](#payments) or [payment authorization completion](#payment_complete) request in the `createdToken` field.
-   * In the [PAYMENT notification](#payment-callback) after payment is completed successfully, in the `tokenData` field.
+* In the synchronous API response to the [payment request](#payments) or [payment authorization completion](#payment_complete) request in the `createdToken` field.
+* In the [PAYMENT notification](#payment-callback) after payment is completed successfully, in the `tokenData` field.
 
 <aside class="warning">
 The payment token is linked with the site ID and the customer ID that you have specified in the original API request. The customer will be able to make payment by payment token only on this site.
 
-To make the payment token valid on other sites of the same merchant, send a request to <a href="mailto:payin@qiwi.com">QIWI Support</a>.
+To make the payment token valid on all sites of the same merchant, send a request to <a href="mailto:payin@qiwi.com">QIWI Support</a>.
 </aside>
 
-## QIWI Wallet payment token issue {#merchant-form-wallet-token-issue}
+## FPS payment token issue {#merchant-form-token-issue-sbp}
 
->Example of a request with QIWI Wallet payment token issue initiation
-
-~~~http
-POST /partner/payin-tokenization-api/v1/sites/test-01/token-requests HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
-{
-   "requestId": "asd1232q77w1e3212",
-   "phone": "79022222222",
-   "accountId": "token324"
-}
-~~~
-
-> Response
+> Request body for the FPS payment token issue
 
 ~~~json
 {
-    "requestId": "asd1232q77w1e3212",
-    "status": {
-        "value": "WAITING_SMS"
-    }
+  "qrCodeUid": "Test123",
+  "qrCode": {
+    "type": "TOKEN",
+    "image": {
+        "mediaType": "image/png",
+        "width": 300,
+        "height": 300
+      }
+  },
+  "tokenizationPurpose": "Описание с деталями привязки счета",
+  "tokenizationAccount": "3e2322",
+  "flags": ["CREATE_TOKEN"]
 }
 ~~~
 
->Example of a request with providing QIWI Wallet payment token
-
-~~~http
-PUT /partner/payin-tokenization-api/v1/sites/test-01/token-requests/complete HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
-
-{
-   "requestId": "asd1232q77w1e3212",
-   "smsCode": "1223"
-}
-~~~
-
-> Response
+> Response body for the FPS payment token issue
 
 ~~~json
 {
-    "requestId": "asd1232q77w1e3212",
-    "status": {
-        "value": "CREATED"
+  "qrCodeUid": "Test123",
+  "qrCode": {
+    "type": "TOKEN",
+    "ttl": 10,
+    "image": {
+        "mediaType": "image/png",
+        "width": 300,
+        "height": 300,
+        "content": "iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAA"
     },
-    "token": {
-        "value": "589c04b5-47dd-41af-9682-b3eb91",<= payment token
-        "expiredDate": "2021-11-08T14:23:54+03:00"
-    }
+    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQDб",
+    "status": "CREATED"
+  },
+  "tokenizationPurpose": "Описание с деталями привязки счета",
+  "flags": ["CREATE_TOKEN"],
+  "token": {
+      "status": "CREATED",
+      "value": "a4a312345-6789-1234-a567-89a1234567a0",
+      "expiredDate": "2023-08-11T10:10:32+03:00"
+  },
+  "createdOn": "2022-08-11T20:10:32+03:00"
 }
 ~~~
 
-To issue a QIWI Wallet payment token, make the following API requests:
+> Request body for FPS QR code issue with token creation
 
-1. Requesting the initiation of the QIWI Wallet's payment token issue.
+~~~json
+{
+  "qrCodeUid": "Test123",
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "image": {
+        "mediaType": "image/png",
+        "width": 300,
+        "height": 300
+      }
+  },
+  "tokenizationPurpose": "Описание с деталями привязки счета",
+  "tokenizationAccount": "3e2322",
+  "redirectUrl": "http://someurl.com"
+  "flags": ["CREATE_TOKEN"]
+}
+~~~
 
-    Make POST request to the URL:
+> Response body for FPS QR code issue with token creation
 
-    `/payin-tokenization-api/v1/sites/{siteId}/token-requests`
+~~~json
+{
+  "qrCodeUid": "Test123",
+  "amount": {
+    "value": 100.00,
+    "currency": "RUB"
+  },
+  "qrCode": {
+    "type": "DYNAMIC",
+    "ttl": 10,
+    "image": {
+        "mediaType": "image/png",
+        "width": 300,
+        "height": 300,
+        "content": "iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAYAA"
+    },
+    "payload": "https://qr.nspk.ru/AD10006M8KH234K782OQM0L13JI31LQDб",
+    "status": "CREATED"
+  },
+  "redirectUrl": "http://someurl.com",
+  "tokenizationPurpose": "Описание с деталями привязки счета",
+  "flags": ["CREATE_TOKEN"],
+  "token": {
+    "status": "CREATED",
+    "value": "a4a312345-6789-1234-a567-89a1234567a0",
+    "expiredDate": "2023-08-11T10:10:32+03:00"
+  },
+  "createdOn": "2022-08-11T20:10:32+03:00"
+}
+~~~
 
-    where `{siteId}` — merchant `siteId` identifier.
+To create a Faster Payment System (FPS) payment token, use one of the following options:
 
-    In the JSON-body of the request specify the parameters:
+1. Without payment.
 
-    * `requestId` — a unique query identifier (1 to 36 characters). The uniqueness means that the ID should differ from the identifiers of all previously created RSP requests for the issue of a payment token within one `siteId`.
-    * `phone` — QIWI Wallet number of the customer.
-    * `accountId` — unique customer identifier in your system. **Put different `accountId` values for different users to ensure the security of customers' payment data.**
+   Use [Faster Payment System QR Code](#qr-code-sbp) API request with data:
 
-2. A one-time SMS will be sent to the customer's phone. Include it in the following request to complete the issue of the payment token of the wallet.
+   * `qrCode` object with QR code parameters:
+     * `qrCode.type` — `TOKEN`.
+     * `qrCode.image` — type and size of the QR code image.
+   * `tokenizationAccount` — unique client identifier in merchant's system.
+   * `"flags":["CREATE_TOKEN"]`.
+   *`tokenizationPurpose` — token description.
 
-    Make POST request to the URL:
+2. Payment with account binding.
 
-    `/payin-tokenization-api/v1/sites/{siteId}/token-requests/complete`
+   <aside class="warning">FPS payment token is issued only after successful payment authorization by the Issuer.</aside>
 
-    where `{siteId}` — merchant `siteId` identifier.
+   Use [Faster Payment System QR Code](#qr-code-sbp) API request with data:
 
-    In the JSON-body of the request specify the parameters:
+   * `qrCode` object with QR code parameters:
+     * `qrCode.type` — `DYNAMIC`.
+     * `qrCode.image` — type and size of the QR code image.
+   * `amount` — payment amount.
+   * `tokenizationAccount` — unique client identifier in merchant's system.
+   * `"flags":["CREATE_TOKEN"]`.
+   * `tokenizationPurpose` — token description.
 
-    * `requestId` — the identifier from the initiation request for payment token issue.
-    * `smsCode` — a code from SMS sent to the customer.
+**To secure card data, use different `tokenizationAccount` parameters for different clients.**
 
-In response, you get payment token data:
+FPS payment token is received in `token` parameter of the response and in the [TOKEN notification](#token-callback).
 
-* `token.value` — a QIWI Wallet payment token
-* `token.expiredDate` — expiration date of a payment token, in `YYYY-MM-DDThh:mm:ss+DMZ` format.
-
-<aside class="warning">
-The payment token is linked with the site ID and the customer ID that you have specified in the original payment request. The customer will be able to make payment by payment token only on this site.
-
-To make the payment token valid on other sites of the same merchant, send a request to <a href="mailto:payin@qiwi.com">QIWI Support</a>.
+<aside class="notice">
+The payment token is linked with the site ID and the customer ID that you have specified in the original API request. The customer will be able to make payment by payment token only on this site.
 </aside>
 
-## Removal of the payment token {#delete-payment-token}
+See details on how to make payments by the FPS token in [this section](#token-sbp-payment).
 
-> Delete payment token
+## Disabling the payment token {#delete-payment-token}
 
-~~~http
-DELETE /partner/payin/v1/sites/test-01/tokens HTTP/1.1
-Accept: application/json
-Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
-Content-type: application/json
-Host: api.qiwi.com
+To disable a payment token, make a [Payment token deletion](#delete-token) API request. In the JSON-body of the request specify the parameters:
 
-{
-   "token": "66aebf5f-098e-4e36-922a-a4107b349a96",
-   "customerAccountId": "token324"
-}
-~~~
-
-The method disables a payment token. It applies both to the card payment token and the QIWI wallet payment token.
-
-To disable a payment token, make a DELETE request to the URL:
-
-`/partner/payin/v1/sites/{siteId}/tokens`
-
-In the JSON-body of the request specify the parameters:
-
-* `customerAccountId` is a unique customer ID in your system linked to a payment token.
+* `customerAccountId` is a unique customer ID in merchant's system linked to a payment token.
 * `token` is a payment token to stop.
 
 A successful response means that the payment token for the specified customer is no longer valid.

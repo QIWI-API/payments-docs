@@ -1,16 +1,19 @@
 # Payment Through Merchant Web Form {#merchant-api-integration}
 
 <aside class="warning">
-When you integrate with your payment form, you send requests to the API with full card numbers and CVV/CVV2 code. This is only allowed if your organization has a PCI DSS certificate.
+When you integrate card payments with the merchant payment form, you send requests to the API with full card numbers and CVV/CVV2 code. This is only allowed if merchant's organization has a PCI DSS certificate.
 
-PCI DSS is an information security standard adopted in the Visa and MasterCard payment card industry. All companies that accept cards are required to comply with the requirements of the standard.
+PCI DSS is an information security standard adopted in the Visa and Mastercard payment card industry. All companies that accept cards are required to comply with the requirements of the standard.
 </aside>
 
-When you integrate payments with your own payment form, [Bank Card](#qiwi-form-card) payment method is available by default. The following payment methods are connected on demand:
+<aside class="notice">
+According to Russian Central Bank 13-MP rule the compliance of the partner’s actual activities with those declared by him at the conclusion of the contract is checked. For this, as well as to reduce the risk of invalid and fraudulent transactions, the partner needs to <a href="/explain/en/qiwi-payin/partner-pay-form/fingerprint/">integrate a script</a> designed to collect additional client data when making payments.
+</aside>
 
-* [Card and QIWI Wallet payment token](#merchant-token-pay).
+[Bank Card](#qiwi-form-card) payment method is available for integration by default. The following payment methods are enabled on demand:
+
+* [Card payment token](#merchant-token-pay).
 * [Faster Payments System](#merchant-form-sbp).
-* [Mobile phone account](#merchant-form-phone-account).
 
 ## Payment process {#flow-payment-merchant-form}
 
@@ -55,7 +58,7 @@ deactivate store
 
 To create a payment, send the following data in API request [Payment](#payments):
 
-* API access key;
+* [API access key](#api-auth);
 * amount of payment;
 * payment method;
 * other information for payment creation.
@@ -73,7 +76,7 @@ PUT /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
-Host: api.qiwi.com
+Host: b2b-api.qiwi.com
 
 {
   "amount": {
@@ -97,7 +100,7 @@ PUT /partner/payin/v1/sites/test-01/payments/1811 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
-Host: api.qiwi.com
+Host: b2b-api.qiwi.com
 
 {
   "amount": {
@@ -118,11 +121,28 @@ Host: api.qiwi.com
 To start payment with subsequent hold of funds on the client card (two-step payment), send the following data in API request [Payment](#payments):
 
 * API access key;
-* amount of the payment;
-* payment method `CARD` and customer's card data;
-* other data for the payment.
+* payment amount data;
+* payment method parameters in `paymentMethod` object:
+  * `type` — `CARD`;
+  * `pan` — card number;
+  * `expiryDate` – card expiry date in `MM/YY` format;
+  * `cvv2` — card CVV2/CVC2;
+  * `holderName` – card holder name (Latin letters);
+* other information about the payment.
 
-For the two-step payment, the [reimbursement](#reimburse) is formed only after the [order confirmation](#merchant-capture).
+When the customer card was previously tokenized on merchant's side, the following parameters in `paymentMethod` object should be included:
+
+* `cardTokenPaymentType` – parameter for correct processing of transactions in the payment systems. Allowed values:
+  * `FIRST_PAYMENT` — when you are going to save the card data on the merchant's side;
+  * `INITIATED_BY_CLIENT` — transaction on the saved card initiated by a client;
+  * `INITIATED_BY_MERCHANT` — transaction on the saved card initiated by the merchant;
+  * `RECURRING_PAYMENT` — recurring operation on the saved card;
+  * `INSTALLMENT` — repeated operation on the saved card in accordance with payment schedule for credit repayment.
+* `firstTransaction` – (optional) JSON-object with data of the transaction when card was saved before. Contains fields:
+  * `paymentId` – unique payment identifier in RSP information system;
+  * `trnId` – unique payment identifier in NSPK information system.
+
+For the two-step payment (default option), the [reimbursement](#reimburse) is formed only after the [order confirmation](#merchant-capture).
 
 <a name="one-step"></a>
 
@@ -190,7 +210,7 @@ POST /partner/payin/v1/sites/test-01/payments/1811/complete HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
-Host: api.qiwi.com
+Host: b2b-api.qiwi.com
 
 {
   "threeDS": {
@@ -210,7 +230,7 @@ To proceed with additional authentication from the issuer, send a POST form to t
 - `MD` — a unique transaction identifier;
 - `PaReq` — the `pareq` value from the response to the payment request.
 
-To maintain backward compatibility, using 3-D Secure 1.0 or 3-D Secure 2.0 does not affect your integration with the API.
+To maintain backward compatibility, using 3-D Secure 1.0 or 3-D Secure 2.0 does not affect merchant's integration with the API.
 
 The customer's information is passed to the card payment system. The issuer bank either grants permission to charge funds without authentication (frictionless flow) or decides whether to authenticate with a single-time password (challenge flow). After the authentication is passed, the customer is redirected to `TermUrl` URL with the encrypted result of the authentication in the `PaRes` parameter.
 
@@ -245,6 +265,7 @@ To complete the authentication of the customer, pass on the API request [Complet
       "authCode":null,
       "type":"CARD"
     },
+    "merchantSiteUid":"test-00",
     "customer":{
       "phone":"75167693659"
     },
@@ -264,11 +285,11 @@ To complete the authentication of the customer, pass on the API request [Complet
 >Capture example
 
 ~~~http
-PUT /partner/payin/v1/sites/{siteId}/payments/804900/capture/bxwd8096 HTTP/1.1
+PUT /partner/payin/v1/sites/{siteId}/payments/804900/captures/bxwd8096 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 5c4b25xx93aa435d9cb8cd17480356f9
 Content-type: application/json
-Host: api.qiwi.com
+Host: b2b-api.qiwi.com
 ~~~
 
 The capture step is required only for two-step payments with holding funds.
@@ -289,7 +310,7 @@ PUT /partner/payin/v1/sites/test-02/payments/1815 HTTP/1.1
 Accept: application/json
 Authorization: Bearer 7uc4b25xx93xxx5d9cb8cd17480356f9
 Content-type: application/json
-Host: api.qiwi.com
+Host: b2b-api.qiwi.com
 
 {
   "amount": {
@@ -306,28 +327,36 @@ Host: api.qiwi.com
 }
 ~~~
 
-The payment tokens are used for charging a customer balance without entering card details or QIWI Wallet number. By default, the use of payment tokens is disabled. Contact your manager in QIWI Support to enable that.
+The payment tokens are used for charging a customer balance without entering card details. By default, the use of payment tokens is disabled. Contact your manager in QIWI Support to enable that.
+
+When using payment token for the payment, customer does not have to enter its card data and proceed with 3-D Secure authentication.
 
 The issue of a payment token is described [in this section](#payment-token-issue).
 
 <aside class="warning">
-Customer will be able to make payment by payment token only on the site where payment token was issued.
+Customer is able to make payment by payment token only on the site where payment token was issued.
 
 To make the payment token valid on other sites, send a request to <a href="mailto:payin@qiwi.com">QIWI Support</a>.
 </aside>
 
-To pay for the customer order with its payment token, send in API request [Payment](#payments) the following data:
+To pay for the customer order with its payment token, send the following data in API request [Payment](#payments):
 
-* the payment token in `paymentMethod` JSON-object,
-* customer identifier for which the payment token was issued, in `customer.account` parameter.
-
-Parameter|Type|Description
---------|---|--------
-paymentMethod.type|String|Type of the operation. Only `TOKEN`
-paymentMethod.paymentToken|String| Payment token string
-customer.account|String|Unique ID of the customer in the RSP system for which the payment token was issued. **Without this parameter, you cannot pay with the payment token.**
-
-Customer won't have to enter its card data and proceed with 3-D Secure authentication.
+* API access key;
+* payment amount data;
+* payment method parameters in `paymentMethod` object:
+  * `type` – `TOKEN`;
+  * `paymentToken` – payment token string;
+* additional information about the saved card in `paymentMethod` object:
+  * `cardTokenPaymentType` – parameter for correct processing of transactions in the payment systems. Allowed values:
+    * `INITIATED_BY_CLIENT` — transaction on the saved card initiated by a client;
+    * `INITIATED_BY_MERCHANT` — transaction on the saved card initiated by the merchant;
+    * `RECURRING_PAYMENT` — recurring operation on the saved card;
+    * `INSTALLMENT` — repeated operation on the saved card in accordance with payment schedule for credit repayment.
+  * `firstTransaction` – JSON-object with transaction identifier info where card was saved. Contains fields:
+    * `paymentId` – unique payment identifier in RSP information system;
+    * `trnId` – unique payment identifier in NSPK information system.
+* customer identifier in the RSP system for which the payment token was issued, in `customer.account` parameter (**without this parameter, you cannot pay with the payment token.**);
+* other information about the payment.
 
 ## Faster Payments System {#merchant-form-sbp}
 
@@ -390,12 +419,11 @@ To create a QR code for the payment, send the API request [Faster Payment System
 
 * Unique QR code API request identifier.
 * `qrCode` object with QR code parameters:
-   * QR code type in `qrCode.type` field:
-     * `DYNAMIC` — unique QR code for each payment.
-   * Code lifetime (minutes) in `qrCode.ttl` field. The QR code is deactivated after the period ends. Default value is 72 hours.
-   * QR code image size and type in `qrCode.image` object.
-* Payment amount in `amount` field.
-* Payment details in `paymentPurpose` field. If it is empty customer bank app displays your store title.
+   * `qrCode.type`— `DYNAMIC`.
+   * `qrCode.ttl` —  code lifetime (minutes). The QR code is deactivated after the period ends. Default value is 72 hours.
+   * `qrCode.image` — QR code image size and type.
+* `amount` — payment amount.
+* `paymentPurpose` — payment details. If it is empty customer bank app displays merchant's store title.
 
 In the response, the JSON object `qrCode` contains the data of the QR code:
 
@@ -433,42 +461,30 @@ When payment status becomes final, the [notification](#payment-callback) will be
 
 To get QR code information you can use the [Faster Payment System QR Code Status](#qr-code-sbp-get) API request. Response contains QR code details including its current status so you can check if it is still a valid one.
 
-### Testing operations {#test-fps}
+### FPS token payment {#token-sbp-payment}
 
-See information in [this section](#test_data_sbp).
-
-## Payment from mobile phone account {#merchant-form-phone-account}
-
-Purchases from a mobile phone account occur without entering card data. After merchant initiates payment, customer receives SMS from their mobile network operator. SMS contains the information about corresponding purchase. Customer approves or rejects the payment by the response SMS.
-
-By default, this payment method is turned off. To use this method, contact your manager in QIWI Support.
-
-### How to send a payment {#merchant-form-mobile-payment}
-
-> Payment example
+> Request body for payment with FPS token
 
 ~~~json
 {
-  "paymentMethod": {
-    "type": "MOBILE_COMMERCE",
-    "phone": "+79111111111"
-  },
-  "amount": {
-    "value": 5900.00,
-    "currency": "RUB"
-  },
-  "flags": [
-    "SALE"
-  ],
-  "customer": {
-    "account": "79111111111",
-    "email": "test@qiwi.com",
-    "phone": "79111111111"
-  }
+  "tokenizationAccount": "customer123",
+  "token": "c5ba4a05-21c9-4a36-af7a-b709b4caa4d6"
 }
 ~~~
 
-When sending payment, put into `paymentMethod` object in [Payment API request](#payments) the following data:
+See details about FPS payment token issue in [this section](#merchant-form-token-issue-sbp).
 
-* `type` — always `MOBILE_COMMERCE`.
-* `phone` — phone number, from which to make a payment. Number should be in international format with `+` sign.
+<aside class="warning">
+Customer is able to make payment by payment token only on the site where payment token was issued.
+
+To make the payment token valid on other sites, send a request to <a href="mailto:payin@qiwi.com">QIWI Support</a>.
+</aside>
+
+Use [Payment by FPS token](#payment-sbp-token) API method with the following parameters:
+
+* `token` — FPS payment token;
+* `tokenizationAccount` — client identifier for which the token was issued.
+
+### Testing operations {#test-fps}
+
+See information in [this section](#test_data_sbp).

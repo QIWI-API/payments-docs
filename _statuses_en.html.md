@@ -6,12 +6,12 @@ The Payment Protocol uses the following HTTP-codes of errors for API requests:
 
 Error Code | Meaning
 ---------- | -------
-400 | Bad Request — Your request is invalid (error in request' data or format).
-401 | Unauthorized — Your API access key is wrong.
+400 | Bad Request — Client request is invalid (error in request' data or format).
+401 | Unauthorized — Client API access key is wrong.
 403 | Forbidden — Access to API is forbidden.
 404 | Not Found — The specified resource could not be found.
 405 | Method Not Allowed — You tried to create a payment with an invalid method.
-406 | Not Acceptable — Your request' data format isn't JSON.
+406 | Not Acceptable — Client request' data format isn't JSON.
 410 | Gone — The resource requested has been removed from our servers.
 429 | Too Many Requests — You are sending requests too frequently.
 500 | Internal Server Error — We had a problem with our server. Try again later. If response body is empty, repeat the request with the same parameters. If the body is non-empty, make [payment status request](#payment_status)/[invoice status request](#invoice-details).
@@ -76,6 +76,12 @@ API errors describe a reason for rejection of the operation. API errors are pres
 * in API responses — field `status.reason`;
 * in notifications — field `status.reasonCode`.
 
+Some API errors are accompanied by [details with recommended troubleshooting](#ps-error-codes) in the `status.psErrorCode` field.
+
+<aside class="notice">
+API errors list can be expanded.
+</aside>
+
 API error| Description
 ------------------|--------
 INVALID_STATE| Incorrect transaction status
@@ -83,8 +89,8 @@ INVALID_AMOUNT| Incorrect payment amount
 INVALID_RECEIVER_DATA | Error on transmitting receiver data
 DECLINED_BY_MPI | Rejected by MPI
 DECLINED_BY_FRAUD| Rejected by fraud monitoring
-REATTEMPT_NOT_PERMITTED| Re-attempting authorization request is forbidden due to Payment system rules
-REATTEMPT_NOT_PERMITTED_BY_PS| Operation rejected by Payment system. Re-attempting the operation is not possible for the card
+REATTEMPT_NOT_PERMITTED| Re-attempting authorization request is forbidden due to a Payment system rules
+REATTEMPT_NOT_PERMITTED_BY_PS| Operation rejected by Payment system. Error details with recommended troubleshooting are in the `status.psErrorCode` [field](#ps-error-codes). Re-attempting the operation is not possible for the card
 GATEWAY_INTEGRATION_ERROR| Acquirer integration error
 GATEWAY_TECHNICAL_ERROR| Technical error on acquirer side
 ACQUIRING_MPI_TECH_ERROR| Technical error on 3DS authentication
@@ -103,17 +109,56 @@ ACQUIRING_UNKNOWN| Unknown error
 BILL_ALREADY_PAID| Invoice is already paid
 PAYIN_PROCESSING_ERROR| Payment processing error
 PAYMENT_EXPIRED_3DS | 3-D Secure authentication not passed
-QW_LIMIT_ERROR | Exceeded limits for QIWI Wallet (monthly, daily, etc)
-QW_IDENTIFICATION_ERROR | QIWI Wallet identification required or identification level is not enough for the customer
-QW_AUTH_ERROR | The current authentication level does not match the required
-QW_INSUFFICIENT_FUNDS | Insufficient funds
-QW_AMOUNT_ERROR | Forbidden payment amount in QIWI Wallet (amount is less than the minimum allowed amount or larger than the maximum allowed amount, or daily limit exceeded or zero amount)
-QW_REGISTRATION_ERROR | QIWI Wallet registration error
-QW_AGENT_ERROR | QIWI Wallet agent is blocked
-QW_ACCOUNT_ERROR | QIWI Wallet account is blocked
-QW_IDENTIFICATION_STATUS_ERROR | Attempt to transfer limited amount in another currency in QIWI Wallet
-QW_CURRENCY_ERROR | Currency error in QIWI Wallet (currency not found, wallet with that currency is not found)
-QW_PAYMENT_ERROR | QIWI Wallet payment error
-QW_PROVIDER_ERROR | QIWI Wallet provider is blocked
-QW_SMS_CONFIRM_EXPIRED | SMS code is expired in QIWI Wallet
 TRY_AGAIN_LATER | Repeat the request later
+
+## Error detail codes {#ps-error-codes}
+
+Error detail code with recommended action from a Payment system is returned in the `status.psErrorCode` field of the response.
+
+| Code | Corresponding [API error](#reason-codes) | Error details and recommended troubleshooting                                                                                                                  |
+|------|------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 03   | REATTEMPT_NOT_PERMITTED_BY_PS            | Operation with this MCC forbidden by the card issuer                                                                                                           |
+| 04   | REATTEMPT_NOT_PERMITTED_BY_PS            | Card blocked                                                                                                                                                   |
+| 05   | ACQUIRING_NOT_PERMITTED                  | The transaction was rejected due to other reasons                                                                                                              |
+| 12   | REATTEMPT_NOT_PERMITTED_BY_PS            | Operation of that type forbidden by Rules and Standards of a Payment system                                                                                    |
+| 13   | ACQUIRING_NOT_PERMITTED                  | Incorrect amount. Repeat the operation with a different amount                                                                                                 |
+| 14   | ACQUIRING_NOT_PERMITTED                  | Incorrect card number. Enter correct number or use another card                                                                                                |
+| 15   | REATTEMPT_NOT_PERMITTED_BY_PS            | There is no issuer for the card                                                                                                                                |
+| 30   | ACQUIRING_NOT_PERMITTED                  | Operation rejected. Contact QIWI support to get additional information                                                                                         |
+| 33   | REATTEMPT_NOT_PERMITTED_BY_PS            | Card is not available for use                                                                                                                                  |
+| 41   | REATTEMPT_NOT_PERMITTED_BY_PS            | Card is not available for use                                                                                                                                  |
+| 43   | REATTEMPT_NOT_PERMITTED_BY_PS            | Card is not available for use                                                                                                                                  |
+| 51   | ACQUIRING_INSUFFICIENT_FUNDS             | The Client might be recommended to repeat the operation after account replenishment                                                                            |
+| 54   | ACQUIRING_EXPIRED_CARD                   | The expiration date of the card is missing or transmitted incorrectly                                                                                          |
+| 57   | REATTEMPT_NOT_PERMITTED_BY_PS            | This type of operation is not available for the card                                                                                                           |
+| 58   | REATTEMPT_NOT_PERMITTED_BY_PS            | This type of operation is not available for the acquirer                                                                                                       |
+| 61   | ACQUIRING_LIMIT_EXCEEDED                 | The Client may be recommended to try the transaction again on another day — after the Issuer resets the limit on the total amount of transactions of this type |
+| 62   | REATTEMPT_NOT_PERMITTED_BY_PS            | The transaction is not available due to restrictions on the card or account of the Cardholder                                                                  |
+| 63   | ACQUIRING_NOT_PERMITTED                  | The transaction was rejected, contact Qiwi support for more information                                                                                        |
+| 65   | ACQUIRING_LIMIT_EXCEEDED                 | The Client may be recommended to retry the transaction on another day — after the Issuer resets the limit on the total number of transactions of this type     |
+| 75   | ACQUIRING_INCORRECT_CVV                  | The transaction was rejected due to incorrect PIN code entered earlier                                                                                         |
+| 76   | REATTEMPT_NOT_PERMITTED_BY_PS            | Rejecting the cancellation of a request due to the absence of the original request                                                                             |
+| 78   | REATTEMPT_NOT_PERMITTED_BY_PS            | Denying a request due to an attempt to use an inactive card                                                                                                    |
+| 86   | ACQUIRING_INCORRECT_CVV                  | The transaction was rejected due to incorrect PIN code entered earlier                                                                                         |
+| 88   | ACQUIRING_AUTH_TECHNICAL_ERROR           | The transaction was rejected due to cryptography error, can occur due to incorrect CVV2/CVC2                                                                   |
+| 91   | ACQUIRING_ISSUER_NOT_AVAILABLE           | The Client may be advised to retry the transaction at another time – after the Issuer recovers the functioning                                                 |
+| 92   | REATTEMPT_NOT_PERMITTED_BY_PS            | Rejection by the Payment System due to the impossibility of carrying out the transaction                                                                       |
+| 93   | REATTEMPT_NOT_PERMITTED_BY_PS            | Denial of a request due to violation of legal requirements                                                                                                     |
+| 94   | REATTEMPT_NOT_PERMITTED_BY_PS            | Rejecting a duplicate request                                                                                                                                  |
+| 96   | ACQUIRING_NOT_PERMITTED                  | The Client may be advised to retry the transaction at another time – after the Issuer ot the Platform recovers the functioning                                 |
+| TS   | REATTEMPT_NOT_PERMITTED_BY_PS            | Rejection of the request due to cancellation of the Cardholder's long-term order                                                                               |
+| CB   | ACQUIRING_ACQUIRER_ERROR                 | The transaction was rejected due to incorrect date of birth of the Cardholder                                                                                  |
+| CD   | REATTEMPT_NOT_PERMITTED_BY_PS            | The transaction was rejected due to death of the Cardholder                                                                                                    |
+
+### Rules for working with detailed information {#ps-error-codes-rules}
+There are two groups of error codes:
+
+* Group 1: `03`, `04`, `12`, `15`, `33`, `41`, `43`, `57`, `58`, `62`, `76`, `78`, `92`, `93`, `94`, `CD`, `TS`, `05`.
+* Group 2: `13`, `14`, `30`, `54`, `51`, `61`, `63`, `65`, `75`, `86`, `88`, `91`, `96`, `CB`.
+
+According to the NSPC rules, the following conditions for repeating transactions with non-3DS authorization on MIR cards are applied
+
+* After a response from group 1, no more transactions can be performed during the day.
+* After the response from group 2, another attempt to perform transactions is allowed during the day.
+
+Restrictions apply to the final recipient, if we have received the corresponding response codes.
